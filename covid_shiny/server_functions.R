@@ -3,6 +3,10 @@ tidy_trend_excel_sheets <- function(sheets) {
     sheets <- sheets[grep("Table", names(sheets))]
     sheets <- map(sheets, function(i) select_if(i, ~sum(!is.na(.)) > 0))
 
+    tables <- "NHS 24|Hospital Care|Ambulance|Discharges|Testing|Table 6 - Workforce|Care Homes|Deaths"
+    
+    sheets <- keep(sheets, str_detect(names(sheets), tables))
+
     # NHS 24 stats
     sheets[[grep("NHS 24", names(sheets))]] <- tidy_table(
         df = sheets[grep("NHS 24", names(sheets))][[1]],
