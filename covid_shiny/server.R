@@ -38,12 +38,12 @@ shinyServer(function(input, output) {
         pull(slice(map_data()[[1]], nrow(map_data()[[1]]) - 1), Scotland)
     })
     output[["introduction_deaths"]] <- renderText({
-        pull(slice(trend_data()[[8]], nrow(trend_data()[[8]])))
+        pull(slice(trend_data()[[9]], nrow(trend_data()[[9]])))
 
     })
     output[["introduction_daily_deaths"]] <- renderText({
-        pull(slice(trend_data()[[8]], nrow(trend_data()[[8]]))) - 
-        pull(slice(trend_data()[[8]], nrow(trend_data()[[8]]) - 1))
+        pull(slice(trend_data()[[9]], nrow(trend_data()[[9]]))) - 
+        pull(slice(trend_data()[[9]], nrow(trend_data()[[9]]) - 1))
 
     })
 
@@ -55,7 +55,8 @@ shinyServer(function(input, output) {
     output[["Testing"]] <- DT::renderDataTable({trend_data()[[5]]})
     output[["Workforce Absences"]] <- DT::renderDataTable({trend_data()[[6]]})
     output[["Adult Care Homes"]] <- DT::renderDataTable({trend_data()[[7]]})
-    output[["Deaths"]] <- DT::renderDataTable({trend_data()[[8]]})
+    output[["Care Home Workforce"]] <- DT::renderDataTable({trend_data()[[8]]})
+    output[["Deaths"]] <- DT::renderDataTable({trend_data()[[9]]})
 
     # NHS 24 plots
     output[["nhs_calls"]] <- renderPlotly({
@@ -97,7 +98,7 @@ shinyServer(function(input, output) {
         daily_barplot(df, x = "Date", y = "`Daily Change`")
     })
     output[["cumulative_testing"]] <- renderPlotly({
-        df <- select(trend_data()[[5]], -Total, -Daily, -Cumulative) %>% 
+        df <- select(trend_data()[[5]], Date, Negative, Positive) %>% 
             pivot_longer(-Date)
         p <- ggplot(data = df, aes(x = Date, y = value, fill = name)) +
             geom_bar(stat = "identity") +
@@ -113,18 +114,23 @@ shinyServer(function(input, output) {
 
     # Adult care homes plots
     output[["carehome_cases_plot"]] <- renderPlotly({
-        cumulative_group_plot(trend_data()[[7]], x = "Date", y = "value")
+        cumulative_plot(df = trend_data()[[7]], x = "Date", y = "`Cumulative number of suspected COVID-19 cases in adult care homes`")
+    })
+    output[["carehome_daily_plot"]] <- renderPlotly({
+        daily_barplot(trend_data()[[7]], x = "Date", y = "`Daily number of new suspected COVID-19 cases in adult care homes`")
+    })
+
+    # Carehome workforce plots
+    output[["staff_absence_rate"]] <- renderPlotly({
+        daily_barplot(trend_data()[[8]], x = "Date", "`Staff absence rate`")
     })
 
     # Deaths plots
     output[["cumulative_deaths"]] <- renderPlotly({
-        p <- ggplot(data = trend_data()[[8]], aes(x = Date, y = `Number of COVID-19 confirmed deaths registered to date`)) +
-            geom_point() +
-            geom_line()
-        ggplotly(p)
+        cumulative_plot(df = trend_data()[[9]], x = "Date", y = "`Number of COVID-19 confirmed deaths registered to date`")
     })
     output[["daily_deaths"]] <- renderPlotly({
-        df <- find_daily_increase(trend_data()[[8]], "`Number of COVID-19 confirmed deaths registered to date`")  
+        df <- find_daily_increase(trend_data()[[9]], "`Number of COVID-19 confirmed deaths registered to date`")  
         daily_barplot(df, x = "Date", y = "`Daily Change`")
     })
 

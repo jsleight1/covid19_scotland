@@ -3,66 +3,71 @@ tidy_trend_excel_sheets <- function(sheets) {
     sheets <- sheets[grep("Table", names(sheets))]
     sheets <- map(sheets, function(i) select_if(i, ~sum(!is.na(.)) > 0))
 
-    tables <- "NHS 24|Hospital Care|Ambulance|Discharges|Testing|Table 6 - Workforce|Care Homes|Deaths"
-    
-    sheets <- keep(sheets, str_detect(names(sheets), tables))
+    final_sheets <- list()
 
     # NHS 24 stats
-    sheets[[grep("NHS 24", names(sheets))]] <- tidy_table(
-        df = sheets[grep("NHS 24", names(sheets))][[1]],
+    final_sheets[[1]] <- tidy_table(
+        df = sheets[[grep("Table 1 - NHS 24", names(sheets))]],
         row = 3
     )
 
     # Hospital care stats
-    first_cat <- sheets[[grep("Hospital Care", names(sheets))]][[2, 2]] %>% 
+    first_cat <- sheets[[grep("Table 2 - Hospital Care", names(sheets))]][[2, 2]] %>% 
         str_remove("\\(i\\) |\\(ii\\) ")
-    second_cat <- sheets[[grep("Hospital Care", names(sheets))]][[2, 5]] %>% 
+    second_cat <- sheets[[grep("Table 2 - Hospital Care", names(sheets))]][[2, 5]] %>% 
         str_remove("\\(i\\) |\\(ii\\) ")
             
-    sheets[[grep("Hospital Care", names(sheets))]] <- sheets[[grep("Hospital Care", names(sheets))]] %>% 
+    final_sheets[[2]] <- sheets[[grep("Table 2 - Hospital Care", names(sheets))]] %>% 
         slice(4:nrow(.)) %>% 
         set_names(gsub("\\r|\\n", "", c("Date", paste(first_cat, c("Confirmed", "Suspected", "Total")), paste(second_cat, c("Confirmed", "Suspected", "Total"))))) %>% 
         mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>% 
         mutate_if(is.character, as.numeric)
     
     # Ambulance stats
-    sheets[[grep("Ambulance", names(sheets))]] <- tidy_table(
-        df = sheets[[grep("Ambulance", names(sheets))]],
+    final_sheets[[3]] <- tidy_table(
+        df = sheets[[grep("Table 3 - Ambulance", names(sheets))]],
         row = 3
     )
 
     # Delayed discharges 
-    sheets[[grep("Discharge", names(sheets))]] <- tidy_table(
-        df = sheets[[grep("Discharge", names(sheets))]],
+    final_sheets[[4]] <- tidy_table(
+        df = sheets[[grep("Table 4 - Delayed Discharges", names(sheets))]],
         row = 3
     )
 
     # # Testing 
-    sheets[[grep("Testing", names(sheets))]] <- tidy_table(
-        df = sheets[[grep("Testing", names(sheets))]],
+    final_sheets[[5]] <- tidy_table(
+        df = sheets[[grep("Table 5 - Testing", names(sheets))]],
         row = 4
     )
 
 
     # Workforce absences
-    sheets[[grep("Workforce", names(sheets))]] <- tidy_table(
-        df = sheets[[grep("Workforce", names(sheets))]],
+    final_sheets[[6]] <- tidy_table(
+        df = sheets[[grep("Table 6 - Workforce", names(sheets))]],
         row = 2
     )
 
     # Care homes
-    sheets[[grep("Care Home", names(sheets))]] <- tidy_table(
-        df = sheets[[grep("Care Home", names(sheets))]],
+    final_sheets[[7]] <- tidy_table(
+        df = sheets[[grep("Table 7a - Care Homes", names(sheets))]],
         row = 3
+    )
+
+    # Care home workforce
+    final_sheets[[8]] <- tidy_table(
+        df = sheets[[grep("Table 7b - Care Home Workforce", names(sheets))]],
+        row = 2
     )
 
     # Deaths
-    sheets[[grep("Deaths", names(sheets))]] <- tidy_table(
-        df = sheets[[grep("Deaths", names(sheets))]],
+    final_sheets[[9]] <- tidy_table(
+        df = sheets[[grep("Table 8 - Deaths", names(sheets))]],
         row = 3
     )
 
-    sheets
+    names(final_sheets) <- names(sheets)
+    final_sheets
 }
 
 tidy_table <- function(df, row) {
@@ -93,4 +98,11 @@ cumulative_group_plot <- function(df, x, y) {
         geom_line(aes(color = name, linetype = name)) +
         theme(legend.title = element_blank())
     ggplotly(p)     
+}
+
+cumulative_plot <- function(df, x, y) {
+    p <- ggplot(data = df, aes_string(x = x, y = y)) +
+        geom_point() +
+        geom_line()
+    ggplotly(p)
 }
