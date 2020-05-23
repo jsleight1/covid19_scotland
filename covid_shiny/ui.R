@@ -62,121 +62,138 @@ shinyUI(fluidPage(
         tabPanel("National Data",
             tabsetPanel(type = "tabs",
             tabPanel(
-                h4("NHS 24"),
+                h5("NHS 24"),
                 tabsetPanel(type = "tabs", 
                     tabPanel(
-                        h5("Table"),
+                        h6("Table"),
                         DT::dataTableOutput(outputId = "NHS 24")
                     ),
                     tabPanel(
-                        h5("Daily NHS Calls"),
+                        h6("Daily NHS Calls"),
                         plotlyOutput(outputId = "nhs_calls", height = "600px")
                     )
                 )
             ),
             tabPanel(
-                h4("Hospital Care"),
+                h5("Hospital Care"),
                 tabsetPanel(type = "tabs",
                      tabPanel(
-                         h5("Table"),
+                         h6("Table"),
                          DT::dataTableOutput(outputId = "Hospital Care")
                      ), 
                      tabPanel(
-                         h5("Daily Increase in Patients in Intensive Care"),
+                         h6("Daily Increase in Patients in Intensive Care"),
                          plotlyOutput(outputId = "daily_intensive_increase", height = "600px")
                      ),
                      tabPanel(
-                         h5("Daily Increase in Patients in Hospital (including intensive care)"),
+                         h6("Daily Increase in Patients in Hospital (including intensive care)"),
                          plotlyOutput(outputId = "daily_hospital_increase", height = "600px")
                      ),
                      tabPanel(
-                         h5("Total Patients in Hosptials"),
+                         h6("Total Patients in Hosptials"),
                          plotlyOutput(outputId = "cumulative_hospital", height = "600px")
                      )
                 )            
             ),
             tabPanel(
-                h4("Ambulance Attendances"),
+                h5("Ambulance Attendances"),
                 tabsetPanel(type = "tabs",
                     tabPanel(
-                        h5("Table"),
+                        h6("Table"),
                         DT::dataTableOutput(outputId = "Ambulance Attendances")
                     ),
                     tabPanel(
-                        h5("Number of Ambulance Attendances"),
+                        h6("Number of Ambulance Attendances"),
                         plotlyOutput(outputId = "ambulance_plot", height = "600px")
                     )
                 )
             ),
             tabPanel(
-                h4("Delayed Discharges"),
+                h5("Delayed Discharges"),
                 tabsetPanel(type = "tabs",
                     tabPanel(
-                        h5("Table"),
+                        h6("Table"),
                         DT::dataTableOutput(outputId = "Delayed Discharges")
                     ), 
                     tabPanel(
-                        h5("Number of Delayed Discharges"),
+                        h6("Number of Delayed Discharges"),
                         plotlyOutput(outputId = "discharge", height = "600px")
                     )
                 )
             ), 
             tabPanel(
-                h4("Testing"),
+                h5("Testing"),
                 tabsetPanel(type = "tabs",
                     tabPanel(
-                        h5("Table"),
+                        h6("Table"),
                         DT::dataTableOutput(outputId = "Testing")
                     ),
                     tabPanel(
-                        h5("Cumulative Testing"),
+                        h6("Cumulative Testing"),
                         plotlyOutput(outputId = "cumulative_testing", height = "600px")
                     ),
                     tabPanel(
-                        h5("Daily Positive Cases"),
+                        h6("Daily Positive Cases"),
                         plotlyOutput(outputId = "daily_positive_tests", height = "600px")
                     )
                 )       
             ), 
             tabPanel(
-                h4("Workforce Absences"),
+                h5("Workforce Absences"),
                 tabsetPanel(type = "tabs",
                     tabPanel(
-                        h5("Table"),
+                        h6("Table"),
                         DT::dataTableOutput(outputId = "Workforce Absences")
                     ),
                     tabPanel(
-                        h5("Daily Workforce Absences"),
+                        h6("Daily Workforce Absences"),
                         plotlyOutput(outputId = "daily_workforce_absences", height = "600px")
                     )
                 )          
             ), 
             tabPanel(
-                h4("Adult Care Homes"),
+                h5("Adult Care Homes"),
                 tabsetPanel(type = "tabs",
                     tabPanel(
-                        h5("Table"),
+                        h6("Table"),
                         DT::dataTableOutput(outputId = "Adult Care Homes")
                     ), 
                     tabPanel(
-                        h5("Carehome Cases"),
+                        h6("Carehome Cases"),
                         plotlyOutput(outputId = "carehome_cases_plot", height = "600px")
+                    ), 
+                    tabPanel(
+                        h6("Daily Carehome Cases"),
+                        plotlyOutput(outputId = "carehome_daily_plot", height = "600px")
                     )
                 )  
             ), 
             tabPanel(
-                h4("Deaths"),
+                h5("Care Home Workforce"),
                 tabsetPanel(type = "tabs",
                     tabPanel(
-                        h5("Table"),
+                        h6("Table"),
+                        DT::dataTableOutput(outputId = "Care Home Workforce")
+                    ),
+                    tabPanel(
+                        h6("Staff Absence Rate"),
+                        plotlyOutput(outputId = "staff_absence_rate", height = "600px")
+                    )
+                )  
+            ),
+            tabPanel(
+                h5("Deaths"),
+                tabsetPanel(type = "tabs",
+                    tabPanel(
+                        h6("Table"),
                         DT::dataTableOutput(outputId = "Deaths")
                     ), 
                     tabPanel(
-                         h5("Cumulative Deaths"),
+                         h6("Cumulative Deaths"),
                         plotlyOutput(outputId = "cumulative_deaths", height = "600px")
                     ),
                     tabPanel(
-                        h5("Daily Deaths"),
+                        h6("Daily Deaths"),
                         plotlyOutput(outputId = "daily_deaths", height = "600px")
                     )      
                 )  
