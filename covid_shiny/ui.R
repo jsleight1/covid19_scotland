@@ -133,8 +133,8 @@ shinyUI(fluidPage(
                         plotlyOutput(outputId = "cumulative_testing", height = "600px")
                     ),
                     tabPanel(
-                        h6("Daily Positive Cases"),
-                        plotlyOutput(outputId = "daily_positive_tests", height = "600px")
+                        h6("Daily Testing"),
+                        plotlyOutput(outputId = "daily_tests", height = "600px")
                     )
                 )       
             ), 
@@ -263,5 +263,4 @@ shinyUI(fluidPage(
             )
         ) 
     )
-
 ))
