@@ -25,7 +25,7 @@ tidy_trend_excel_sheets <- function(sheets) {
     
     # Ambulance stats
     final_sheets[["Table 3 - Ambulance"]] <- tidy_table(
-        df = sheets[[grep("Table 3 - Ambulance", names(sheets))]],
+        df = select(sheets[[grep("Table 3 - Ambulance", names(sheets))]], -1),
         row = 3
     )
 
