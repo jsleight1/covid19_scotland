@@ -120,6 +120,9 @@ shinyServer(function(input, output) {
     output[["carehome_daily_plot"]] <- renderPlotly({
         daily_barplot(trend_data()[["Table 7a - Care Homes"]], x = "Date", y = "`Daily number of new suspected COVID-19 cases in adult care homes`")
     })
+    output[["carehome_count_plot"]] <- renderPlotly({
+        cumulative_plot(df = trend_data()[["Table 7a - Care Homes"]], x = "Date", y = "`Cumulative number of adult care homes that have reported a suspected COVID-19 case`")
+    })
 
     # Carehome workforce plots
     output[["staff_absence_rate"]] <- renderPlotly({
