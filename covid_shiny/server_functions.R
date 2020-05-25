@@ -36,11 +36,11 @@ tidy_trend_excel_sheets <- function(sheets) {
     )
 
     # # Testing 
-    final_sheets[["Table 5 - Testing"]] <- tidy_table(
-        df = sheets[[grep("Table 5 - Testing", names(sheets))]],
-        row = 4
-    )
-
+    final_sheets[["Table 5 - Testing"]] <- sheets[[grep("Table 5 - Testing", names(sheets))]] %>% 
+        set_names(c("Date", "Negative", "Positive", "Total", paste("NHS_labs", c("Daily", "Cumulative"), sep = "_"), paste("Regional_Centres", c("Daily", "Cumulative"), sep = "_"))) %>% 
+        slice(4:nrow(.)) %>% 
+        mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>% 
+        mutate_if(is.character, as.numeric)
 
     # Workforce absences
     final_sheets[["Table 6 - Workforce"]] <- tidy_table(
@@ -72,7 +72,6 @@ tidy_trend_excel_sheets <- function(sheets) {
 
 tidy_table <- function(df, row) {
     col_names <- na.omit(unlist(slice(df, row-1)))
-    if(any(grepl("tested", names(df)))) col_names <- prepend(col_names, "Date", 1)
     df %>% 
         slice(row:nrow(.)) %>% 
         select(1:length(col_names)) %>% 
