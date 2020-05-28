@@ -4,19 +4,6 @@ shinyUI(fluidPage(
         tabPanel("Introduction",
             shinyWidgets::setBackgroundColor(color = "66B2FF"),
             fluidRow(
-                div(
-                    "Welcome the COVID-19 Scotland Analysis tool. 
-                    The Scottish Government releases COVID-19 trend data daily split into
-                    both National and Regional releases within two separate excel spreadsheets found here:",
-                    style = "color:black; font-size:15px"
-                ),
-                a(
-                    "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/.", 
-                    href = "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/.",
-                    style = "color:blue; font-size:15px"
-                )
-            ),
-            fluidRow(
                 column(width = 12, div("National Cumulative Cases", style = "font-size:20px;"), plotlyOutput(outputId = "introduction_plot", height = "500px")),
             ),
             fluidRow(
@@ -47,6 +34,14 @@ shinyUI(fluidPage(
                     div(textOutput(outputId = "introduction_daily_deaths"), style = "font-size:20px; color:red")
                 )
 
+            ),
+            fluidRow(
+                div("Reference:"),
+                a(
+                    "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/", 
+                    href = "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/",
+                    style = "color:blue; font-size:15px"
+                )
             )
         ),
         tabPanel("National Data",
