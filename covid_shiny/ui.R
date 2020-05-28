@@ -8,26 +8,16 @@ shinyUI(fluidPage(
                     "Welcome the COVID-19 Scotland Analysis tool. 
                     The Scottish Government releases COVID-19 trend data daily split into
                     both National and Regional releases within two separate excel spreadsheets found here:",
-                    style = "color:black"
+                    style = "color:black; font-size:15px"
                 ),
-                a("https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/.", href = "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/.")
-            ),
-            fluidRow(
-                column(8, align = "center", offset = 2, 
-                    fileInput("file1", div("Please upload the 'Trends in daily COVID-19 data' excel spreadsheet here", style = "color:black"),
-                        accept = c('text/xlsx')
-                    )
+                a(
+                    "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/.", 
+                    href = "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/.",
+                    style = "color:blue; font-size:15px"
                 )
             ),
             fluidRow(
-                column(8, align = "center", offset = 2, 
-                    fileInput("file2", div("Please upload the 'COVID-19 data by NHS Board' excel spreadsheet here", style = "color:black"),
-                        accept = c('text/xlsx')
-                    )
-                )
-            ),
-            fluidRow(
-                column(width = 12, div("National Cumulative Cases", style = "font-size:20px;"), plotlyOutput(outputId = "introduction_plot")),
+                column(width = 12, div("National Cumulative Cases", style = "font-size:20px;"), plotlyOutput(outputId = "introduction_plot", height = "500px")),
             ),
             fluidRow(
                 div("Daily Updates", style = "font-size:20px;"),
@@ -171,7 +161,7 @@ shinyUI(fluidPage(
                         plotlyOutput(outputId = "carehome_count_plot", height = "700px")
                     )
                 )  
-            ), 
+            ),
             tabPanel(
                 h5("Care Home Workforce"),
                 tabsetPanel(type = "tabs",

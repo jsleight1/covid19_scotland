@@ -2,79 +2,80 @@ source("dependencies.R")
 source("server_functions.R")
 
 shinyServer(function(input, output) {
-    trend_data <- reactive({
-        file <- req(input$file1$datapath)
-        readxl::excel_sheets(file) %>% 
-            set_names() %>% 
-            map(readxl::read_excel, path = file) %>% 
-            tidy_trend_excel_sheets()
-    })
-    map_data <- reactive({
-        file <- req(input$file2$datapath)
-        sheets <- readxl::excel_sheets(file) %>% 
-            set_names() %>% 
-            map(readxl::read_excel, path = file)
-        sheets[grep("Table", names(sheets))] %>% 
-            map(., function(i) {
-                i <- select_if(i, ~sum(!is.na(.)) > 0)
-                tidy_table(df = i, row = 3)
-            })
-    })
+    # Read in national data
+    url_trend <- "https://www.gov.scot/binaries/content/documents/govscot/publications/statistics/2020/04/coronavirus-covid-19-trends-in-daily-data/documents/trends-in-number-of-people-in-hospital-with-confirmed-or-suspected-covid-19/trends-in-number-of-people-in-hospital-with-confirmed-or-suspected-covid-19/govscot%3Adocument/Trends%2Bin%2Bdaily%2BCOVID-19%2Bdata%2B28%2BMay%2B2020.xlsx"
+    GET(url_trend, write_disk(tf_national <- tempfile(fileext = ".xlsx"), overwrite = TRUE))
+    national_data <- readxl::excel_sheets(tf_national) %>% 
+        set_names() %>% 
+        map(readxl::read_excel, path = tf_national) %>% 
+        tidy_trend_excel_sheets()
 
+    # Read in regional data
+    url_regional = "https://www.gov.scot/binaries/content/documents/govscot/publications/statistics/2020/04/coronavirus-covid-19-trends-in-daily-data/documents/covid-19-data-by-nhs-board/covid-19-data-by-nhs-board/govscot%3Adocument/COVID-19%2Bdata%2Bby%2BNHS%2BBoard%2B28%2BMay%2B2020.xlsx"
+    GET(url_regional, write_disk(tf_regional <- tempfile(fileext = ".xlsx"), overwrite = TRUE))
+    sheets <- readxl::excel_sheets(tf_regional) %>% 
+        set_names() %>% 
+        map(readxl::read_excel, path = tf_regional)
+    regional_data <- sheets[grep("Table", names(sheets))] %>% 
+        map(., function(i) {
+            i <- select_if(i, ~sum(!is.na(.)) > 0)
+            tidy_table(df = i, row = 3)
+        })
+    
     # Introduction
     output[["introduction_plot"]] <- renderPlotly({
-        df <- map_data()[[1]] %>% 
+        df <- regional_data[["Table 1 - Cumulative cases"]] %>% 
             select(Date, Scotland)
         daily_barplot(df, x = "Date", y = "Scotland")
     })
     output[["introduction_date"]] <- renderText({
-         as.character(pull(slice(map_data()[["Table 1 - Cumulative cases"]], nrow(map_data()[["Table 1 - Cumulative cases"]])), Date))
+         as.character(pull(slice(regional_data[["Table 1 - Cumulative cases"]], nrow(regional_data[["Table 1 - Cumulative cases"]])), Date))
     })
     output[["introduction_cases"]] <- renderText({
-         pull(slice(map_data()[["Table 1 - Cumulative cases"]], nrow(map_data()[["Table 1 - Cumulative cases"]])), Scotland)
+         pull(slice(regional_data[["Table 1 - Cumulative cases"]], nrow(regional_data[["Table 1 - Cumulative cases"]])), Scotland)
     })
     output[["introduction_daily_cases"]] <- renderText({
-        pull(slice(map_data()[["Table 1 - Cumulative cases"]], nrow(map_data()[["Table 1 - Cumulative cases"]])), Scotland) - 
-        pull(slice(map_data()[["Table 1 - Cumulative cases"]], nrow(map_data()[["Table 1 - Cumulative cases"]]) - 1), Scotland)
+        pull(slice(regional_data[["Table 1 - Cumulative cases"]], nrow(regional_data[["Table 1 - Cumulative cases"]])), Scotland) - 
+        pull(slice(regional_data[["Table 1 - Cumulative cases"]], nrow(regional_data[["Table 1 - Cumulative cases"]]) - 1), Scotland)
     })
     output[["introduction_deaths"]] <- renderText({
-        pull(slice(trend_data()[["Table 8 - Deaths"]], nrow(trend_data()[["Table 8 - Deaths"]])))
+        pull(slice(national_data[["Table 8 - Deaths"]], nrow(national_data[["Table 8 - Deaths"]])))
 
     })
     output[["introduction_daily_deaths"]] <- renderText({
-        pull(slice(trend_data()[["Table 8 - Deaths"]], nrow(trend_data()[["Table 8 - Deaths"]]))) - 
-        pull(slice(trend_data()[["Table 8 - Deaths"]], nrow(trend_data()[["Table 8 - Deaths"]]) - 1))
+        pull(slice(national_data[["Table 8 - Deaths"]], nrow(national_data[["Table 8 - Deaths"]]))) - 
+        pull(slice(national_data[["Table 8 - Deaths"]], nrow(national_data[["Table 8 - Deaths"]]) - 1))
 
     })
 
     # National analysis
-    output[["NHS 24"]] <- DT::renderDataTable({trend_data()[["Table 1 - NHS 24"]]})
-    output[["Hospital Care"]] <- DT::renderDataTable({trend_data()[["Table 2 - Hospital Care"]]})
-    output[["Ambulance Attendances"]] <- DT::renderDataTable({trend_data()[["Table 3 - Ambulance"]]})
-    output[["Delayed Discharges"]] <- DT::renderDataTable({trend_data()[["Table 4 - Delayed Discharges"]]})
-    output[["Testing"]] <- DT::renderDataTable({trend_data()[["Table 5 - Testing"]]})
-    output[["Workforce Absences"]] <- DT::renderDataTable({trend_data()[["Table 6 - Workforce"]]})
-    output[["Adult Care Homes"]] <- DT::renderDataTable({trend_data()[["Table 7a - Care Homes"]]})
-    output[["Care Home Workforce"]] <- DT::renderDataTable({trend_data()[["Table 7b - Care Home Workforce"]]})
-    output[["Deaths"]] <- DT::renderDataTable({trend_data()[["Table 8 - Deaths"]]})
+    output[["NHS 24"]] <- DT::renderDataTable({national_data[["Table 1 - NHS 24"]]})
+    output[["Hospital Care"]] <- DT::renderDataTable({national_data[["Table 2 - Hospital Care"]]})
+    output[["Ambulance Attendances"]] <- DT::renderDataTable({national_data[["Table 3 - Ambulance"]]})
+    output[["Delayed Discharges"]] <- DT::renderDataTable({national_data[["Table 4 - Delayed Discharges"]]})
+    output[["Testing"]] <- DT::renderDataTable({national_data[["Table 5 - Testing"]]})
+    output[["Workforce Absences"]] <- DT::renderDataTable({national_data[["Table 6 - Workforce"]]})
+    output[["Adult Care Homes"]] <- DT::renderDataTable({national_data[["Table 7a - Care Homes"]]})
+    output[["Care Home Workforce"]] <- DT::renderDataTable({national_data[["Table 7b - Care Home Workforce"]]})
+    output[["Deaths"]] <- DT::renderDataTable({national_data[["Table 8 - Deaths"]]})
 
     # NHS 24 plots
     output[["nhs_calls"]] <- renderPlotly({
-        cumulative_group_plot(trend_data()[["Table 1 - NHS 24"]], x = "Date", y = "value")
+        cumulative_group_plot(national_data[["Table 1 - NHS 24"]], x = "Date", y = "value")
     })
 
     # Hosptial Care plots
     output[["daily_intensive_increase"]] <- renderPlotly({
-        df <- find_daily_increase(trend_data()[["Table 2 - Hospital Care"]], "`COVID-19 patients in ICU or combined ICU/HDU Total`")
+        df <- find_daily_increase(national_data[["Table 2 - Hospital Care"]], "`COVID-19 patients in ICU or combined ICU/HDU Total`")
         daily_barplot(df, x = "Date", y = "`Daily Change`")
     })
 
     output[["daily_hospital_increase"]] <- renderPlotly({
-        df <- find_daily_increase(trend_data()[["Table 2 - Hospital Care"]], "`COVID-19 patients in hospital (including those in ICU) Total`")
+        df <- find_daily_increase(national_data[["Table 2 - Hospital Care"]], "`COVID-19 patients in hospital (including those in ICU) Total`")
         daily_barplot(df, x = "Date", y = "`Daily Change`")
     })
     output[["cumulative_hospital"]] <- renderPlotly({
-        df <- select(trend_data()[["Table 2 - Hospital Care"]], 
+        df <- select(national_data[["Table 2 - Hospital Care"]], 
             Date, 
             `COVID-19 patients in ICU or combined ICU/HDU Total`, 
             `COVID-19 patients in hospital (including those in ICU) Total`
@@ -84,77 +85,78 @@ shinyServer(function(input, output) {
 
     # Ambulance plots
     output[["ambulance_plot"]] <- renderPlotly({
-        cumulative_group_plot(trend_data()[["Table 3 - Ambulance"]], x = "Date", y = "value")
+        cumulative_group_plot(national_data[["Table 3 - Ambulance"]], x = "Date", y = "value")
     })
 
     # Delayed Discharge plots
     output[["discharge"]] <- renderPlotly({
-        daily_barplot(trend_data()[["Table 4 - Delayed Discharges"]], x = "Date", y = "`Number of delayed discharges`")
+        daily_barplot(national_data[["Table 4 - Delayed Discharges"]], x = "Date", y = "`Number of delayed discharges`")
     })
 
     # Testing plots
     output[["daily_tests"]] <- renderPlotly({
-        positive <- find_daily_increase(trend_data()[["Table 5 - Testing"]], "Positive") %>% 
+        positive <- find_daily_increase(national_data[["Table 5 - Testing"]], "Positive") %>% 
             rename(Positive = "Daily Change")
-        negative <- find_daily_increase(trend_data()[["Table 5 - Testing"]], "Negative") %>% 
+        negative <- find_daily_increase(national_data[["Table 5 - Testing"]], "Negative") %>% 
             rename(Negative = "Daily Change")
         df <- inner_join(positive, negative, by = "Date") %>% 
             pivot_longer(-Date)
         stacked_barplot(df, x = "Date", y = "value")
     })
     output[["cumulative_testing"]] <- renderPlotly({
-        df <- select(trend_data()[["Table 5 - Testing"]], Date, Negative, Positive) %>% 
+        df <- select(national_data[["Table 5 - Testing"]], Date, Negative, Positive) %>% 
             pivot_longer(-Date)
         stacked_barplot(df, x = "Date", y = "value")
     })
 
     # Workforce Absences plots
     output[["daily_workforce_absences"]] <- renderPlotly({
-        cumulative_group_plot(trend_data()[["Table 6 - Workforce"]], x = "Date", y = "value")
+        cumulative_group_plot(national_data[["Table 6 - Workforce"]], x = "Date", y = "value")
     })
 
     # Adult care homes plots
     output[["carehome_cases_plot"]] <- renderPlotly({
-        cumulative_plot(df = trend_data()[["Table 7a - Care Homes"]], x = "Date", y = "`Cumulative number of suspected COVID-19 cases in adult care homes`")
+        cumulative_plot(df = national_data[["Table 7a - Care Homes"]], x = "Date", y = "`Cumulative number of suspected COVID-19 cases in adult care homes`")
     })
     output[["carehome_daily_plot"]] <- renderPlotly({
-        daily_barplot(trend_data()[["Table 7a - Care Homes"]], x = "Date", y = "`Daily number of new suspected COVID-19 cases in adult care homes`")
+        daily_barplot(national_data[["Table 7a - Care Homes"]], x = "Date", y = "`Daily number of new suspected COVID-19 cases in adult care homes`")
     })
     output[["carehome_count_plot"]] <- renderPlotly({
-        cumulative_plot(df = trend_data()[["Table 7a - Care Homes"]], x = "Date", y = "`Cumulative number of adult care homes that have reported a suspected COVID-19 case`")
+        cumulative_plot(df = national_data[["Table 7a - Care Homes"]], x = "Date", y = "`Cumulative number of adult care homes that have reported a suspected COVID-19 case`")
     })
+
 
     # Carehome workforce plots
     output[["staff_absence_rate"]] <- renderPlotly({
-        daily_barplot(trend_data()[["Table 7b - Care Home Workforce"]], x = "Date", "`Staff absence rate`")
+        daily_barplot(national_data[["Table 7b - Care Home Workforce"]], x = "Date", "`Staff absence rate`")
     })
 
     # Deaths plots
     output[["cumulative_deaths"]] <- renderPlotly({
-        cumulative_plot(df = trend_data()[["Table 8 - Deaths"]], x = "Date", y = "`Number of COVID-19 confirmed deaths registered to date`")
+        cumulative_plot(df = national_data[["Table 8 - Deaths"]], x = "Date", y = "`Number of COVID-19 confirmed deaths registered to date`")
     })
     output[["daily_deaths"]] <- renderPlotly({
-        df <- find_daily_increase(trend_data()[["Table 8 - Deaths"]], "`Number of COVID-19 confirmed deaths registered to date`")  
+        df <- find_daily_increase(national_data[["Table 8 - Deaths"]], "`Number of COVID-19 confirmed deaths registered to date`")  
         daily_barplot(df, x = "Date", y = "`Daily Change`")
     })
 
     # Regional analysis
-    output[["regional_cumulative_cases"]] <- DT::renderDataTable(map_data()[["Table 1 - Cumulative cases"]])
-    output[["regional_COVID_inpatients"]] <- DT::renderDataTable(map_data()[["Table 2 - ICU patients"]])
-    output[["regional_hospital_confirmed"]] <- DT::renderDataTable(map_data()[["Table 3a - Hospital Confirmed"]])
-    output[["regional_hospital_suspected"]] <- DT::renderDataTable(map_data()[["Table 3b- Hospital Suspected"]])
+    output[["regional_cumulative_cases"]] <- DT::renderDataTable(regional_data[["Table 1 - Cumulative cases"]])
+    output[["regional_COVID_inpatients"]] <- DT::renderDataTable(regional_data[["Table 2 - ICU patients"]])
+    output[["regional_hospital_confirmed"]] <- DT::renderDataTable(regional_data[["Table 3a - Hospital Confirmed"]])
+    output[["regional_hospital_suspected"]] <- DT::renderDataTable(regional_data[["Table 3b- Hospital Suspected"]])
 
     output[["regional_cumulative_plot"]] <- renderPlotly({
-        cumulative_group_plot(map_data()[["Table 1 - Cumulative cases"]], x = "Date", y = "value")
+        cumulative_group_plot(regional_data[["Table 1 - Cumulative cases"]], x = "Date", y = "value")
     })
     output[["regional_inpatient_plot"]] <- renderPlotly({
-        cumulative_group_plot(map_data()[["Table 2 - ICU patients"]], x = "Date", y = "value")
+        cumulative_group_plot(regional_data[["Table 2 - ICU patients"]], x = "Date", y = "value")
     })
     output[["regional_confirmed_plot"]] <- renderPlotly({
-        cumulative_group_plot(map_data()[["Table 3a - Hospital Confirmed"]] , x = "Date", y = "value")
+        cumulative_group_plot(regional_data[["Table 3a - Hospital Confirmed"]] , x = "Date", y = "value")
     })
     output[["regional_suspected_plot"]] <- renderPlotly({
-        cumulative_group_plot(map_data()[["Table 3b- Hospital Suspected"]], x = "Date", y = "value")
+        cumulative_group_plot(regional_data[["Table 3b- Hospital Suspected"]], x = "Date", y = "value")
     })
 
     output$map <- renderLeaflet({
@@ -182,7 +184,7 @@ shinyServer(function(input, output) {
             "regional_confirmed" = "Hospital Confirmed",
             "regional_suspected" =  "Hospital Suspected"  
         )
-        df <- map_data()[[grep(type, names(map_data()))]] %>% 
+        df <- regional_data[[grep(type, names(regional_data))]] %>% 
             slice(nrow(.)) %>% 
             select(-Date) %>% 
             t() %>% 
@@ -203,5 +205,3 @@ shinyServer(function(input, output) {
             ) 
     })
 })
-
-
