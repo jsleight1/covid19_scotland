@@ -28,53 +28,53 @@ shinyServer(function(input, output) {
         daily_barplot(df, x = "Date", y = "Scotland")
     })
     output[["introduction_date"]] <- renderText({
-         as.character(pull(slice(map_data()[[1]], nrow(map_data()[[1]])), Date))
+         as.character(pull(slice(map_data()[["Table 1 - Cumulative cases"]], nrow(map_data()[["Table 1 - Cumulative cases"]])), Date))
     })
     output[["introduction_cases"]] <- renderText({
-         pull(slice(map_data()[[1]], nrow(map_data()[[1]])), Scotland)
+         pull(slice(map_data()[["Table 1 - Cumulative cases"]], nrow(map_data()[["Table 1 - Cumulative cases"]])), Scotland)
     })
     output[["introduction_daily_cases"]] <- renderText({
-        pull(slice(map_data()[[1]], nrow(map_data()[[1]])), Scotland) - 
-        pull(slice(map_data()[[1]], nrow(map_data()[[1]]) - 1), Scotland)
+        pull(slice(map_data()[["Table 1 - Cumulative cases"]], nrow(map_data()[["Table 1 - Cumulative cases"]])), Scotland) - 
+        pull(slice(map_data()[["Table 1 - Cumulative cases"]], nrow(map_data()[["Table 1 - Cumulative cases"]]) - 1), Scotland)
     })
     output[["introduction_deaths"]] <- renderText({
-        pull(slice(trend_data()[[9]], nrow(trend_data()[[9]])))
+        pull(slice(trend_data()[["Table 8 - Deaths"]], nrow(trend_data()[["Table 8 - Deaths"]])))
 
     })
     output[["introduction_daily_deaths"]] <- renderText({
-        pull(slice(trend_data()[[9]], nrow(trend_data()[[9]]))) - 
-        pull(slice(trend_data()[[9]], nrow(trend_data()[[9]]) - 1))
+        pull(slice(trend_data()[["Table 8 - Deaths"]], nrow(trend_data()[["Table 8 - Deaths"]]))) - 
+        pull(slice(trend_data()[["Table 8 - Deaths"]], nrow(trend_data()[["Table 8 - Deaths"]]) - 1))
 
     })
 
     # National analysis
-    output[["NHS 24"]] <- DT::renderDataTable({trend_data()[[1]]})
-    output[["Hospital Care"]] <- DT::renderDataTable({trend_data()[[2]]})
-    output[["Ambulance Attendances"]] <- DT::renderDataTable({trend_data()[[3]]})
-    output[["Delayed Discharges"]] <- DT::renderDataTable({trend_data()[[4]]})
-    output[["Testing"]] <- DT::renderDataTable({trend_data()[[5]]})
-    output[["Workforce Absences"]] <- DT::renderDataTable({trend_data()[[6]]})
-    output[["Adult Care Homes"]] <- DT::renderDataTable({trend_data()[[7]]})
-    output[["Care Home Workforce"]] <- DT::renderDataTable({trend_data()[[8]]})
-    output[["Deaths"]] <- DT::renderDataTable({trend_data()[[9]]})
+    output[["NHS 24"]] <- DT::renderDataTable({trend_data()[["Table 1 - NHS 24"]]})
+    output[["Hospital Care"]] <- DT::renderDataTable({trend_data()[["Table 2 - Hospital Care"]]})
+    output[["Ambulance Attendances"]] <- DT::renderDataTable({trend_data()[["Table 3 - Ambulance"]]})
+    output[["Delayed Discharges"]] <- DT::renderDataTable({trend_data()[["Table 4 - Delayed Discharges"]]})
+    output[["Testing"]] <- DT::renderDataTable({trend_data()[["Table 5 - Testing"]]})
+    output[["Workforce Absences"]] <- DT::renderDataTable({trend_data()[["Table 6 - Workforce"]]})
+    output[["Adult Care Homes"]] <- DT::renderDataTable({trend_data()[["Table 7a - Care Homes"]]})
+    output[["Care Home Workforce"]] <- DT::renderDataTable({trend_data()[["Table 7b - Care Home Workforce"]]})
+    output[["Deaths"]] <- DT::renderDataTable({trend_data()[["Table 8 - Deaths"]]})
 
     # NHS 24 plots
     output[["nhs_calls"]] <- renderPlotly({
-        cumulative_group_plot(trend_data()[[1]], x = "Date", y = "value")
+        cumulative_group_plot(trend_data()[["Table 1 - NHS 24"]], x = "Date", y = "value")
     })
 
     # Hosptial Care plots
     output[["daily_intensive_increase"]] <- renderPlotly({
-        df <- find_daily_increase(trend_data()[[2]], "`COVID-19 patients in ICU or combined ICU/HDU Total`")
+        df <- find_daily_increase(trend_data()[["Table 2 - Hospital Care"]], "`COVID-19 patients in ICU or combined ICU/HDU Total`")
         daily_barplot(df, x = "Date", y = "`Daily Change`")
     })
 
     output[["daily_hospital_increase"]] <- renderPlotly({
-        df <- find_daily_increase(trend_data()[[2]], "`COVID-19 patients in hospital (including those in ICU) Total`")
+        df <- find_daily_increase(trend_data()[["Table 2 - Hospital Care"]], "`COVID-19 patients in hospital (including those in ICU) Total`")
         daily_barplot(df, x = "Date", y = "`Daily Change`")
     })
     output[["cumulative_hospital"]] <- renderPlotly({
-        df <- select(trend_data()[[2]], 
+        df <- select(trend_data()[["Table 2 - Hospital Care"]], 
             Date, 
             `COVID-19 patients in ICU or combined ICU/HDU Total`, 
             `COVID-19 patients in hospital (including those in ICU) Total`
@@ -84,73 +84,77 @@ shinyServer(function(input, output) {
 
     # Ambulance plots
     output[["ambulance_plot"]] <- renderPlotly({
-        cumulative_group_plot(trend_data()[[3]], x = "Date", y = "value")
+        cumulative_group_plot(trend_data()[["Table 3 - Ambulance"]], x = "Date", y = "value")
     })
 
     # Delayed Discharge plots
     output[["discharge"]] <- renderPlotly({
-        daily_barplot(trend_data()[[4]], x = "Date", y = "`Number of delayed discharges`")
+        daily_barplot(trend_data()[["Table 4 - Delayed Discharges"]], x = "Date", y = "`Number of delayed discharges`")
     })
 
     # Testing plots
-    output[["daily_positive_tests"]] <- renderPlotly({
-        df <- find_daily_increase(trend_data()[[5]], "Positive")
-        daily_barplot(df, x = "Date", y = "`Daily Change`")
+    output[["daily_tests"]] <- renderPlotly({
+        positive <- find_daily_increase(trend_data()[["Table 5 - Testing"]], "Positive") %>% 
+            rename(Positive = "Daily Change")
+        negative <- find_daily_increase(trend_data()[["Table 5 - Testing"]], "Negative") %>% 
+            rename(Negative = "Daily Change")
+        df <- inner_join(positive, negative, by = "Date") %>% 
+            pivot_longer(-Date)
+        stacked_barplot(df, x = "Date", y = "value")
     })
     output[["cumulative_testing"]] <- renderPlotly({
-        df <- select(trend_data()[[5]], Date, Negative, Positive) %>% 
+        df <- select(trend_data()[["Table 5 - Testing"]], Date, Negative, Positive) %>% 
             pivot_longer(-Date)
-        p <- ggplot(data = df, aes(x = Date, y = value, fill = name)) +
-            geom_bar(stat = "identity") +
-            scale_fill_discrete(name = "Test Result")
-        ggplotly(p)
-
+        stacked_barplot(df, x = "Date", y = "value")
     })
 
     # Workforce Absences plots
     output[["daily_workforce_absences"]] <- renderPlotly({
-        cumulative_group_plot(trend_data()[[6]], x = "Date", y = "value")
+        cumulative_group_plot(trend_data()[["Table 6 - Workforce"]], x = "Date", y = "value")
     })
 
     # Adult care homes plots
     output[["carehome_cases_plot"]] <- renderPlotly({
-        cumulative_plot(df = trend_data()[[7]], x = "Date", y = "`Cumulative number of suspected COVID-19 cases in adult care homes`")
+        cumulative_plot(df = trend_data()[["Table 7a - Care Homes"]], x = "Date", y = "`Cumulative number of suspected COVID-19 cases in adult care homes`")
     })
     output[["carehome_daily_plot"]] <- renderPlotly({
-        daily_barplot(trend_data()[[7]], x = "Date", y = "`Daily number of new suspected COVID-19 cases in adult care homes`")
+        daily_barplot(trend_data()[["Table 7a - Care Homes"]], x = "Date", y = "`Daily number of new suspected COVID-19 cases in adult care homes`")
+    })
+    output[["carehome_count_plot"]] <- renderPlotly({
+        cumulative_plot(df = trend_data()[["Table 7a - Care Homes"]], x = "Date", y = "`Cumulative number of adult care homes that have reported a suspected COVID-19 case`")
     })
 
     # Carehome workforce plots
     output[["staff_absence_rate"]] <- renderPlotly({
-        daily_barplot(trend_data()[[8]], x = "Date", "`Staff absence rate`")
+        daily_barplot(trend_data()[["Table 7b - Care Home Workforce"]], x = "Date", "`Staff absence rate`")
     })
 
     # Deaths plots
     output[["cumulative_deaths"]] <- renderPlotly({
-        cumulative_plot(df = trend_data()[[9]], x = "Date", y = "`Number of COVID-19 confirmed deaths registered to date`")
+        cumulative_plot(df = trend_data()[["Table 8 - Deaths"]], x = "Date", y = "`Number of COVID-19 confirmed deaths registered to date`")
     })
     output[["daily_deaths"]] <- renderPlotly({
-        df <- find_daily_increase(trend_data()[[9]], "`Number of COVID-19 confirmed deaths registered to date`")  
+        df <- find_daily_increase(trend_data()[["Table 8 - Deaths"]], "`Number of COVID-19 confirmed deaths registered to date`")  
         daily_barplot(df, x = "Date", y = "`Daily Change`")
     })
 
     # Regional analysis
-    output[["regional_cumulative_cases"]] <- DT::renderDataTable(map_data()[[1]])
-    output[["regional_COVID_inpatients"]] <- DT::renderDataTable(map_data()[[2]])
-    output[["regional_hospital_confirmed"]] <- DT::renderDataTable(map_data()[[3]])
-    output[["regional_hospital_suspected"]] <- DT::renderDataTable(map_data()[[4]])
+    output[["regional_cumulative_cases"]] <- DT::renderDataTable(map_data()[["Table 1 - Cumulative cases"]])
+    output[["regional_COVID_inpatients"]] <- DT::renderDataTable(map_data()[["Table 2 - ICU patients"]])
+    output[["regional_hospital_confirmed"]] <- DT::renderDataTable(map_data()[["Table 3a - Hospital Confirmed"]])
+    output[["regional_hospital_suspected"]] <- DT::renderDataTable(map_data()[["Table 3b- Hospital Suspected"]])
 
     output[["regional_cumulative_plot"]] <- renderPlotly({
-        cumulative_group_plot(map_data()[[1]], x = "Date", y = "value")
+        cumulative_group_plot(map_data()[["Table 1 - Cumulative cases"]], x = "Date", y = "value")
     })
     output[["regional_inpatient_plot"]] <- renderPlotly({
-        cumulative_group_plot(map_data()[[2]], x = "Date", y = "value")
+        cumulative_group_plot(map_data()[["Table 2 - ICU patients"]], x = "Date", y = "value")
     })
     output[["regional_confirmed_plot"]] <- renderPlotly({
-        cumulative_group_plot(map_data()[[3]] , x = "Date", y = "value")
+        cumulative_group_plot(map_data()[["Table 3a - Hospital Confirmed"]] , x = "Date", y = "value")
     })
     output[["regional_suspected_plot"]] <- renderPlotly({
-        cumulative_group_plot(map_data()[[4]], x = "Date", y = "value")
+        cumulative_group_plot(map_data()[["Table 3b- Hospital Suspected"]], x = "Date", y = "value")
     })
 
     output$map <- renderLeaflet({
@@ -161,7 +165,7 @@ shinyServer(function(input, output) {
             "NHS Dumfries & Galloway",          55.0709,             -3.6051,
             "NHS Fife",                         56.2082,             -3.1495,
             "NHS Forth Valley",                 56.0253,             -3.8490,
-            "NHS Grampian",                     57.4149,             -2.0991,            
+            "NHS Grampian",                     57.1497,             -2.0943,            
             "NHS Greater Glasgow & Clyde",      55.8642,             -4.2518,
             "NHS Highland",                     57.4778,             -4.2247, 
             "NHS Lanarkshire",                  55.6736,             -3.7820,
@@ -173,12 +177,12 @@ shinyServer(function(input, output) {
             "Golden Jubilee National Hospital", 55.9060,             -4.4262
         )
         type <- switch(input$mapInput,
-            "cases" = "Table 1 - Cumulative cases",   
-            "inpatients" = "Table 2 - ICU patients",   
-            "regional_confirmed" = "Table 3a - Hospital Confirmed",
-            "regional_suspected" =  "Table 3b- Hospital Suspected"  
+            "cases" = "Cumulative cases",   
+            "inpatients" = "ICU patients",   
+            "regional_confirmed" = "Hospital Confirmed",
+            "regional_suspected" =  "Hospital Suspected"  
         )
-        df <- map_data()[[type]] %>% 
+        df <- map_data()[[grep(type, names(map_data()))]] %>% 
             slice(nrow(.)) %>% 
             select(-Date) %>% 
             t() %>% 
@@ -186,15 +190,18 @@ shinyServer(function(input, output) {
             rownames_to_column("Region") %>% 
             rename(Cases_to_date = "V1") %>% 
             inner_join(., coords, by = "Region") %>% 
-            mutate(Circle_size = scales::rescale(Cases_to_date) * 20)
+            mutate(Circle_size = scales::rescale(Cases_to_date, to = c(2000, 18000)))
         leaflet(df) %>% 
-            addTiles() %>% 
+            addTiles(options = providerTileOptions(minZoom = 5, maxZoom = 9)) %>% 
             setView(lat = 56.4907, lng = -4.2026, zoom = 6) %>% 
-            addCircleMarkers(
+            addCircles(
                 lat = ~Latitude, 
                 lng = ~Longitude, 
                 radius = ~Circle_size,
-                label = ~Cases_to_date
+                popup = paste(df$Region, "<br>",
+                           type, df$Cases_to_date, "<br>")
             ) 
     })
 })
+
+

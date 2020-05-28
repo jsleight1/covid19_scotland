@@ -70,7 +70,7 @@ shinyUI(fluidPage(
                     ),
                     tabPanel(
                         h6("Daily NHS Calls"),
-                        plotlyOutput(outputId = "nhs_calls", height = "600px")
+                        plotlyOutput(outputId = "nhs_calls", height = "700px")
                     )
                 )
             ),
@@ -83,15 +83,15 @@ shinyUI(fluidPage(
                      ), 
                      tabPanel(
                          h6("Daily Increase in Patients in Intensive Care"),
-                         plotlyOutput(outputId = "daily_intensive_increase", height = "600px")
+                         plotlyOutput(outputId = "daily_intensive_increase", height = "700px")
                      ),
                      tabPanel(
                          h6("Daily Increase in Patients in Hospital (including intensive care)"),
-                         plotlyOutput(outputId = "daily_hospital_increase", height = "600px")
+                         plotlyOutput(outputId = "daily_hospital_increase", height = "700px")
                      ),
                      tabPanel(
                          h6("Total Patients in Hosptials"),
-                         plotlyOutput(outputId = "cumulative_hospital", height = "600px")
+                         plotlyOutput(outputId = "cumulative_hospital", height = "700px")
                      )
                 )            
             ),
@@ -104,7 +104,7 @@ shinyUI(fluidPage(
                     ),
                     tabPanel(
                         h6("Number of Ambulance Attendances"),
-                        plotlyOutput(outputId = "ambulance_plot", height = "600px")
+                        plotlyOutput(outputId = "ambulance_plot", height = "700px")
                     )
                 )
             ),
@@ -117,7 +117,7 @@ shinyUI(fluidPage(
                     ), 
                     tabPanel(
                         h6("Number of Delayed Discharges"),
-                        plotlyOutput(outputId = "discharge", height = "600px")
+                        plotlyOutput(outputId = "discharge", height = "700px")
                     )
                 )
             ), 
@@ -130,11 +130,11 @@ shinyUI(fluidPage(
                     ),
                     tabPanel(
                         h6("Cumulative Testing"),
-                        plotlyOutput(outputId = "cumulative_testing", height = "600px")
+                        plotlyOutput(outputId = "cumulative_testing", height = "700px")
                     ),
                     tabPanel(
-                        h6("Daily Positive Cases"),
-                        plotlyOutput(outputId = "daily_positive_tests", height = "600px")
+                        h6("Daily Testing"),
+                        plotlyOutput(outputId = "daily_tests", height = "700px")
                     )
                 )       
             ), 
@@ -147,7 +147,7 @@ shinyUI(fluidPage(
                     ),
                     tabPanel(
                         h6("Daily Workforce Absences"),
-                        plotlyOutput(outputId = "daily_workforce_absences", height = "600px")
+                        plotlyOutput(outputId = "daily_workforce_absences", height = "700px")
                     )
                 )          
             ), 
@@ -159,12 +159,16 @@ shinyUI(fluidPage(
                         DT::dataTableOutput(outputId = "Adult Care Homes")
                     ), 
                     tabPanel(
-                        h6("Carehome Cases"),
-                        plotlyOutput(outputId = "carehome_cases_plot", height = "600px")
+                        h6("Cumulative number of suspected COVID-19 cases"),
+                        plotlyOutput(outputId = "carehome_cases_plot", height = "700px")
                     ), 
                     tabPanel(
                         h6("Daily Carehome Cases"),
-                        plotlyOutput(outputId = "carehome_daily_plot", height = "600px")
+                        plotlyOutput(outputId = "carehome_daily_plot", height = "700px")
+                    ),
+                    tabPanel(
+                        h6("Cumulative number of care homes with suspected COVID-19 case"),
+                        plotlyOutput(outputId = "carehome_count_plot", height = "700px")
                     )
                 )  
             ), 
@@ -177,7 +181,7 @@ shinyUI(fluidPage(
                     ),
                     tabPanel(
                         h6("Staff Absence Rate"),
-                        plotlyOutput(outputId = "staff_absence_rate", height = "600px")
+                        plotlyOutput(outputId = "staff_absence_rate", height = "700px")
                     )
                 )  
             ),
@@ -190,11 +194,11 @@ shinyUI(fluidPage(
                     ), 
                     tabPanel(
                          h6("Cumulative Deaths"),
-                        plotlyOutput(outputId = "cumulative_deaths", height = "600px")
+                        plotlyOutput(outputId = "cumulative_deaths", height = "700px")
                     ),
                     tabPanel(
                         h6("Daily Deaths"),
-                        plotlyOutput(outputId = "daily_deaths", height = "600px")
+                        plotlyOutput(outputId = "daily_deaths", height = "700px")
                     )      
                 )  
             ))
@@ -227,25 +231,25 @@ shinyUI(fluidPage(
                     tabsetPanel(type = "tabs",
                         tabPanel(
                             h5("Regional Cumulative Cases"),
-                            plotlyOutput(outputId = "regional_cumulative_plot", height = "600px")
+                            plotlyOutput(outputId = "regional_cumulative_plot", height = "700px")
                         ),
                         tabPanel(
                             h5("Regional COVID-19 Patients in ICU"),
-                            plotlyOutput(outputId = "regional_inpatient_plot", height = "600px")
+                            plotlyOutput(outputId = "regional_inpatient_plot", height = "700px")
                         ),
                         tabPanel(
                             h5("Regional Confirmed Hospital Cases"),
-                            plotlyOutput(outputId = "regional_confirmed_plot", height = "600px")
+                            plotlyOutput(outputId = "regional_confirmed_plot", height = "700px")
                         ),
                         tabPanel(
                             h5("Regional Suspected Hospital Cases"),
-                            plotlyOutput(outputId = "regional_suspected_plot", height = "600px")
+                            plotlyOutput(outputId = "regional_suspected_plot", height = "700px")
                         )
                     )
                 ),
                 tabPanel(
                     h4("Map"),
-                    leafletOutput("map", height = 600),
+                    leafletOutput("map", height = 700),
                     fluidRow(
                         radioButtons(
                             inputId = "mapInput",
@@ -263,5 +267,4 @@ shinyUI(fluidPage(
             )
         ) 
     )
-
 ))
