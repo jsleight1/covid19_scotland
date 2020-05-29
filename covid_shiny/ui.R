@@ -7,7 +7,6 @@ shinyUI(fluidPage(
                 column(width = 12, div("National Cumulative Cases", style = "font-size:20px;"), plotlyOutput(outputId = "introduction_plot", height = "500px")),
             ),
             fluidRow(
-                div("Daily Updates", style = "font-size:20px;"),
                 column(width = 1, div("Date: ", style = "font-size:20px;")),
                 column(
                     width = 2, 
