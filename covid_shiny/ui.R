@@ -4,33 +4,9 @@ shinyUI(fluidPage(
         tabPanel("Introduction",
             shinyWidgets::setBackgroundColor(color = "66B2FF"),
             fluidRow(
-                div(
-                    "Welcome the COVID-19 Scotland Analysis tool. 
-                    The Scottish Government releases COVID-19 trend data daily split into
-                    both National and Regional releases within two separate excel spreadsheets found here:",
-                    style = "color:black"
-                ),
-                a("https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/.", href = "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/.")
+                column(width = 12, div("National Cumulative Cases", style = "font-size:20px;"), plotlyOutput(outputId = "introduction_plot", height = "500px")),
             ),
             fluidRow(
-                column(8, align = "center", offset = 2, 
-                    fileInput("file1", div("Please upload the 'Trends in daily COVID-19 data' excel spreadsheet here", style = "color:black"),
-                        accept = c('text/xlsx')
-                    )
-                )
-            ),
-            fluidRow(
-                column(8, align = "center", offset = 2, 
-                    fileInput("file2", div("Please upload the 'COVID-19 data by NHS Board' excel spreadsheet here", style = "color:black"),
-                        accept = c('text/xlsx')
-                    )
-                )
-            ),
-            fluidRow(
-                column(width = 12, div("National Cumulative Cases", style = "font-size:20px;"), plotlyOutput(outputId = "introduction_plot")),
-            ),
-            fluidRow(
-                div("Daily Updates", style = "font-size:20px;"),
                 column(width = 1, div("Date: ", style = "font-size:20px;")),
                 column(
                     width = 2, 
@@ -57,6 +33,14 @@ shinyUI(fluidPage(
                     div(textOutput(outputId = "introduction_daily_deaths"), style = "font-size:20px; color:red")
                 )
 
+            ),
+            fluidRow(
+                div("Reference:"),
+                a(
+                    "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/", 
+                    href = "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/",
+                    style = "color:blue; font-size:15px"
+                )
             )
         ),
         tabPanel("National Data",
@@ -171,7 +155,7 @@ shinyUI(fluidPage(
                         plotlyOutput(outputId = "carehome_count_plot", height = "700px")
                     )
                 )  
-            ), 
+            ),
             tabPanel(
                 h5("Care Home Workforce"),
                 tabsetPanel(type = "tabs",
