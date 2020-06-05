@@ -31,7 +31,7 @@ tidy_trend_excel_sheets <- function(sheets) {
 
     # Delayed discharges 
     final_sheets[["Table 4 - Delated Discharges"]] <- tidy_table(
-        df = sheets[[grep("Table 4 - Delayed Discharges", names(sheets))]],
+        df = select(sheets[[grep("Table 4 - Delayed Discharges", names(sheets))]], -1),
         row = 3
     )
 
