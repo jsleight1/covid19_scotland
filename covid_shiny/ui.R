@@ -197,8 +197,8 @@ shinyUI(fluidPage(
                             DT::dataTableOutput(outputId = "regional_cumulative_cases")
                         ),
                         tabPanel(
-                            h5("Regional COVID-19 Inpatients"),
-                            DT::dataTableOutput(outputId = "regional_COVID_inpatients")
+                            h5("Regional COVID-19 Patients in ICU"),
+                            DT::dataTableOutput(outputId = "regional_ICU")
                         ),
                         tabPanel(
                             h5("Regional Confirmed Hosptial Cases"),
@@ -219,7 +219,7 @@ shinyUI(fluidPage(
                         ),
                         tabPanel(
                             h5("Regional COVID-19 Patients in ICU"),
-                            plotlyOutput(outputId = "regional_inpatient_plot", height = "700px")
+                            plotlyOutput(outputId = "regional_icu_plot", height = "700px")
                         ),
                         tabPanel(
                             h5("Regional Confirmed Hospital Cases"),
@@ -240,7 +240,7 @@ shinyUI(fluidPage(
                             label = "Select Input",
                             choices = c(
                                 "Regional Cases" = "cases",
-                                "Regional Inpatients" = "inpatients",
+                                "Regional ICU Patients" = "icu",
                                 "Regional Hospital Confirmed" = "regional_confirmed",
                                 "Regional Hospital Suspected" = "regional_suspected"
                             ),

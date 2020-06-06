@@ -140,14 +140,14 @@ shinyServer(function(input, output) {
 
     # Regional analysis
     output[["regional_cumulative_cases"]] <- DT::renderDataTable(regional_data[["Table 1 - Cumulative cases"]])
-    output[["regional_COVID_inpatients"]] <- DT::renderDataTable(regional_data[["Table 2 - ICU patients"]])
+    output[["regional_ICU"]] <- DT::renderDataTable(regional_data[["Table 2 - ICU patients"]])
     output[["regional_hospital_confirmed"]] <- DT::renderDataTable(regional_data[["Table 3a - Hospital Confirmed"]])
     output[["regional_hospital_suspected"]] <- DT::renderDataTable(regional_data[["Table 3b- Hospital Suspected"]])
 
     output[["regional_cumulative_plot"]] <- renderPlotly({
         cumulative_group_plot(regional_data[["Table 1 - Cumulative cases"]], x = "Date", y = "value")
     })
-    output[["regional_inpatient_plot"]] <- renderPlotly({
+    output[["regional_icu_plot"]] <- renderPlotly({
         cumulative_group_plot(regional_data[["Table 2 - ICU patients"]], x = "Date", y = "value")
     })
     output[["regional_confirmed_plot"]] <- renderPlotly({
@@ -178,7 +178,7 @@ shinyServer(function(input, output) {
         )
         type <- switch(input$mapInput,
             "cases" = "Cumulative cases",   
-            "inpatients" = "ICU patients",   
+            "icu" = "ICU patients",   
             "regional_confirmed" = "Hospital Confirmed",
             "regional_suspected" =  "Hospital Suspected"  
         )
