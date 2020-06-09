@@ -74,7 +74,7 @@ shinyUI(fluidPage(
                          plotlyOutput(outputId = "daily_hospital_increase", height = "700px")
                      ),
                      tabPanel(
-                         h6("Total Patients in Hosptials"),
+                         h6("Total Patients in Hospitals"),
                          plotlyOutput(outputId = "cumulative_hospital", height = "700px")
                      )
                 )            
@@ -201,11 +201,11 @@ shinyUI(fluidPage(
                             DT::dataTableOutput(outputId = "regional_ICU")
                         ),
                         tabPanel(
-                            h5("Regional Confirmed Hosptial Cases"),
+                            h5("Regional Confirmed Hospital Cases"),
                             DT::dataTableOutput(outputId = "regional_hospital_confirmed")
                         ),
                         tabPanel(
-                            h5("Regional Suspected Hosptial Cases"),
+                            h5("Regional Suspected Hospital Cases"),
                             DT::dataTableOutput(outputId = "regional_hospital_suspected")
                         )
                     )
