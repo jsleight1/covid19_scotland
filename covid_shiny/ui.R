@@ -4,7 +4,7 @@ shinyUI(fluidPage(
         tabPanel("Introduction",
             shinyWidgets::setBackgroundColor(color = "66B2FF"),
             fluidRow(
-                column(width = 12, div("National Cumulative Cases", style = "font-size:20px;"), plotlyOutput(outputId = "introduction_plot", height = "500px")),
+                column(width = 12, div("National Cumulative Cases", style = "font-size:20px;"), plotlyOutput(outputId = "introduction_plot", height = "500px"))
             ),
             fluidRow(
                 column(width = 1, div("Date: ", style = "font-size:20px;")),
@@ -31,7 +31,8 @@ shinyUI(fluidPage(
                 column(
                     width = 1,
                     div(textOutput(outputId = "introduction_daily_deaths"), style = "font-size:20px; color:red")
-                )
+                ),
+                style = "padding-top:30px; padding-bottom:30px"
 
             ),
             fluidRow(
