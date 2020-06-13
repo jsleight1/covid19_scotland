@@ -89,15 +89,15 @@ daily_barplot <- function(df, x, y) {
 
 find_daily_increase <- function(df, column) {
     df[["Daily Change"]] <- df[[gsub("\`", "", column)]] - lag(df[[gsub("\`", "", column)]])
-    select(df, Date, `Daily Change`)
+    df
 }
 
 cumulative_group_plot <- function(df, x, y) {
     df <- pivot_longer(df, -Date)
-    p <- ggplot(data = df, aes_string(x = x, y = y)) +
-        geom_line(aes(color = name, linetype = name)) +
+    p <- ggplot(data = df, aes_string(x = x, y = y, label1 = x, label2 = y, label3 = "name")) +
+        geom_line(aes(color = fct_reorder2(name, .data[[x]], .data[[y]]), linetype = name)) +
         theme(legend.title = element_blank())
-    ggplotly(p)     
+    ggplotly(p, tooltip = c("label1", "label2", "label3")) 
 }
 
 cumulative_plot <- function(df, x, y) {
