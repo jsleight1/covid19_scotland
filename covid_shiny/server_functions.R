@@ -112,3 +112,19 @@ stacked_barplot <- function(df, x, y) {
         theme(legend.title = element_blank())
     ggplotly(p)
 }
+
+render_custom_datatable <- function(df, title) {
+    DT::renderDataTable(
+        df,
+        extensions = c("Buttons", "Scroller", "FixedColumns"), 
+        rownames = FALSE,
+        options = list(
+            dom = "tB",
+            scrollY = 400,
+            scrollX = TRUE,
+            scroller = TRUE,
+            buttons = list(list(extend = "excel", filename = title)),
+            fixedColumns = list(leftColumn = 1)
+        )
+    )
+}

@@ -47,15 +47,15 @@ shinyServer(function(input, output) {
     })
 
     # National analysis
-    output[["NHS 24"]] <- DT::renderDataTable({national_data[["Table 1 - NHS 24"]]})
-    output[["Hospital Care"]] <- DT::renderDataTable({national_data[["Table 2 - Hospital Care"]]})
-    output[["Ambulance Attendances"]] <- DT::renderDataTable({national_data[["Table 3 - Ambulance"]]})
-    output[["Delayed Discharges"]] <- DT::renderDataTable({national_data[["Table 4 - Delayed Discharges"]]})
-    output[["Testing"]] <- DT::renderDataTable({national_data[["Table 5 - Testing"]]})
-    output[["Workforce Absences"]] <- DT::renderDataTable({national_data[["Table 6 - Workforce"]]})
-    output[["Adult Care Homes"]] <- DT::renderDataTable({national_data[["Table 7a - Care Homes"]]})
-    output[["Care Home Workforce"]] <- DT::renderDataTable({national_data[["Table 7b - Care Home Workforce"]]})
-    output[["Deaths"]] <- DT::renderDataTable({national_data[["Table 8 - Deaths"]]})
+    output[["NHS 24"]] <- render_custom_datatable(national_data[["Table 1 - NHS 24"]], "NHS_24") 
+    output[["Hospital Care"]] <- render_custom_datatable(national_data[["Table 2 - Hospital Care"]], "Hostpital_Case")
+    output[["Ambulance Attendances"]] <- render_custom_datatable(national_data[["Table 3 - Ambulance"]], "Ambulance_Attendances")
+    output[["Delayed Discharges"]] <- render_custom_datatable(national_data[["Table 4 - Delayed Discharges"]], "Delayed_Discharges")
+    output[["Testing"]] <- render_custom_datatable(national_data[["Table 5 - Testing"]], "COVID19_Testing")
+    output[["Workforce Absences"]] <- render_custom_datatable(national_data[["Table 6 - Workforce"]], "Workforce_Absences")
+    output[["Adult Care Homes"]] <- render_custom_datatable(national_data[["Table 7a - Care Homes"]], "Adult_Care_Homes")
+    output[["Care Home Workforce"]] <- render_custom_datatable(national_data[["Table 7b - Care Home Workforce"]], "Care_Home_Workforce")
+    output[["Deaths"]] <- render_custom_datatable(national_data[["Table 8 - Deaths"]], "COVID19_Deaths")
 
     # NHS 24 plots
     output[["nhs_calls"]] <- renderPlotly({
@@ -139,11 +139,11 @@ shinyServer(function(input, output) {
     })
 
     # Regional analysis
-    output[["regional_cumulative_cases"]] <- DT::renderDataTable(regional_data[["Table 1 - Cumulative cases"]])
-    output[["regional_ICU"]] <- DT::renderDataTable(regional_data[["Table 2 - ICU patients"]])
-    output[["regional_hospital_confirmed"]] <- DT::renderDataTable(regional_data[["Table 3a - Hospital Confirmed"]])
-    output[["regional_hospital_suspected"]] <- DT::renderDataTable(regional_data[["Table 3b- Hospital Suspected"]])
-
+    output[["regional_cumulative_cases"]] <- render_custom_datatable(regional_data[["Table 1 - Cumulative cases"]], "regional_cumulative_cases") 
+    output[["regional_ICU"]] <- render_custom_datatable(regional_data[["Table 2 - ICU patients"]], "regional_ICU")
+    output[["regional_hospital_confirmed"]] <- render_custom_datatable(regional_data[["Table 3a - Hospital Confirmed"]], "regional_hospital_confirmed")
+    output[["regional_hospital_suspected"]] <- render_custom_datatable(regional_data[["Table 3b- Hospital Suspected"]], "regional_hospital_suspected")
+    
     output[["regional_cumulative_plot"]] <- renderPlotly({
         cumulative_group_plot(regional_data[["Table 1 - Cumulative cases"]], x = "Date", y = "value")
     })
