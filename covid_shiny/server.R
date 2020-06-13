@@ -117,7 +117,7 @@ shinyServer(function(input, output) {
         selectInput(inputId = "care_cases", label = "Choose Y Axis Variable", width = "100%", as.list(setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date")))
     })
     output[["carehome_cases_plot"]] <- renderPlotly({
-        daily_barplot(df = national_data[["Table 7a - Care Homes"]], x = "Date", y = paste0("`", input[["care_cases"]], "`"))
+        daily_barplot(df = national_data[["Table 7a - Care Homes"]], x = "Date", y = paste0("`", req(input[["care_cases"]]), "`"))
     })
 
     # Carehome workforce plots
@@ -125,7 +125,7 @@ shinyServer(function(input, output) {
         selectInput(inputId = "care_work", label = "Choose Y Axis Variable:", width = "100%", as.list(setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date")))
     })
     output[["care_workforce_plot"]] <- renderPlotly({
-        daily_barplot(df = national_data[["Table 7b - Care Home Workforce"]], x = "Date", y = paste0("`", input[["care_work"]], "`"))
+        daily_barplot(df = national_data[["Table 7b - Care Home Workforce"]], x = "Date", y = paste0("`", req(input[["care_work"]]), "`"))
     })
 
     # Deaths plots
