@@ -24,9 +24,7 @@ shinyServer(function(input, output) {
     
     # Introduction
     output[["introduction_plot"]] <- renderPlotly({
-        df <- regional_data[["Table 1 - Cumulative cases"]] %>% 
-            select(Date, Scotland)
-        daily_barplot(df, x = "Date", y = "Scotland")
+        daily_barplot(regional_data[["Table 1 - Cumulative cases"]], x = "Date", y = "Scotland") 
     })
     output[["introduction_date"]] <- renderText({
         as.character(last(pull(regional_data[["Table 1 - Cumulative cases"]], Date)))
@@ -41,9 +39,8 @@ shinyServer(function(input, output) {
         last(pull(national_data[["Table 8 - Deaths"]], -Date))
     })
     output[["introduction_daily_deaths"]] <- renderText({
-        pull(slice(national_data[["Table 8 - Deaths"]], nrow(national_data[["Table 8 - Deaths"]]))) - 
-        pull(slice(national_data[["Table 8 - Deaths"]], nrow(national_data[["Table 8 - Deaths"]]) - 1))
-
+        df <- find_daily_increase(national_data[["Table 8 - Deaths"]], "`Number of COVID-19 confirmed deaths registered to date`")
+        last(pull(df, `Daily Change`))
     })
 
     # National analysis
