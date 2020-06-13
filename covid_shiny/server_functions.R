@@ -77,7 +77,8 @@ tidy_table <- function(df, row) {
         select(1:length(col_names)) %>% 
         set_names(col_names) %>% 
         mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>% 
-        mutate_if(is.character, as.numeric)
+        mutate_if(is.character, as.numeric) %>% 
+        filter(rowSums(is.na(.)) != ncol(.))
 }
 
 daily_barplot <- function(df, x, y) {
@@ -120,7 +121,7 @@ render_custom_datatable <- function(df, title) {
         rownames = FALSE,
         options = list(
             dom = "tB",
-            scrollY = 400,
+            scrollY = 500,
             scrollX = TRUE,
             scroller = TRUE,
             buttons = list(list(extend = "excel", filename = title)),
