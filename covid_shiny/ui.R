@@ -143,16 +143,9 @@ shinyUI(fluidPage(
                         DT::dataTableOutput(outputId = "Adult Care Homes")
                     ), 
                     tabPanel(
-                        h6("Cumulative number of suspected COVID-19 cases"),
+                        h6("Plot"), 
+                        fluidRow(uiOutput("carehome_cases_select")),
                         plotlyOutput(outputId = "carehome_cases_plot", height = "700px")
-                    ), 
-                    tabPanel(
-                        h6("Daily Carehome Cases"),
-                        plotlyOutput(outputId = "carehome_daily_plot", height = "700px")
-                    ),
-                    tabPanel(
-                        h6("Cumulative number of care homes with suspected COVID-19 case"),
-                        plotlyOutput(outputId = "carehome_count_plot", height = "700px")
                     )
                 )  
             ),
@@ -164,24 +157,9 @@ shinyUI(fluidPage(
                         DT::dataTableOutput(outputId = "Care Home Workforce")
                     ),
                     tabPanel(
-                        h6("Number of staff absent"),
-                        plotlyOutput(outputId = "care_staff_absent", height = "700px")
-                    ),
-                    tabPanel(
-                        h6("Staff Absence Rate"),
-                        plotlyOutput(outputId = "care_staff_absence_rate", height = "700px")
-                    ),
-                    tabPanel(
-                        h6("Number of Staff Returned Response"),
-                        plotlyOutput(outputId = "care_staff_submission", height = "700px")
-                    ),
-                    tabPanel(
-                        h6("Care Home Response Rate"),
-                        plotlyOutput(outputId = "care_response_rate", height = "700px")
-                    ),
-                    tabPanel(
-                        h6("Number of Care Homes Returned Response"),
-                        plotlyOutput(outputId = "care_home_submission", height = "700px")
+                        h6("Plot"),
+                        fluidRow(uiOutput("care_workforce_select")),
+                        plotlyOutput(outputId = "care_workforce_plot", height = "700px")
                     )
                 )  
             ),

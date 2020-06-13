@@ -113,32 +113,19 @@ shinyServer(function(input, output) {
     })
 
     # Adult care homes plots
+    output[["carehome_cases_select"]] <- renderUI({
+        selectInput(inputId = "care_cases", label = "Choose Y Axis Variable", width = "100%", as.list(setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date")))
+    })
     output[["carehome_cases_plot"]] <- renderPlotly({
-        cumulative_plot(df = national_data[["Table 7a - Care Homes"]], x = "Date", y = "`Cumulative number of suspected COVID-19 cases in adult care homes`")
+        daily_barplot(df = national_data[["Table 7a - Care Homes"]], x = "Date", y = paste0("`", input[["care_cases"]], "`"))
     })
-    output[["carehome_daily_plot"]] <- renderPlotly({
-        daily_barplot(national_data[["Table 7a - Care Homes"]], x = "Date", y = "`Daily number of new suspected COVID-19 cases in adult care homes`")
-    })
-    output[["carehome_count_plot"]] <- renderPlotly({
-        cumulative_plot(df = national_data[["Table 7a - Care Homes"]], x = "Date", y = "`Cumulative number of adult care homes that have reported a suspected COVID-19 case`")
-    })
-
 
     # Carehome workforce plots
-    output[["care_staff_absent"]] <- renderPlotly({
-        daily_barplot(national_data[["Table 7b - Care Home Workforce"]], x = "Date", "`No. of staff reported as absent in adult care homes`")
+    output[["care_workforce_select"]] <- renderUI({
+        selectInput(inputId = "care_work", label = "Choose Y Axis Variable:", width = "100%", as.list(setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date")))
     })
-    output[["care_home_submission"]] <- renderPlotly({
-        daily_barplot(national_data[["Table 7b - Care Home Workforce"]], x = "Date", "`Adult care homes which submitted a return`")
-    })
-    output[["care_response_rate"]] <- renderPlotly({
-        daily_barplot(national_data[["Table 7b - Care Home Workforce"]], x = "Date", "`Response rate`")
-    })
-    output[["care_staff_submission"]] <- renderPlotly({
-        daily_barplot(national_data[["Table 7b - Care Home Workforce"]], x = "Date", "`Total no. of staff in adult care homes which submitted a return`")
-    })
-    output[["care_staff_absence_rate"]] <- renderPlotly({
-        daily_barplot(national_data[["Table 7b - Care Home Workforce"]], x = "Date", "`Staff absence rate`")
+    output[["care_workforce_plot"]] <- renderPlotly({
+        daily_barplot(df = national_data[["Table 7b - Care Home Workforce"]], x = "Date", y = paste0("`", input[["care_work"]], "`"))
     })
 
     # Deaths plots
