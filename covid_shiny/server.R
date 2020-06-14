@@ -126,12 +126,12 @@ shinyServer(function(input, output) {
     })
 
     # Deaths plots
-    output[["cumulative_deaths"]] <- renderPlotly({
-        cumulative_plot(df = national_data[["Table 8 - Deaths"]], x = "Date", y = "`Number of COVID-19 confirmed deaths registered to date`")
+    output[["deaths_select"]] <- renderUI({
+        selectInput(inputId = "deaths", label = "Choose Y Axis Variable:", width = "100%", as.list(setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date")))
     })
-    output[["daily_deaths"]] <- renderPlotly({
-        df <- find_daily_increase(national_data[["Table 8 - Deaths"]], "`Number of COVID-19 confirmed deaths registered to date`")  
-        daily_barplot(df, x = "Date", y = "`Daily Change`")
+    
+    output[["deaths_plot"]] <- renderPlotly({
+        daily_barplot(df = national_data[["Table 8 - Deaths"]], x = "Date", y = paste0("`", req(input[["deaths"]]), "`"))
     })
 
     # Regional analysis

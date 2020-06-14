@@ -172,13 +172,18 @@ shinyUI(fluidPage(
                         DT::dataTableOutput(outputId = "Deaths")
                     ), 
                     tabPanel(
-                         h6("Cumulative Deaths"),
-                        plotlyOutput(outputId = "cumulative_deaths", height = "700px")
-                    ),
-                    tabPanel(
-                        h6("Daily Deaths"),
-                        plotlyOutput(outputId = "daily_deaths", height = "700px")
-                    )      
+                        h6("Plot"),
+                        fluidRow(uiOutput("deaths_select")),
+                        plotlyOutput(outputId = "deaths_plot", height = "700px")
+                    )
+                    # tabPanel(
+                    #      h6("Cumulative Deaths"),
+                    #     plotlyOutput(outputId = "cumulative_deaths", height = "700px")
+                    # ),
+                    # tabPanel(
+                    #     h6("Daily Deaths"),
+                    #     plotlyOutput(outputId = "daily_deaths", height = "700px")
+                    # )      
                 )  
             ))
         ), 

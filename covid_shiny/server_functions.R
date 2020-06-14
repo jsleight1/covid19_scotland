@@ -63,9 +63,10 @@ tidy_trend_excel_sheets <- function(sheets) {
 
     # Deaths
     final_sheets[["Table 8 - Deaths"]] <- tidy_table(
-        df = sheets[[grep("Table 8 - Deaths", names(sheets))]],
-        row = 3
-    )
+            df = sheets[[grep("Table 8 - Deaths", names(sheets))]],
+            row = 3
+        ) %>% 
+        find_daily_increase(df = ., column = setdiff(colnames(.), "Date"))
 
     names(final_sheets) <- names(sheets)
     final_sheets
