@@ -131,3 +131,19 @@ render_custom_datatable <- function(df, title) {
         )
     )
 }
+
+# decide_plotly_output <- function(data, input) {
+#     if (length(input == 1) {
+#         daily_barplot(
+#             df = data, 
+#             x = "Date", 
+#             y = paste0("`", input), "`")
+#         )
+#     } else {
+#         cumulative_group_plot(
+#             df = select(data, Date, input)), 
+#             x = "Date", 
+#             y = "value"
+#         )
+#     }
+# }

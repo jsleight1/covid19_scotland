@@ -39,7 +39,10 @@ shinyServer(function(input, output) {
         last(pull(national_data[["Table 8 - Deaths"]], -Date))
     })
     output[["introduction_daily_deaths"]] <- renderText({
-        df <- find_daily_increase(national_data[["Table 8 - Deaths"]], "`Number of COVID-19 confirmed deaths registered to date`")
+        df <- find_daily_increase(
+            national_data[["Table 8 - Deaths"]], 
+            column = "`Number of COVID-19 confirmed deaths registered to date`"
+        )
         last(pull(df, `Daily Change`))
     })
 
@@ -55,18 +58,45 @@ shinyServer(function(input, output) {
     output[["Deaths"]] <- render_custom_datatable(find_daily_increase(national_data[["Table 8 - Deaths"]], "`Number of COVID-19 confirmed deaths registered to date`"), "COVID19_Deaths")
 
     # NHS 24 plots
-    output[["nhs_calls"]] <- renderPlotly({
-        cumulative_group_plot(national_data[["Table 1 - NHS 24"]], x = "Date", y = "value")
+    output[["nhs_calls_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "nhs_calls", 
+            label = "Choose Y Axis Variable", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = as.list(setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date"))
+        )
+    })
+    output[["nhs_calls_plot"]] <- renderPlotly({
+        if (length(req(input[["nhs_calls"]])) == 1) {
+            daily_barplot(
+                df = national_data[["Table 1 - NHS 24"]], 
+                x = "Date", 
+                y = paste0("`", req(input[["nhs_calls"]]), "`")
+            )
+        } else {
+            cumulative_group_plot(
+                df = select(national_data[["Table 1 - NHS 24"]], Date, req(input[["nhs_calls"]])), 
+                x = "Date", 
+                y = "value"
+            )
+        } 
     })
 
     # Hospital Care plots
     output[["daily_intensive_increase"]] <- renderPlotly({
-        df <- find_daily_increase(national_data[["Table 2 - Hospital Care"]], "`COVID-19 patients in ICU or combined ICU/HDU Total`")
+        df <- find_daily_increase(
+            national_data[["Table 2 - Hospital Care"]], 
+            column = "`COVID-19 patients in ICU or combined ICU/HDU Total`"
+        )
         daily_barplot(df, x = "Date", y = "`Daily Change`")
     })
 
     output[["daily_hospital_increase"]] <- renderPlotly({
-        df <- find_daily_increase(national_data[["Table 2 - Hospital Care"]], "`COVID-19 patients in hospital (including those in ICU) Total`")
+        df <- find_daily_increase(
+            national_data[["Table 2 - Hospital Care"]], 
+            column = "`COVID-19 patients in hospital (including those in ICU) Total`"
+        )
         daily_barplot(df, x = "Date", y = "`Daily Change`")
     })
     output[["cumulative_hospital"]] <- renderPlotly({
@@ -80,12 +110,20 @@ shinyServer(function(input, output) {
 
     # Ambulance plots
     output[["ambulance_plot"]] <- renderPlotly({
-        cumulative_group_plot(national_data[["Table 3 - Ambulance"]], x = "Date", y = "value")
+        cumulative_group_plot(
+            national_data[["Table 3 - Ambulance"]], 
+            x = "Date", 
+            y = "value"
+        )
     })
 
     # Delayed Discharge plots
     output[["discharge"]] <- renderPlotly({
-        daily_barplot(national_data[["Table 4 - Delayed Discharges"]], x = "Date", y = "`Number of delayed discharges`")
+        daily_barplot(
+            national_data[["Table 4 - Delayed Discharges"]], 
+            x = "Date", 
+            y = "`Number of delayed discharges`"
+        )
     })
 
     # Testing plots
@@ -111,27 +149,54 @@ shinyServer(function(input, output) {
 
     # Adult care homes plots
     output[["carehome_cases_select"]] <- renderUI({
-        selectInput(inputId = "care_cases", label = "Choose Y Axis Variable", width = "100%", as.list(setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date")))
+        selectInput(
+            inputId = "care_cases", 
+            label = "Choose Y Axis Variable", 
+            width = "100%", 
+            choices = as.list(setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date"))
+        )
     })
     output[["carehome_cases_plot"]] <- renderPlotly({
-        daily_barplot(df = national_data[["Table 7a - Care Homes"]], x = "Date", y = paste0("`", req(input[["care_cases"]]), "`"))
+        daily_barplot(
+            df = national_data[["Table 7a - Care Homes"]], 
+            x = "Date", 
+            y = paste0("`", req(input[["care_cases"]]), "`")
+        )
     })
 
     # Carehome workforce plots
     output[["care_workforce_select"]] <- renderUI({
-        selectInput(inputId = "care_work", label = "Choose Y Axis Variable:", width = "100%", as.list(setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date")))
+        selectInput(
+            inputId = "care_work", 
+            label = "Choose Y Axis Variable:", 
+            width = "100%", 
+            choices = as.list(setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date"))
+        )
     })
     output[["care_workforce_plot"]] <- renderPlotly({
-        daily_barplot(df = national_data[["Table 7b - Care Home Workforce"]], x = "Date", y = paste0("`", req(input[["care_work"]]), "`"))
+        daily_barplot(
+            df = national_data[["Table 7b - Care Home Workforce"]], 
+            x = "Date", 
+            y = paste0("`", req(input[["care_work"]]), "`")
+        )
     })
 
     # Deaths plots
     output[["deaths_select"]] <- renderUI({
-        selectInput(inputId = "deaths", label = "Choose Y Axis Variable:", width = "100%", as.list(setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date")))
+        selectInput(
+            inputId = "deaths", 
+            label = "Choose Y Axis Variable:", 
+            width = "100%", 
+            choices = as.list(setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date"))
+        )
     })
     
     output[["deaths_plot"]] <- renderPlotly({
-        daily_barplot(df = national_data[["Table 8 - Deaths"]], x = "Date", y = paste0("`", req(input[["deaths"]]), "`"))
+        daily_barplot(
+            df = national_data[["Table 8 - Deaths"]], 
+            x = "Date", 
+            y = paste0("`", req(input[["deaths"]]), "`")
+        )
     })
 
     # Regional analysis
