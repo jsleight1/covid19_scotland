@@ -37,6 +37,7 @@ tidy_trend_excel_sheets <- function(sheets) {
 
     # # Testing 
     final_sheets[["Table 5 - Testing"]] <- sheets[[grep("Table 5 - Testing", names(sheets))]] %>% 
+        select(-(ncol(.))) %>% 
         set_names(c("Date", "Negative", "Positive", "Total", "Daily_Positive", paste("NHS_labs", c("Daily", "Cumulative"), sep = "_"), paste("Regional_Centres", c("Daily", "Cumulative"), sep = "_"))) %>% 
         slice(4:nrow(.)) %>% 
         mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>% 
