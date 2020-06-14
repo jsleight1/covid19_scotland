@@ -36,7 +36,7 @@ shinyServer(function(input, output) {
         last(pull(national_data[["Table 5 - Testing"]], Daily_Positive))
     })
     output[["introduction_deaths"]] <- renderText({
-        last(pull(national_data[["Table 8 - Deaths"]], -Date))
+        last(pull(national_data[["Table 8 - Deaths"]], `Number of COVID-19 confirmed deaths registered to date`))
     })
     output[["introduction_daily_deaths"]] <- renderText({
         df <- find_daily_increase(
@@ -68,19 +68,10 @@ shinyServer(function(input, output) {
         )
     })
     output[["nhs_calls_plot"]] <- renderPlotly({
-        if (length(req(input[["nhs_calls"]])) == 1) {
-            daily_barplot(
-                df = national_data[["Table 1 - NHS 24"]], 
-                x = "Date", 
-                y = paste0("`", req(input[["nhs_calls"]]), "`")
-            )
-        } else {
-            cumulative_group_plot(
-                df = select(national_data[["Table 1 - NHS 24"]], Date, req(input[["nhs_calls"]])), 
-                x = "Date", 
-                y = "value"
-            )
-        } 
+        decide_plotly_output(
+            data = national_data[["Table 1 - NHS 24"]],
+            input = req(input[["nhs_calls"]])
+        )
     })
 
     # Hospital Care plots
@@ -119,19 +110,10 @@ shinyServer(function(input, output) {
         )
     })
     output[["ambulance_plot"]] <- renderPlotly({
-        if (length(req(input[["ambulance"]])) == 1) {
-            daily_barplot(
-                df = national_data[["Table 3 - Ambulance"]], 
-                x = "Date", 
-                y = paste0("`", req(input[["ambulance"]]), "`")
-            )
-        } else {
-            cumulative_group_plot(
-                df = select(national_data[["Table 3 - Ambulance"]], Date, req(input[["ambulance"]])), 
-                x = "Date", 
-                y = "value"
-            )
-        } 
+        decide_plotly_output(
+            data = national_data[["Table 3 - Ambulance"]],
+            input = req(input[["ambulance"]])
+        )
     })
 
     # Delayed Discharge plots
@@ -170,19 +152,10 @@ shinyServer(function(input, output) {
         )
     })
     output[["workforce_absence_plot"]] <- renderPlotly({
-        if (length(req(input[["workforce_absence"]])) == 1) {
-            daily_barplot(
-                df = national_data[["Table 6 - Workforce"]], 
-                x = "Date", 
-                y = paste0("`", req(input[["workforce_absence"]]), "`")
-            )
-        } else {
-            cumulative_group_plot(
-                df = select(national_data[["Table 6 - Workforce"]], Date, req(input[["workforce_absence"]])), 
-                x = "Date", 
-                y = "value"
-            )
-        } 
+        decide_plotly_output(
+            data = national_data[["Table 6 - Workforce"]],
+            input = req(input[["workforce_absence"]])
+        )
     })
 
     # Adult care homes plots
@@ -196,20 +169,10 @@ shinyServer(function(input, output) {
         )
     })
     output[["carehome_cases_plot"]] <- renderPlotly({
-        if(length(req(input[["care_cases"]])) == 1) {
-            daily_barplot(
-                df = national_data[["Table 7a - Care Homes"]], 
-                x = "Date", 
-                y = paste0("`", req(input[["care_cases"]]), "`")
-            )
-        } else {
-            cumulative_group_plot(
-                df = select(national_data[["Table 7a - Care Homes"]], Date, req(input[["care_cases"]])),
-                x = "Date",
-                y = "value"
-            )
-        }
-        
+        decide_plotly_output(
+            data = national_data[["Table 7a - Care Homes"]],
+            input = req(input[["care_cases"]])
+        )
     })
 
     # Carehome workforce plots
@@ -223,19 +186,10 @@ shinyServer(function(input, output) {
         )
     })
     output[["care_workforce_plot"]] <- renderPlotly({
-        if (length(req(input[["care_work"]])) == 1) {
-            daily_barplot(
-                df = national_data[["Table 7b - Care Home Workforce"]], 
-                x = "Date", 
-                y = paste0("`", req(input[["care_work"]]), "`")
-            )
-        } else {
-            cumulative_group_plot(
-                df = select(national_data[["Table 7b - Care Home Workforce"]], Date, req(input[["care_work"]])),
-                x = "Date",
-                y = "value"
-            )
-        }
+        decide_plotly_output(
+            data = national_data[["Table 7b - Care Home Workforce"]],
+            input = req(input[["care_work"]])
+        )
     })
 
     # Deaths plots
@@ -248,21 +202,11 @@ shinyServer(function(input, output) {
             choices = as.list(setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date"))
         )
     })
-    
     output[["deaths_plot"]] <- renderPlotly({
-        if (length(req(input[["deaths"]])) == 1) {
-            daily_barplot(
-                df = national_data[["Table 8 - Deaths"]], 
-                x = "Date", 
-                y = paste0("`", req(input[["deaths"]]), "`")
-            )
-        } else {
-            cumulative_group_plot(
-                df = select(national_data[["Table 8 - Deaths"]], Date, req(input[["deaths"]])),
-                x = "Date",
-                y = "value"
-            )
-        }  
+        decide_plotly_output(
+            data = national_data[["Table 8 - Deaths"]],
+            input = req(input[["deaths"]])
+        )
     })
 
     # Regional analysis
