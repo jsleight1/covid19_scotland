@@ -89,7 +89,8 @@ shinyUI(fluidPage(
                         DT::dataTableOutput(outputId = "Ambulance Attendances")
                     ),
                     tabPanel(
-                        h6("Number of Ambulance Attendances"),
+                        h6("Plot"),
+                        fluidRow(uiOutput("ambulance_select")),
                         plotlyOutput(outputId = "ambulance_plot", height = "700px")
                     )
                 )
@@ -102,7 +103,7 @@ shinyUI(fluidPage(
                         DT::dataTableOutput(outputId = "Delayed Discharges")
                     ), 
                     tabPanel(
-                        h6("Number of Delayed Discharges"),
+                        h6("Plot"),
                         plotlyOutput(outputId = "discharge", height = "700px")
                     )
                 )
@@ -132,8 +133,9 @@ shinyUI(fluidPage(
                         DT::dataTableOutput(outputId = "Workforce Absences")
                     ),
                     tabPanel(
-                        h6("Daily Workforce Absences"),
-                        plotlyOutput(outputId = "daily_workforce_absences", height = "700px")
+                        h6("Plot"),
+                        fluidRow(uiOutput("workforce_absence_select")),
+                        plotlyOutput(outputId = "workforce_absence_plot", height = "700px")
                     )
                 )          
             ), 

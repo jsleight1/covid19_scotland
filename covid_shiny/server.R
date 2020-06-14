@@ -109,12 +109,29 @@ shinyServer(function(input, output) {
     })
 
     # Ambulance plots
-    output[["ambulance_plot"]] <- renderPlotly({
-        cumulative_group_plot(
-            national_data[["Table 3 - Ambulance"]], 
-            x = "Date", 
-            y = "value"
+    output[["ambulance_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "ambulance", 
+            label = "Choose Y Axis Variable", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = as.list(setdiff(colnames(national_data[["Table 3 - Ambulance"]]), "Date"))
         )
+    })
+    output[["ambulance_plot"]] <- renderPlotly({
+        if (length(req(input[["ambulance"]])) == 1) {
+            daily_barplot(
+                df = national_data[["Table 3 - Ambulance"]], 
+                x = "Date", 
+                y = paste0("`", req(input[["ambulance"]]), "`")
+            )
+        } else {
+            cumulative_group_plot(
+                df = select(national_data[["Table 3 - Ambulance"]], Date, req(input[["ambulance"]])), 
+                x = "Date", 
+                y = "value"
+            )
+        } 
     })
 
     # Delayed Discharge plots
@@ -143,60 +160,109 @@ shinyServer(function(input, output) {
     })
 
     # Workforce Absences plots
-    output[["daily_workforce_absences"]] <- renderPlotly({
-        cumulative_group_plot(national_data[["Table 6 - Workforce"]], x = "Date", y = "value")
+    output[["workforce_absence_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "workforce_absence", 
+            label = "Choose Y Axis Variable", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = as.list(setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date"))
+        )
+    })
+    output[["workforce_absence_plot"]] <- renderPlotly({
+        if (length(req(input[["workforce_absence"]])) == 1) {
+            daily_barplot(
+                df = national_data[["Table 6 - Workforce"]], 
+                x = "Date", 
+                y = paste0("`", req(input[["workforce_absence"]]), "`")
+            )
+        } else {
+            cumulative_group_plot(
+                df = select(national_data[["Table 6 - Workforce"]], Date, req(input[["workforce_absence"]])), 
+                x = "Date", 
+                y = "value"
+            )
+        } 
     })
 
     # Adult care homes plots
     output[["carehome_cases_select"]] <- renderUI({
-        selectInput(
+        selectizeInput(
             inputId = "care_cases", 
             label = "Choose Y Axis Variable", 
             width = "100%", 
+            multiple = TRUE,
             choices = as.list(setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date"))
         )
     })
     output[["carehome_cases_plot"]] <- renderPlotly({
-        daily_barplot(
-            df = national_data[["Table 7a - Care Homes"]], 
-            x = "Date", 
-            y = paste0("`", req(input[["care_cases"]]), "`")
-        )
+        if(length(req(input[["care_cases"]])) == 1) {
+            daily_barplot(
+                df = national_data[["Table 7a - Care Homes"]], 
+                x = "Date", 
+                y = paste0("`", req(input[["care_cases"]]), "`")
+            )
+        } else {
+            cumulative_group_plot(
+                df = select(national_data[["Table 7a - Care Homes"]], Date, req(input[["care_cases"]])),
+                x = "Date",
+                y = "value"
+            )
+        }
+        
     })
 
     # Carehome workforce plots
     output[["care_workforce_select"]] <- renderUI({
-        selectInput(
+        selectizeInput(
             inputId = "care_work", 
             label = "Choose Y Axis Variable:", 
             width = "100%", 
+            multiple = TRUE,
             choices = as.list(setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date"))
         )
     })
     output[["care_workforce_plot"]] <- renderPlotly({
-        daily_barplot(
-            df = national_data[["Table 7b - Care Home Workforce"]], 
-            x = "Date", 
-            y = paste0("`", req(input[["care_work"]]), "`")
-        )
+        if (length(req(input[["care_work"]])) == 1) {
+            daily_barplot(
+                df = national_data[["Table 7b - Care Home Workforce"]], 
+                x = "Date", 
+                y = paste0("`", req(input[["care_work"]]), "`")
+            )
+        } else {
+            cumulative_group_plot(
+                df = select(national_data[["Table 7b - Care Home Workforce"]], Date, req(input[["care_work"]])),
+                x = "Date",
+                y = "value"
+            )
+        }
     })
 
     # Deaths plots
     output[["deaths_select"]] <- renderUI({
-        selectInput(
+        selectizeInput(
             inputId = "deaths", 
             label = "Choose Y Axis Variable:", 
             width = "100%", 
+            multiple = TRUE,
             choices = as.list(setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date"))
         )
     })
     
     output[["deaths_plot"]] <- renderPlotly({
-        daily_barplot(
-            df = national_data[["Table 8 - Deaths"]], 
-            x = "Date", 
-            y = paste0("`", req(input[["deaths"]]), "`")
-        )
+        if (length(req(input[["deaths"]])) == 1) {
+            daily_barplot(
+                df = national_data[["Table 8 - Deaths"]], 
+                x = "Date", 
+                y = paste0("`", req(input[["deaths"]]), "`")
+            )
+        } else {
+            cumulative_group_plot(
+                df = select(national_data[["Table 8 - Deaths"]], Date, req(input[["deaths"]])),
+                x = "Date",
+                y = "value"
+            )
+        }  
     })
 
     # Regional analysis
