@@ -24,13 +24,13 @@ shinyServer(function(input, output) {
     
     # Introduction
     output[["introduction_plot"]] <- renderPlotly({
-        daily_barplot(regional_data[["Table 1 - Cumulative cases"]], x = "Date", y = "Scotland") 
+        daily_barplot(national_data[["Table 5 - Testing"]], x = "Date", y = "Positive") 
     })
     output[["introduction_date"]] <- renderText({
         as.character(last(pull(national_data[["Table 8 - Deaths"]], Date)))
     })
     output[["introduction_cases"]] <- renderText({
-        last(pull(regional_data[["Table 1 - Cumulative cases"]], Scotland))
+        last(pull(national_data[["Table 5 - Testing"]], Positive))
     })
     output[["introduction_daily_cases"]] <- renderText({
         last(pull(national_data[["Table 5 - Testing"]], Daily_Positive))
