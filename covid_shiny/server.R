@@ -27,7 +27,7 @@ shinyServer(function(input, output) {
         daily_barplot(regional_data[["Table 1 - Cumulative cases"]], x = "Date", y = "Scotland") 
     })
     output[["introduction_date"]] <- renderText({
-        as.character(last(pull(regional_data[["Table 1 - Cumulative cases"]], Date)))
+        as.character(last(pull(national_data[["Table 8 - Deaths"]], Date)))
     })
     output[["introduction_cases"]] <- renderText({
         last(pull(regional_data[["Table 1 - Cumulative cases"]], Scotland))
