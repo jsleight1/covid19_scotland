@@ -61,10 +61,10 @@ shinyServer(function(input, output) {
     output[["nhs_calls_select"]] <- renderUI({
         selectizeInput(
             inputId = "nhs_calls", 
-            label = "Choose Y Axis Variable", 
+            label = "Choose Y Axis Variables", 
             width = "100%", 
             multiple = TRUE,
-            choices = as.list(setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date"))
+            choices = setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date")
         )
     })
     output[["nhs_calls_plot"]] <- renderPlotly({
@@ -103,10 +103,10 @@ shinyServer(function(input, output) {
     output[["ambulance_select"]] <- renderUI({
         selectizeInput(
             inputId = "ambulance", 
-            label = "Choose Y Axis Variable", 
+            label = "Choose Y Axis Variables", 
             width = "100%", 
             multiple = TRUE,
-            choices = as.list(setdiff(colnames(national_data[["Table 3 - Ambulance"]]), "Date"))
+            choices = setdiff(colnames(national_data[["Table 3 - Ambulance"]]), "Date")
         )
     })
     output[["ambulance_plot"]] <- renderPlotly({
@@ -145,10 +145,10 @@ shinyServer(function(input, output) {
     output[["workforce_absence_select"]] <- renderUI({
         selectizeInput(
             inputId = "workforce_absence", 
-            label = "Choose Y Axis Variable", 
+            label = "Choose Y Axis Variables", 
             width = "100%", 
             multiple = TRUE,
-            choices = as.list(setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date"))
+            choices = setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date")
         )
     })
     output[["workforce_absence_plot"]] <- renderPlotly({
@@ -162,10 +162,10 @@ shinyServer(function(input, output) {
     output[["carehome_cases_select"]] <- renderUI({
         selectizeInput(
             inputId = "care_cases", 
-            label = "Choose Y Axis Variable", 
+            label = "Choose Y Axis Variables", 
             width = "100%", 
             multiple = TRUE,
-            choices = as.list(setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date"))
+            choices = setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date")
         )
     })
     output[["carehome_cases_plot"]] <- renderPlotly({
@@ -179,10 +179,10 @@ shinyServer(function(input, output) {
     output[["care_workforce_select"]] <- renderUI({
         selectizeInput(
             inputId = "care_work", 
-            label = "Choose Y Axis Variable:", 
+            label = "Choose Y Axis Variables:", 
             width = "100%", 
             multiple = TRUE,
-            choices = as.list(setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date"))
+            choices = setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date")
         )
     })
     output[["care_workforce_plot"]] <- renderPlotly({
@@ -196,10 +196,10 @@ shinyServer(function(input, output) {
     output[["deaths_select"]] <- renderUI({
         selectizeInput(
             inputId = "deaths", 
-            label = "Choose Y Axis Variable:", 
+            label = "Choose Y Axis Variables:", 
             width = "100%", 
             multiple = TRUE,
-            choices = as.list(setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date"))
+            choices = setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date")
         )
     })
     output[["deaths_plot"]] <- renderPlotly({
@@ -215,20 +215,71 @@ shinyServer(function(input, output) {
     output[["regional_hospital_confirmed"]] <- render_custom_datatable(regional_data[["Table 3a - Hospital Confirmed"]], "regional_hospital_confirmed")
     output[["regional_hospital_suspected"]] <- render_custom_datatable(regional_data[["Table 3b- Hospital Suspected"]], "regional_hospital_suspected")
     
+    output[["regional_cumulative_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "regional_cumulative", 
+            label = "Choose Y Axis Variables:", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(regional_data[["Table 1 - Cumulative cases"]]), "Date")
+        )
+    })
     output[["regional_cumulative_plot"]] <- renderPlotly({
-        cumulative_group_plot(regional_data[["Table 1 - Cumulative cases"]], x = "Date", y = "value")
-    })
-    output[["regional_icu_plot"]] <- renderPlotly({
-        cumulative_group_plot(regional_data[["Table 2 - ICU patients"]], x = "Date", y = "value")
-    })
-    output[["regional_confirmed_plot"]] <- renderPlotly({
-        cumulative_group_plot(regional_data[["Table 3a - Hospital Confirmed"]] , x = "Date", y = "value")
-    })
-    output[["regional_suspected_plot"]] <- renderPlotly({
-        cumulative_group_plot(regional_data[["Table 3b- Hospital Suspected"]], x = "Date", y = "value")
+        decide_plotly_output(
+            data = regional_data[["Table 1 - Cumulative cases"]],
+            input = req(input[["regional_cumulative"]])
+        )
     })
 
-    output$map <- renderLeaflet({
+    output[["regional_icu_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "regional_icu", 
+            label = "Choose Y Axis Variables:", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(regional_data[["Table 2 - ICU patients"]]), "Date")
+        )
+    })
+    output[["regional_icu_plot"]] <- renderPlotly({
+        decide_plotly_output(
+            data = regional_data[["Table 2 - ICU patients"]],
+            input = req(input[["regional_icu"]])
+        )
+    })
+
+    output[["regional_confirmed_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "regional_confirmed", 
+            label = "Choose Y Axis Variable:", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(regional_data[["Table 3a - Hospital Confirmed"]]), "Date")
+        )
+    })
+    output[["regional_confirmed_plot"]] <- renderPlotly({
+        decide_plotly_output(
+            data = regional_data[["Table 3a - Hospital Confirmed"]],
+            input = req(input[["regional_confirmed"]])
+        )
+    })
+
+    output[["regional_suspected_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "regional_suspected", 
+            label = "Choose Y Axis Variable:", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(regional_data[["Table 3b- Hospital Suspected"]]), "Date")
+        )
+    })
+    output[["regional_suspected_plot"]] <- renderPlotly({
+        decide_plotly_output(
+            data = regional_data[["Table 3b- Hospital Suspected"]],
+            input = req(input[["regional_suspected"]])
+        )
+    })
+
+    output[["map"]] <- renderLeaflet({
         coords <- tribble(
             ~Region,                            ~Latitude,         ~Longitude,
             "NHS Ayrshire & Arran",             55.4586,             -4.6292,

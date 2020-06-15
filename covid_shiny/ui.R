@@ -183,51 +183,65 @@ shinyUI(fluidPage(
             ))
         ), 
         tabPanel("Regional Data",
-            tabsetPanel(type = "tabs",
+           tabsetPanel(type = "tabs",
                 tabPanel(
-                    h4("Tables"),
+                    h5("Regional Cumulative Cases"),
                     tabsetPanel(type = "tabs",
                         tabPanel(
-                            h5("Regional Cumulative Cases"),
+                            h6("Table"),
                             DT::dataTableOutput(outputId = "regional_cumulative_cases")
                         ),
                         tabPanel(
-                            h5("Regional COVID-19 Patients in ICU"),
+                            h6("Plot"),
+                            fluidRow(uiOutput("regional_cumulative_select")),
+                            plotlyOutput(outputId = "regional_cumulative_plot", height = "700px")
+                        )    
+                    )
+                ),
+                tabPanel(
+                    h5("Regional COVID-19 Patients in ICU"),
+                    tabsetPanel(type = "tabs",
+                        tabPanel(
+                            h6("Table"),
                             DT::dataTableOutput(outputId = "regional_ICU")
                         ),
                         tabPanel(
-                            h5("Regional Confirmed Hospital Cases"),
+                            h6("Plot"),
+                            fluidRow(uiOutput("regional_icu_select")),
+                            plotlyOutput(outputId = "regional_icu_plot", height = "700px")
+                        )                
+                    )
+                ),
+                tabPanel(
+                    h5("Regional Confirmed Hospital Cases"),
+                    tabsetPanel(type = "tabs",
+                        tabPanel(
+                            h6("Table"),
                             DT::dataTableOutput(outputId = "regional_hospital_confirmed")
                         ),
                         tabPanel(
-                            h5("Regional Suspected Hospital Cases"),
-                            DT::dataTableOutput(outputId = "regional_hospital_suspected")
+                            h6("Plot"),
+                            fluidRow(uiOutput("regional_confirmed_select")),
+                            plotlyOutput(outputId = "regional_confirmed_plot", height = "700px")
                         )
                     )
                 ),
                 tabPanel(
-                    h4("Plots"),
+                    h5("Regional Suspected Hospital Cases"),
                     tabsetPanel(type = "tabs",
                         tabPanel(
-                            h5("Regional Cumulative Cases"),
-                            plotlyOutput(outputId = "regional_cumulative_plot", height = "700px")
+                        h6("Table"),
+                            DT::dataTableOutput(outputId = "regional_hospital_suspected")
                         ),
                         tabPanel(
-                            h5("Regional COVID-19 Patients in ICU"),
-                            plotlyOutput(outputId = "regional_icu_plot", height = "700px")
-                        ),
-                        tabPanel(
-                            h5("Regional Confirmed Hospital Cases"),
-                            plotlyOutput(outputId = "regional_confirmed_plot", height = "700px")
-                        ),
-                        tabPanel(
-                            h5("Regional Suspected Hospital Cases"),
+                            h6("Plot"),
+                            fluidRow(uiOutput("regional_suspected_select")),
                             plotlyOutput(outputId = "regional_suspected_plot", height = "700px")
                         )
                     )
                 ),
                 tabPanel(
-                    h4("Map"),
+                h4("Map"),
                     leafletOutput("map", height = 700),
                     fluidRow(
                         radioButtons(
@@ -244,6 +258,6 @@ shinyUI(fluidPage(
                     )
                 )
             )
-        ) 
+        )
     )
 ))
