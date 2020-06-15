@@ -47,19 +47,22 @@ shinyUI(fluidPage(
         tabPanel("National Data",
             tabsetPanel(type = "tabs",
             tabPanel(
-                h5("NHS 24"),
-                tabsetPanel(type = "tabs", 
+                h5("Testing"),
+                tabsetPanel(type = "tabs",
                     tabPanel(
                         h6("Table"),
-                        DT::dataTableOutput(outputId = "NHS 24")
+                        DT::dataTableOutput(outputId = "Testing")
                     ),
                     tabPanel(
-                        h6("Plot"),
-                        fluidRow(uiOutput("nhs_calls_select")),
-                        plotlyOutput(outputId = "nhs_calls_plot", height = "700px")
-                    )   
-                )
-            ),
+                        h6("Cumulative Testing"),
+                        plotlyOutput(outputId = "cumulative_testing", height = "700px")
+                    ),
+                    tabPanel(
+                        h6("Daily Testing"),
+                        plotlyOutput(outputId = "daily_tests", height = "700px")
+                    )
+                )       
+            ), 
             tabPanel(
                 h5("Hospital Care"),
                 tabsetPanel(type = "tabs",
@@ -80,6 +83,20 @@ shinyUI(fluidPage(
                          plotlyOutput(outputId = "cumulative_hospital", height = "700px")
                      )
                 )            
+            ),
+            tabPanel(
+                h5("NHS 24"),
+                tabsetPanel(type = "tabs", 
+                    tabPanel(
+                        h6("Table"),
+                        DT::dataTableOutput(outputId = "NHS 24")
+                    ),
+                    tabPanel(
+                        h6("Plot"),
+                        fluidRow(uiOutput("nhs_calls_select")),
+                        plotlyOutput(outputId = "nhs_calls_plot", height = "700px")
+                    )   
+                )
             ),
             tabPanel(
                 h5("Ambulance Attendances"),
@@ -104,27 +121,11 @@ shinyUI(fluidPage(
                     ), 
                     tabPanel(
                         h6("Plot"),
-                        plotlyOutput(outputId = "discharge", height = "700px")
+                        fluidRow(uiOutput("discharge_select")),
+                        plotlyOutput(outputId = "discharge_plot", height = "700px")
                     )
                 )
-            ), 
-            tabPanel(
-                h5("Testing"),
-                tabsetPanel(type = "tabs",
-                    tabPanel(
-                        h6("Table"),
-                        DT::dataTableOutput(outputId = "Testing")
-                    ),
-                    tabPanel(
-                        h6("Cumulative Testing"),
-                        plotlyOutput(outputId = "cumulative_testing", height = "700px")
-                    ),
-                    tabPanel(
-                        h6("Daily Testing"),
-                        plotlyOutput(outputId = "daily_tests", height = "700px")
-                    )
-                )       
-            ), 
+            ),
             tabPanel(
                 h5("Workforce Absences"),
                 tabsetPanel(type = "tabs",

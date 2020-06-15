@@ -47,31 +47,30 @@ shinyServer(function(input, output) {
     })
 
     # National analysis
-    output[["NHS 24"]] <- render_custom_datatable(national_data[["Table 1 - NHS 24"]], "NHS_24") 
+    output[["Testing"]] <- render_custom_datatable(national_data[["Table 5 - Testing"]], "COVID19_Testing")
     output[["Hospital Care"]] <- render_custom_datatable(national_data[["Table 2 - Hospital Care"]], "Hospital_Care")
+    output[["NHS 24"]] <- render_custom_datatable(national_data[["Table 1 - NHS 24"]], "NHS_24") 
     output[["Ambulance Attendances"]] <- render_custom_datatable(national_data[["Table 3 - Ambulance"]], "Ambulance_Attendances")
     output[["Delayed Discharges"]] <- render_custom_datatable(national_data[["Table 4 - Delayed Discharges"]], "Delayed_Discharges")
-    output[["Testing"]] <- render_custom_datatable(national_data[["Table 5 - Testing"]], "COVID19_Testing")
     output[["Workforce Absences"]] <- render_custom_datatable(national_data[["Table 6 - Workforce"]], "Workforce_Absences")
     output[["Adult Care Homes"]] <- render_custom_datatable(national_data[["Table 7a - Care Homes"]], "Adult_Care_Homes")
     output[["Care Home Workforce"]] <- render_custom_datatable(national_data[["Table 7b - Care Home Workforce"]], "Care_Home_Workforce")
     output[["Deaths"]] <- render_custom_datatable(find_daily_increase(national_data[["Table 8 - Deaths"]], "`Number of COVID-19 confirmed deaths registered to date`"), "COVID19_Deaths")
 
-    # NHS 24 plots
-    output[["nhs_calls_select"]] <- renderUI({
-        selectizeInput(
-            inputId = "nhs_calls", 
-            label = "Choose Y Axis Variables", 
-            width = "100%", 
-            multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date")
-        )
+    # Testing plots
+    output[["daily_tests"]] <- renderPlotly({
+        positive <- find_daily_increase(national_data[["Table 5 - Testing"]], "Positive") %>% 
+            select(Date, Positive = "Daily Change")
+        negative <- find_daily_increase(national_data[["Table 5 - Testing"]], "Negative") %>% 
+            select(Date, Negative = "Daily Change")
+        df <- inner_join(positive, negative, by = "Date") %>% 
+            pivot_longer(-Date)
+        stacked_barplot(df, x = "Date", y = "value")
     })
-    output[["nhs_calls_plot"]] <- renderPlotly({
-        decide_plotly_output(
-            data = national_data[["Table 1 - NHS 24"]],
-            input = req(input[["nhs_calls"]])
-        )
+    output[["cumulative_testing"]] <- renderPlotly({
+        df <- select(national_data[["Table 5 - Testing"]], Date, Negative, Positive) %>% 
+            pivot_longer(-Date)
+        stacked_barplot(df, x = "Date", y = "value")
     })
 
     # Hospital Care plots
@@ -99,6 +98,23 @@ shinyServer(function(input, output) {
         cumulative_group_plot(df, x = "Date", y = "value")
     })
 
+    # NHS 24 plots
+    output[["nhs_calls_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "nhs_calls", 
+            label = "Choose Y Axis Variables", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date")
+        )
+    })
+    output[["nhs_calls_plot"]] <- renderPlotly({
+        decide_plotly_output(
+            data = national_data[["Table 1 - NHS 24"]],
+            input = req(input[["nhs_calls"]])
+        )
+    })
+
     # Ambulance plots
     output[["ambulance_select"]] <- renderUI({
         selectizeInput(
@@ -117,28 +133,20 @@ shinyServer(function(input, output) {
     })
 
     # Delayed Discharge plots
-    output[["discharge"]] <- renderPlotly({
-        daily_barplot(
-            national_data[["Table 4 - Delayed Discharges"]], 
-            x = "Date", 
-            y = "`Number of delayed discharges`"
+    output[["discharge_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "discharge", 
+            label = "Choose Y Axis Variables", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(national_data[["Table 4 - Delayed Discharges"]]), "Date")
         )
     })
-
-    # Testing plots
-    output[["daily_tests"]] <- renderPlotly({
-        positive <- find_daily_increase(national_data[["Table 5 - Testing"]], "Positive") %>% 
-            select(Date, Positive = "Daily Change")
-        negative <- find_daily_increase(national_data[["Table 5 - Testing"]], "Negative") %>% 
-            select(Date, Negative = "Daily Change")
-        df <- inner_join(positive, negative, by = "Date") %>% 
-            pivot_longer(-Date)
-        stacked_barplot(df, x = "Date", y = "value")
-    })
-    output[["cumulative_testing"]] <- renderPlotly({
-        df <- select(national_data[["Table 5 - Testing"]], Date, Negative, Positive) %>% 
-            pivot_longer(-Date)
-        stacked_barplot(df, x = "Date", y = "value")
+    output[["discharge_plot"]] <- renderPlotly({
+        decide_plotly_output(
+            data = national_data[["Table 4 - Delayed Discharges"]],
+            input = req(input[["discharge"]])
+        )
     })
 
     # Workforce Absences plots
