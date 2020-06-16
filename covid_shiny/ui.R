@@ -1,5 +1,6 @@
 source("dependencies.R")
 shinyUI(fluidPage(
+    tags$head(includeHTML(("google-analytics.html"))),
     navbarPage("COVID-19 Analysis",
         tabPanel("Introduction",
             shinyWidgets::setBackgroundColor(color = "66B2FF"),
@@ -34,6 +35,9 @@ shinyUI(fluidPage(
                 ),
                 style = "padding-top:30px; padding-bottom:30px"
 
+            ),
+            fluidRow(
+                div("NOTE: As of 15 June, confirmed cases include confirmed cases at UK government regional testing centres, hence why testing plots show a massive increase in testing capacity and positive cases. Additionally, a breakdown by NHS Board is not available. This will hopefully be updated by 18 June.", style = "padding-top:30px; padding-bottom:30px")
             ),
             fluidRow(
                 div("Reference:"),
