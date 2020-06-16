@@ -1,5 +1,6 @@
 source("dependencies.R")
 shinyUI(fluidPage(
+    tags$head(includeHTML(("google-analytics.html"))),
     navbarPage("COVID-19 Analysis",
         tabPanel("Introduction",
             shinyWidgets::setBackgroundColor(color = "66B2FF"),
