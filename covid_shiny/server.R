@@ -36,7 +36,7 @@ shinyServer(function(input, output) {
         last(pull(national_data[["Table 5 - Testing"]], Daily_Positive))
     })
     output[["introduction_deaths"]] <- renderText({
-        last(pull(national_data[["Table 8 - Deaths"]], -Date, -`Daily Change`))
+        last(pull(select(national_data[["Table 8 - Deaths"]], -Date, -`Daily Change`)))
     })
     output[["introduction_daily_deaths"]] <- renderText({
         df <- find_daily_increase(

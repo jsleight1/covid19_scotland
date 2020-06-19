@@ -37,7 +37,12 @@ shinyUI(fluidPage(
 
             ),
             fluidRow(
-                div("NOTE: As of 15 June, confirmed cases include confirmed cases at UK government regional testing centres, hence why testing plots show a massive increase in testing capacity and positive cases. Additionally, a breakdown by NHS Board is not available. This will hopefully be updated by 18 June.", style = "padding-top:30px; padding-bottom:30px")
+                div(
+                    "NOTE: As of 15 June, confirmed cases include confirmed cases at UK government regional testing centres, 
+                    hence why testing plots show a massive increase in testing capacity and positive cases. Therefore the testing 
+                    dataset may not be a true representation of positive and negative tests in Scotland. 
+                    Please wait until the Scottish Goverment updates its reporting of this.", 
+                    style = "padding-top:30px; padding-bottom:30px")
             ),
             fluidRow(
                 div("Reference:"),
