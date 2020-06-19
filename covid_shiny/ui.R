@@ -37,7 +37,12 @@ shinyUI(fluidPage(
 
             ),
             fluidRow(
-                div("NOTE: As of 15 June, confirmed cases include confirmed cases at UK government regional testing centres, hence why testing plots show a massive increase in testing capacity and positive cases. Additionally, a breakdown by NHS Board is not available. This will hopefully be updated by 18 June.", style = "padding-top:30px; padding-bottom:30px")
+                div(
+                    "NOTE: As of 15 June, confirmed cases include confirmed cases at UK government regional testing centres, 
+                    hence why testing plots show a massive increase in testing capacity and positive cases. Therefore the testing 
+                    dataset may not be a true representation of positive and negative tests in Scotland. 
+                    Please wait until the Scottish Goverment updates its reporting of this.", 
+                    style = "padding-top:30px; padding-bottom:30px")
             ),
             fluidRow(
                 div("Reference:"),
@@ -51,18 +56,22 @@ shinyUI(fluidPage(
         tabPanel("National Data",
             tabsetPanel(type = "tabs",
             tabPanel(
-                h5("NHS 24"),
-                tabsetPanel(type = "tabs", 
+                h5("Testing"),
+                tabsetPanel(type = "tabs",
                     tabPanel(
                         h6("Table"),
-                        DT::dataTableOutput(outputId = "NHS 24")
+                        DT::dataTableOutput(outputId = "Testing")
                     ),
                     tabPanel(
-                        h6("Daily NHS Calls"),
-                        plotlyOutput(outputId = "nhs_calls", height = "700px")
+                        h6("Cumulative Testing"),
+                        plotlyOutput(outputId = "cumulative_testing", height = "700px")
+                    ),
+                    tabPanel(
+                        h6("Daily Testing"),
+                        plotlyOutput(outputId = "daily_tests", height = "700px")
                     )
-                )
-            ),
+                )       
+            ), 
             tabPanel(
                 h5("Hospital Care"),
                 tabsetPanel(type = "tabs",
@@ -85,6 +94,20 @@ shinyUI(fluidPage(
                 )            
             ),
             tabPanel(
+                h5("NHS 24"),
+                tabsetPanel(type = "tabs", 
+                    tabPanel(
+                        h6("Table"),
+                        DT::dataTableOutput(outputId = "NHS 24")
+                    ),
+                    tabPanel(
+                        h6("Plot"),
+                        fluidRow(uiOutput("nhs_calls_select")),
+                        plotlyOutput(outputId = "nhs_calls_plot", height = "700px")
+                    )   
+                )
+            ),
+            tabPanel(
                 h5("Ambulance Attendances"),
                 tabsetPanel(type = "tabs",
                     tabPanel(
@@ -92,7 +115,8 @@ shinyUI(fluidPage(
                         DT::dataTableOutput(outputId = "Ambulance Attendances")
                     ),
                     tabPanel(
-                        h6("Number of Ambulance Attendances"),
+                        h6("Plot"),
+                        fluidRow(uiOutput("ambulance_select")),
                         plotlyOutput(outputId = "ambulance_plot", height = "700px")
                     )
                 )
@@ -105,28 +129,12 @@ shinyUI(fluidPage(
                         DT::dataTableOutput(outputId = "Delayed Discharges")
                     ), 
                     tabPanel(
-                        h6("Number of Delayed Discharges"),
-                        plotlyOutput(outputId = "discharge", height = "700px")
+                        h6("Plot"),
+                        fluidRow(uiOutput("discharge_select")),
+                        plotlyOutput(outputId = "discharge_plot", height = "700px")
                     )
                 )
-            ), 
-            tabPanel(
-                h5("Testing"),
-                tabsetPanel(type = "tabs",
-                    tabPanel(
-                        h6("Table"),
-                        DT::dataTableOutput(outputId = "Testing")
-                    ),
-                    tabPanel(
-                        h6("Cumulative Testing"),
-                        plotlyOutput(outputId = "cumulative_testing", height = "700px")
-                    ),
-                    tabPanel(
-                        h6("Daily Testing"),
-                        plotlyOutput(outputId = "daily_tests", height = "700px")
-                    )
-                )       
-            ), 
+            ),
             tabPanel(
                 h5("Workforce Absences"),
                 tabsetPanel(type = "tabs",
@@ -135,8 +143,9 @@ shinyUI(fluidPage(
                         DT::dataTableOutput(outputId = "Workforce Absences")
                     ),
                     tabPanel(
-                        h6("Daily Workforce Absences"),
-                        plotlyOutput(outputId = "daily_workforce_absences", height = "700px")
+                        h6("Plot"),
+                        fluidRow(uiOutput("workforce_absence_select")),
+                        plotlyOutput(outputId = "workforce_absence_plot", height = "700px")
                     )
                 )          
             ), 
@@ -176,62 +185,73 @@ shinyUI(fluidPage(
                         DT::dataTableOutput(outputId = "Deaths")
                     ), 
                     tabPanel(
-                         h6("Cumulative Deaths"),
-                        plotlyOutput(outputId = "cumulative_deaths", height = "700px")
-                    ),
-                    tabPanel(
-                        h6("Daily Deaths"),
-                        plotlyOutput(outputId = "daily_deaths", height = "700px")
-                    )      
+                        h6("Plot"),
+                        fluidRow(uiOutput("deaths_select")),
+                        plotlyOutput(outputId = "deaths_plot", height = "700px")
+                    )    
                 )  
             ))
         ), 
         tabPanel("Regional Data",
-            tabsetPanel(type = "tabs",
+           tabsetPanel(type = "tabs",
                 tabPanel(
-                    h4("Tables"),
+                    h5("Regional Cumulative Cases"),
                     tabsetPanel(type = "tabs",
                         tabPanel(
-                            h5("Regional Cumulative Cases"),
+                            h6("Table"),
                             DT::dataTableOutput(outputId = "regional_cumulative_cases")
                         ),
                         tabPanel(
-                            h5("Regional COVID-19 Patients in ICU"),
+                            h6("Plot"),
+                            fluidRow(uiOutput("regional_cumulative_select")),
+                            plotlyOutput(outputId = "regional_cumulative_plot", height = "700px")
+                        )    
+                    )
+                ),
+                tabPanel(
+                    h5("Regional COVID-19 Patients in ICU"),
+                    tabsetPanel(type = "tabs",
+                        tabPanel(
+                            h6("Table"),
                             DT::dataTableOutput(outputId = "regional_ICU")
                         ),
                         tabPanel(
-                            h5("Regional Confirmed Hospital Cases"),
+                            h6("Plot"),
+                            fluidRow(uiOutput("regional_icu_select")),
+                            plotlyOutput(outputId = "regional_icu_plot", height = "700px")
+                        )                
+                    )
+                ),
+                tabPanel(
+                    h5("Regional Confirmed Hospital Cases"),
+                    tabsetPanel(type = "tabs",
+                        tabPanel(
+                            h6("Table"),
                             DT::dataTableOutput(outputId = "regional_hospital_confirmed")
                         ),
                         tabPanel(
-                            h5("Regional Suspected Hospital Cases"),
-                            DT::dataTableOutput(outputId = "regional_hospital_suspected")
+                            h6("Plot"),
+                            fluidRow(uiOutput("regional_confirmed_select")),
+                            plotlyOutput(outputId = "regional_confirmed_plot", height = "700px")
                         )
                     )
                 ),
                 tabPanel(
-                    h4("Plots"),
+                    h5("Regional Suspected Hospital Cases"),
                     tabsetPanel(type = "tabs",
                         tabPanel(
-                            h5("Regional Cumulative Cases"),
-                            plotlyOutput(outputId = "regional_cumulative_plot", height = "700px")
+                        h6("Table"),
+                            DT::dataTableOutput(outputId = "regional_hospital_suspected")
                         ),
                         tabPanel(
-                            h5("Regional COVID-19 Patients in ICU"),
-                            plotlyOutput(outputId = "regional_icu_plot", height = "700px")
-                        ),
-                        tabPanel(
-                            h5("Regional Confirmed Hospital Cases"),
-                            plotlyOutput(outputId = "regional_confirmed_plot", height = "700px")
-                        ),
-                        tabPanel(
-                            h5("Regional Suspected Hospital Cases"),
+                            h6("Plot"),
+                            fluidRow(uiOutput("regional_suspected_select")),
                             plotlyOutput(outputId = "regional_suspected_plot", height = "700px")
                         )
                     )
                 ),
                 tabPanel(
-                    h4("Map"),
+                h4("Map"),
                     leafletOutput("map", height = 700),
                     fluidRow(
                         radioButtons(
@@ -248,6 +268,6 @@ shinyUI(fluidPage(
                     )
                 )
             )
-        ) 
+        )
     )
 ))

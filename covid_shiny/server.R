@@ -36,7 +36,7 @@ shinyServer(function(input, output) {
         last(pull(national_data[["Table 5 - Testing"]], Daily_Positive))
     })
     output[["introduction_deaths"]] <- renderText({
-        last(pull(national_data[["Table 8 - Deaths"]], -Date))
+        last(pull(select(national_data[["Table 8 - Deaths"]], -Date, -`Daily Change`)))
     })
     output[["introduction_daily_deaths"]] <- renderText({
         df <- find_daily_increase(
@@ -47,49 +47,15 @@ shinyServer(function(input, output) {
     })
 
     # National analysis
-    output[["NHS 24"]] <- render_custom_datatable(national_data[["Table 1 - NHS 24"]], "NHS_24") 
+    output[["Testing"]] <- render_custom_datatable(national_data[["Table 5 - Testing"]], "COVID19_Testing")
     output[["Hospital Care"]] <- render_custom_datatable(national_data[["Table 2 - Hospital Care"]], "Hospital_Care")
+    output[["NHS 24"]] <- render_custom_datatable(national_data[["Table 1 - NHS 24"]], "NHS_24") 
     output[["Ambulance Attendances"]] <- render_custom_datatable(national_data[["Table 3 - Ambulance"]], "Ambulance_Attendances")
     output[["Delayed Discharges"]] <- render_custom_datatable(national_data[["Table 4 - Delayed Discharges"]], "Delayed_Discharges")
-    output[["Testing"]] <- render_custom_datatable(national_data[["Table 5 - Testing"]], "COVID19_Testing")
     output[["Workforce Absences"]] <- render_custom_datatable(national_data[["Table 6 - Workforce"]], "Workforce_Absences")
     output[["Adult Care Homes"]] <- render_custom_datatable(national_data[["Table 7a - Care Homes"]], "Adult_Care_Homes")
     output[["Care Home Workforce"]] <- render_custom_datatable(national_data[["Table 7b - Care Home Workforce"]], "Care_Home_Workforce")
     output[["Deaths"]] <- render_custom_datatable(find_daily_increase(national_data[["Table 8 - Deaths"]], "`Number of COVID-19 confirmed deaths registered to date`"), "COVID19_Deaths")
-
-    # NHS 24 plots
-    output[["nhs_calls"]] <- renderPlotly({
-        cumulative_group_plot(national_data[["Table 1 - NHS 24"]], x = "Date", y = "value")
-    })
-
-    # Hospital Care plots
-    output[["daily_intensive_increase"]] <- renderPlotly({
-        df <- find_daily_increase(national_data[["Table 2 - Hospital Care"]], "`COVID-19 patients in ICU or combined ICU/HDU Total`")
-        daily_barplot(df, x = "Date", y = "`Daily Change`")
-    })
-
-    output[["daily_hospital_increase"]] <- renderPlotly({
-        df <- find_daily_increase(national_data[["Table 2 - Hospital Care"]], "`COVID-19 patients in hospital (including those in ICU) Total`")
-        daily_barplot(df, x = "Date", y = "`Daily Change`")
-    })
-    output[["cumulative_hospital"]] <- renderPlotly({
-        df <- select(national_data[["Table 2 - Hospital Care"]], 
-            Date, 
-            `COVID-19 patients in ICU or combined ICU/HDU Total`, 
-            `COVID-19 patients in hospital (including those in ICU) Total`
-        )
-        cumulative_group_plot(df, x = "Date", y = "value")
-    })
-
-    # Ambulance plots
-    output[["ambulance_plot"]] <- renderPlotly({
-        cumulative_group_plot(national_data[["Table 3 - Ambulance"]], x = "Date", y = "value")
-    })
-
-    # Delayed Discharge plots
-    output[["discharge"]] <- renderPlotly({
-        daily_barplot(national_data[["Table 4 - Delayed Discharges"]], x = "Date", y = "`Number of delayed discharges`")
-    })
 
     # Testing plots
     output[["daily_tests"]] <- renderPlotly({
@@ -107,34 +73,148 @@ shinyServer(function(input, output) {
         stacked_barplot(df, x = "Date", y = "value")
     })
 
+    # Hospital Care plots
+    output[["daily_intensive_increase"]] <- renderPlotly({
+        df <- find_daily_increase(
+            national_data[["Table 2 - Hospital Care"]], 
+            column = "`COVID-19 patients in ICU or combined ICU/HDU Total`"
+        )
+        daily_barplot(df, x = "Date", y = "`Daily Change`")
+    })
+
+    output[["daily_hospital_increase"]] <- renderPlotly({
+        df <- find_daily_increase(
+            national_data[["Table 2 - Hospital Care"]], 
+            column = "`COVID-19 patients in hospital (including those in ICU) Total`"
+        )
+        daily_barplot(df, x = "Date", y = "`Daily Change`")
+    })
+    output[["cumulative_hospital"]] <- renderPlotly({
+        df <- select(national_data[["Table 2 - Hospital Care"]], 
+            Date, 
+            `COVID-19 patients in ICU or combined ICU/HDU Total`, 
+            `COVID-19 patients in hospital (including those in ICU) Total`
+        )
+        cumulative_group_plot(df, x = "Date", y = "value")
+    })
+
+    # NHS 24 plots
+    output[["nhs_calls_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "nhs_calls", 
+            label = "Choose Y Axis Variables", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date")
+        )
+    })
+    output[["nhs_calls_plot"]] <- renderPlotly({
+        decide_plotly_output(
+            data = national_data[["Table 1 - NHS 24"]],
+            input = req(input[["nhs_calls"]])
+        )
+    })
+
+    # Ambulance plots
+    output[["ambulance_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "ambulance", 
+            label = "Choose Y Axis Variables", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(national_data[["Table 3 - Ambulance"]]), "Date")
+        )
+    })
+    output[["ambulance_plot"]] <- renderPlotly({
+        decide_plotly_output(
+            data = national_data[["Table 3 - Ambulance"]],
+            input = req(input[["ambulance"]])
+        )
+    })
+
+    # Delayed Discharge plots
+    output[["discharge_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "discharge", 
+            label = "Choose Y Axis Variables", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(national_data[["Table 4 - Delayed Discharges"]]), "Date")
+        )
+    })
+    output[["discharge_plot"]] <- renderPlotly({
+        decide_plotly_output(
+            data = national_data[["Table 4 - Delayed Discharges"]],
+            input = req(input[["discharge"]])
+        )
+    })
+
     # Workforce Absences plots
-    output[["daily_workforce_absences"]] <- renderPlotly({
-        cumulative_group_plot(national_data[["Table 6 - Workforce"]], x = "Date", y = "value")
+    output[["workforce_absence_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "workforce_absence", 
+            label = "Choose Y Axis Variables", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date")
+        )
+    })
+    output[["workforce_absence_plot"]] <- renderPlotly({
+        decide_plotly_output(
+            data = national_data[["Table 6 - Workforce"]],
+            input = req(input[["workforce_absence"]])
+        )
     })
 
     # Adult care homes plots
     output[["carehome_cases_select"]] <- renderUI({
-        selectInput(inputId = "care_cases", label = "Choose Y Axis Variable", width = "100%", as.list(setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date")))
+        selectizeInput(
+            inputId = "care_cases", 
+            label = "Choose Y Axis Variables", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date")
+        )
     })
     output[["carehome_cases_plot"]] <- renderPlotly({
-        daily_barplot(df = national_data[["Table 7a - Care Homes"]], x = "Date", y = paste0("`", req(input[["care_cases"]]), "`"))
+        decide_plotly_output(
+            data = national_data[["Table 7a - Care Homes"]],
+            input = req(input[["care_cases"]])
+        )
     })
 
     # Carehome workforce plots
     output[["care_workforce_select"]] <- renderUI({
-        selectInput(inputId = "care_work", label = "Choose Y Axis Variable:", width = "100%", as.list(setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date")))
+        selectizeInput(
+            inputId = "care_work", 
+            label = "Choose Y Axis Variables:", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date")
+        )
     })
     output[["care_workforce_plot"]] <- renderPlotly({
-        daily_barplot(df = national_data[["Table 7b - Care Home Workforce"]], x = "Date", y = paste0("`", req(input[["care_work"]]), "`"))
+        decide_plotly_output(
+            data = national_data[["Table 7b - Care Home Workforce"]],
+            input = req(input[["care_work"]])
+        )
     })
 
     # Deaths plots
-    output[["cumulative_deaths"]] <- renderPlotly({
-        cumulative_plot(df = national_data[["Table 8 - Deaths"]], x = "Date", y = "`Number of COVID-19 confirmed deaths registered to date`")
+    output[["deaths_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "deaths", 
+            label = "Choose Y Axis Variables:", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date")
+        )
     })
-    output[["daily_deaths"]] <- renderPlotly({
-        df <- find_daily_increase(national_data[["Table 8 - Deaths"]], "`Number of COVID-19 confirmed deaths registered to date`")  
-        daily_barplot(df, x = "Date", y = "`Daily Change`")
+    output[["deaths_plot"]] <- renderPlotly({
+        decide_plotly_output(
+            data = national_data[["Table 8 - Deaths"]],
+            input = req(input[["deaths"]])
+        )
     })
 
     # Regional analysis
@@ -143,20 +223,71 @@ shinyServer(function(input, output) {
     output[["regional_hospital_confirmed"]] <- render_custom_datatable(regional_data[["Table 3a - Hospital Confirmed"]], "regional_hospital_confirmed")
     output[["regional_hospital_suspected"]] <- render_custom_datatable(regional_data[["Table 3b- Hospital Suspected"]], "regional_hospital_suspected")
     
+    output[["regional_cumulative_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "regional_cumulative", 
+            label = "Choose Y Axis Variables:", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(regional_data[["Table 1 - Cumulative cases"]]), "Date")
+        )
+    })
     output[["regional_cumulative_plot"]] <- renderPlotly({
-        cumulative_group_plot(regional_data[["Table 1 - Cumulative cases"]], x = "Date", y = "value")
-    })
-    output[["regional_icu_plot"]] <- renderPlotly({
-        cumulative_group_plot(regional_data[["Table 2 - ICU patients"]], x = "Date", y = "value")
-    })
-    output[["regional_confirmed_plot"]] <- renderPlotly({
-        cumulative_group_plot(regional_data[["Table 3a - Hospital Confirmed"]] , x = "Date", y = "value")
-    })
-    output[["regional_suspected_plot"]] <- renderPlotly({
-        cumulative_group_plot(regional_data[["Table 3b- Hospital Suspected"]], x = "Date", y = "value")
+        decide_plotly_output(
+            data = regional_data[["Table 1 - Cumulative cases"]],
+            input = req(input[["regional_cumulative"]])
+        )
     })
 
-    output$map <- renderLeaflet({
+    output[["regional_icu_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "regional_icu", 
+            label = "Choose Y Axis Variables:", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(regional_data[["Table 2 - ICU patients"]]), "Date")
+        )
+    })
+    output[["regional_icu_plot"]] <- renderPlotly({
+        decide_plotly_output(
+            data = regional_data[["Table 2 - ICU patients"]],
+            input = req(input[["regional_icu"]])
+        )
+    })
+
+    output[["regional_confirmed_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "regional_confirmed", 
+            label = "Choose Y Axis Variable:", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(regional_data[["Table 3a - Hospital Confirmed"]]), "Date")
+        )
+    })
+    output[["regional_confirmed_plot"]] <- renderPlotly({
+        decide_plotly_output(
+            data = regional_data[["Table 3a - Hospital Confirmed"]],
+            input = req(input[["regional_confirmed"]])
+        )
+    })
+
+    output[["regional_suspected_select"]] <- renderUI({
+        selectizeInput(
+            inputId = "regional_suspected", 
+            label = "Choose Y Axis Variable:", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(regional_data[["Table 3b- Hospital Suspected"]]), "Date")
+        )
+    })
+    output[["regional_suspected_plot"]] <- renderPlotly({
+        decide_plotly_output(
+            data = regional_data[["Table 3b- Hospital Suspected"]],
+            input = req(input[["regional_suspected"]])
+        )
+    })
+
+    output[["map"]] <- renderLeaflet({
         coords <- tribble(
             ~Region,                            ~Latitude,         ~Longitude,
             "NHS Ayrshire & Arran",             55.4586,             -4.6292,

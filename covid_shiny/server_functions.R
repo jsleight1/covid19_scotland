@@ -31,9 +31,10 @@ tidy_trend_excel_sheets <- function(sheets) {
 
     # Delayed discharges 
     final_sheets[["Table 4 - Delated Discharges"]] <- tidy_table(
-        df = select(sheets[[grep("Table 4 - Delayed Discharges", names(sheets))]], -1),
-        row = 3
-    )
+            df = select(sheets[[grep("Table 4 - Delayed Discharges", names(sheets))]], -1),
+            row = 3
+        ) %>% 
+        find_daily_increase(df = ., column = setdiff(colnames(.), "Date"))
 
     # # Testing 
     final_sheets[["Table 5 - Testing"]] <- sheets[[grep("Table 5 - Testing", names(sheets))]] %>% 
@@ -62,9 +63,10 @@ tidy_trend_excel_sheets <- function(sheets) {
 
     # Deaths
     final_sheets[["Table 8 - Deaths"]] <- tidy_table(
-        df = sheets[[grep("Table 8 - Deaths", names(sheets))]],
-        row = 3
-    )
+            df = sheets[[grep("Table 8 - Deaths", names(sheets))]],
+            row = 3
+        ) %>% 
+        find_daily_increase(df = ., column = setdiff(colnames(.), "Date"))
 
     names(final_sheets) <- names(sheets)
     final_sheets
@@ -128,4 +130,22 @@ render_custom_datatable <- function(df, title) {
             fixedColumns = list(leftColumn = 1)
         )
     )
+}
+
+decide_plotly_output <- function(data, input) {
+    data <- select(data, Date, all_of(input))
+    message(ncol(data))
+    if (ncol(data) == 2) {
+        daily_barplot(
+            df = data, 
+            x = "Date", 
+            y = paste0("`", setdiff(input, "Date"), "`")
+        )
+    } else {
+        cumulative_group_plot(
+            df = data, 
+            x = "Date", 
+            y = "value"
+        )
+    } 
 }
