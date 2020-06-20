@@ -1,6 +1,5 @@
 source("dependencies.R")
 shinyUI(fluidPage(
-    tags$head(includeHTML(("google-analytics.html"))),
     navbarPage("COVID-19 Analysis",
         tabPanel("Introduction",
             shinyWidgets::setBackgroundColor(color = "66B2FF"),
@@ -102,7 +101,10 @@ shinyUI(fluidPage(
                     ),
                     tabPanel(
                         h6("Plot"),
-                        fluidRow(uiOutput("nhs_calls_select")),
+                        fluidRow(
+                            column(uiOutput("nhs_calls_select"), width = 8), 
+                            column(uiOutput("nhs_calls_radio_select"), width = 4)
+                        ),
                         plotlyOutput(outputId = "nhs_calls_plot", height = "700px")
                     )   
                 )
@@ -116,7 +118,10 @@ shinyUI(fluidPage(
                     ),
                     tabPanel(
                         h6("Plot"),
-                        fluidRow(uiOutput("ambulance_select")),
+                        fluidRow(
+                            column(uiOutput("ambulance_select"), width = 8),
+                            column(uiOutput("ambulance_radio_select"), width = 4)
+                        ),
                         plotlyOutput(outputId = "ambulance_plot", height = "700px")
                     )
                 )
@@ -130,7 +135,11 @@ shinyUI(fluidPage(
                     ), 
                     tabPanel(
                         h6("Plot"),
-                        fluidRow(uiOutput("discharge_select")),
+                        fluidRow(
+                            column(uiOutput("discharge_select"), width = 8),
+                            column(uiOutput("discharge_radio_select"), width = 4)
+
+                        ),
                         plotlyOutput(outputId = "discharge_plot", height = "700px")
                     )
                 )
@@ -144,7 +153,10 @@ shinyUI(fluidPage(
                     ),
                     tabPanel(
                         h6("Plot"),
-                        fluidRow(uiOutput("workforce_absence_select")),
+                        fluidRow(
+                            column(uiOutput("workforce_absence_select"), width = 8),
+                            column(uiOutput("workforce_absence_radio_select"), width = 4)
+                        ),
                         plotlyOutput(outputId = "workforce_absence_plot", height = "700px")
                     )
                 )          
@@ -158,7 +170,10 @@ shinyUI(fluidPage(
                     ), 
                     tabPanel(
                         h6("Plot"), 
-                        fluidRow(uiOutput("carehome_cases_select")),
+                        fluidRow(
+                            column(uiOutput("carehome_cases_select"), width = 8),
+                            column(uiOutput("casehome_cases_radio_select"), width = 4)
+                        ),
                         plotlyOutput(outputId = "carehome_cases_plot", height = "700px")
                     )
                 )  
@@ -172,7 +187,10 @@ shinyUI(fluidPage(
                     ),
                     tabPanel(
                         h6("Plot"),
-                        fluidRow(uiOutput("care_workforce_select")),
+                        fluidRow(
+                            column(uiOutput("care_workforce_select"), width = 8),
+                            column(uiOutput("care_workforce_radio_select"), width = 4)
+                        ),
                         plotlyOutput(outputId = "care_workforce_plot", height = "700px")
                     )
                 )  
@@ -186,7 +204,10 @@ shinyUI(fluidPage(
                     ), 
                     tabPanel(
                         h6("Plot"),
-                        fluidRow(uiOutput("deaths_select")),
+                        fluidRow(
+                            column(uiOutput("deaths_select"), width = 8),
+                            column(uiOutput("deaths_radio_select"), width = 4)
+                        ),
                         plotlyOutput(outputId = "deaths_plot", height = "700px")
                     )    
                 )  
@@ -203,7 +224,10 @@ shinyUI(fluidPage(
                         ),
                         tabPanel(
                             h6("Plot"),
-                            fluidRow(uiOutput("regional_cumulative_select")),
+                            fluidRow(
+                                column(uiOutput("regional_cumulative_select"), width = 8),
+                                column(uiOutput("regional_cumulative_radio_select"), width = 4)
+                            ),
                             plotlyOutput(outputId = "regional_cumulative_plot", height = "700px")
                         )    
                     )
@@ -217,7 +241,10 @@ shinyUI(fluidPage(
                         ),
                         tabPanel(
                             h6("Plot"),
-                            fluidRow(uiOutput("regional_icu_select")),
+                            fluidRow(
+                                column(uiOutput("regional_icu_select"), width = 8),
+                                column(uiOutput("regional_icu_radio_select"), width = 4)
+                            ),
                             plotlyOutput(outputId = "regional_icu_plot", height = "700px")
                         )                
                     )
@@ -231,7 +258,10 @@ shinyUI(fluidPage(
                         ),
                         tabPanel(
                             h6("Plot"),
-                            fluidRow(uiOutput("regional_confirmed_select")),
+                            fluidRow(
+                                column(uiOutput("regional_confirmed_select"), width = 8),
+                                column(uiOutput("regional_confirmed_radio_select"), width = 4)
+                            ),
                             plotlyOutput(outputId = "regional_confirmed_plot", height = "700px")
                         )
                     )
@@ -245,7 +275,10 @@ shinyUI(fluidPage(
                         ),
                         tabPanel(
                             h6("Plot"),
-                            fluidRow(uiOutput("regional_suspected_select")),
+                            fluidRow(
+                                column(uiOutput("regional_suspected_select"), width = 8),
+                                column(uiOutput("regional_suspected_radio_select"), width = 4)
+                            ),
                             plotlyOutput(outputId = "regional_suspected_plot", height = "700px")
                         )
                     )
