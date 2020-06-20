@@ -104,8 +104,8 @@ cumulative_group_plot <- function(df, x, y) {
 
 cumulative_plot <- function(df, x, y) {
     p <- ggplot(data = df, aes_string(x = x, y = y)) +
-        geom_point() +
-        geom_line()
+        geom_point(colour = "#619CFF") +
+        geom_line(colour = "#619CFF")
     ggplotly(p)
 }
 
@@ -132,20 +132,38 @@ render_custom_datatable <- function(df, title) {
     )
 }
 
-decide_plotly_output <- function(data, input) {
+decide_plotly_output <- function(data, input, type) {
     data <- select(data, Date, all_of(input))
-    message(ncol(data))
     if (ncol(data) == 2) {
-        daily_barplot(
-            df = data, 
-            x = "Date", 
-            y = paste0("`", setdiff(input, "Date"), "`")
+        switch(type,
+            "Bar Plot" = daily_barplot(df = data, x = "Date", y = paste0("`", setdiff(input, "Date"), "`")),
+            "Line Plot" = cumulative_plot(df = data, x = "Date", y = paste0("`", setdiff(input, "Date"), "`"))
         )
     } else {
-        cumulative_group_plot(
-            df = data, 
-            x = "Date", 
-            y = "value"
+        switch(type,
+            "Stacked Barplot" = stacked_barplot(pivot_longer(data, -Date), x = "Date", y = "value"),
+            "Line Plot" = cumulative_group_plot(df = data, x = "Date", y = "value") 
         )
     } 
+}
+
+decide_checkbox_output <- function(data, input, id) {
+    data <- select(data, all_of(input))
+    if (ncol(data) == 1) {
+        radioButtons(
+            inputId = id,
+            label = "Select Plot Type",
+            choices = c("Bar Plot", "Line Plot"),
+            inline = TRUE,
+            width = "100%"            
+        )  
+    } else {
+        radioButtons(
+            inputId = id,
+            label = "Select Plot Type",
+            choices = c("Line Plot", "Stacked Barplot"),
+            inline = TRUE,
+            width = "100%"            
+        )  
+    }
 }

@@ -108,10 +108,18 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date")
         )
     })
+    output[["nhs_calls_radio_select"]] <- renderUI({
+        decide_checkbox_output(
+            data = national_data[["Table 1 - NHS 24"]],
+            input = req(input[["nhs_calls"]]),
+            id = "nhs_radio_select_in"
+        )    
+    })
     output[["nhs_calls_plot"]] <- renderPlotly({
         decide_plotly_output(
             data = national_data[["Table 1 - NHS 24"]],
-            input = req(input[["nhs_calls"]])
+            input = req(input[["nhs_calls"]]),
+            type = req(input[["nhs_radio_select_in"]])
         )
     })
 
@@ -125,10 +133,18 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(national_data[["Table 3 - Ambulance"]]), "Date")
         )
     })
+    output[["ambulance_radio_select"]] <- renderUI({
+        decide_checkbox_output(
+            data = national_data[["Table 3 - Ambulance"]],
+            input = req(input[["ambulance"]]),
+            id = "ambulance_radio_select_in"
+        )
+    })
     output[["ambulance_plot"]] <- renderPlotly({
         decide_plotly_output(
             data = national_data[["Table 3 - Ambulance"]],
-            input = req(input[["ambulance"]])
+            input = req(input[["ambulance"]]),
+            type = req(input[["ambulance_radio_select_in"]])
         )
     })
 
@@ -142,10 +158,18 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(national_data[["Table 4 - Delayed Discharges"]]), "Date")
         )
     })
+    output[["discharge_radio_select"]] <- renderUI({
+        decide_checkbox_output(
+            data = national_data[["Table 4 - Delayed Discharges"]],
+            input = req(input[["discharge"]]),
+            id = "discharge_radio_select_in"
+        )
+    })
     output[["discharge_plot"]] <- renderPlotly({
         decide_plotly_output(
             data = national_data[["Table 4 - Delayed Discharges"]],
-            input = req(input[["discharge"]])
+            input = req(input[["discharge"]]),
+            type = req(input[["discharge_radio_select_in"]])
         )
     })
 
@@ -159,10 +183,18 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date")
         )
     })
+    output[["workforce_absence_radio_select"]] <- renderUI({
+        decide_checkbox_output(
+            data = national_data[["Table 6 - Workforce"]],
+            input = req(input[["workforce_absence"]]),
+            id = "workforce_absence_radio_select_in"
+        )
+    })
     output[["workforce_absence_plot"]] <- renderPlotly({
         decide_plotly_output(
             data = national_data[["Table 6 - Workforce"]],
-            input = req(input[["workforce_absence"]])
+            input = req(input[["workforce_absence"]]),
+            type = req(input[["workforce_absence_radio_select_in"]])
         )
     })
 
@@ -176,10 +208,18 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date")
         )
     })
+    output[["casehome_cases_radio_select"]] <- renderUI({
+        decide_checkbox_output(
+            data = national_data[["Table 7a - Care Homes"]],
+            input = req(input[["care_cases"]]),
+            id = "carehome_cases_radio_select_in"
+        )
+    })
     output[["carehome_cases_plot"]] <- renderPlotly({
         decide_plotly_output(
             data = national_data[["Table 7a - Care Homes"]],
-            input = req(input[["care_cases"]])
+            input = req(input[["care_cases"]]),
+            type = req(input[["carehome_cases_radio_select_in"]])
         )
     })
 
@@ -193,10 +233,18 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date")
         )
     })
+    output[["care_workforce_radio_select"]] <- renderUI({
+        decide_checkbox_output(
+            data = national_data[["Table 7b - Care Home Workforce"]],
+            input = req(input[["care_work"]]),
+            id = "care_workforce_radio_select_in"
+        )
+    })
     output[["care_workforce_plot"]] <- renderPlotly({
         decide_plotly_output(
             data = national_data[["Table 7b - Care Home Workforce"]],
-            input = req(input[["care_work"]])
+            input = req(input[["care_work"]]),
+            type = req(input[["care_workforce_radio_select_in"]])
         )
     })
 
@@ -210,10 +258,18 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date")
         )
     })
+    output[["deaths_radio_select"]] <- renderUI({
+        decide_checkbox_output(
+            data = national_data[["Table 8 - Deaths"]],
+            input = req(input[["deaths"]]),
+            id = "deaths_radio_select_in"
+        )
+    })
     output[["deaths_plot"]] <- renderPlotly({
         decide_plotly_output(
             data = national_data[["Table 8 - Deaths"]],
-            input = req(input[["deaths"]])
+            input = req(input[["deaths"]]),
+            type = req(input[["deaths_radio_select_in"]])
         )
     })
 
@@ -232,10 +288,18 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(regional_data[["Table 1 - Cumulative cases"]]), "Date")
         )
     })
+    output[["regional_cumulative_radio_select"]] <- renderUI({
+        decide_checkbox_output(
+            data = regional_data[["Table 1 - Cumulative cases"]],
+            input = req(input[["regional_cumulative"]]),
+            id = "regional_cumulative_radio_select_in"
+        )
+    })
     output[["regional_cumulative_plot"]] <- renderPlotly({
         decide_plotly_output(
             data = regional_data[["Table 1 - Cumulative cases"]],
-            input = req(input[["regional_cumulative"]])
+            input = req(input[["regional_cumulative"]]),
+            type = req(input[["regional_cumulative_radio_select_in"]])
         )
     })
 
@@ -248,10 +312,18 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(regional_data[["Table 2 - ICU patients"]]), "Date")
         )
     })
+    output[["regional_icu_radio_select"]] <- renderUI({
+        decide_checkbox_output(
+            data = regional_data[["Table 2 - ICU patients"]],
+            input = req(input[["regional_icu"]]),
+            id = "regional_icu_radio_select_in"
+        )
+    })
     output[["regional_icu_plot"]] <- renderPlotly({
         decide_plotly_output(
             data = regional_data[["Table 2 - ICU patients"]],
-            input = req(input[["regional_icu"]])
+            input = req(input[["regional_icu"]]),
+            type = req(input[["regional_icu_radio_select_in"]])
         )
     })
 
@@ -264,10 +336,18 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(regional_data[["Table 3a - Hospital Confirmed"]]), "Date")
         )
     })
+    output[["regional_confirmed_radio_select"]] <- renderUI({
+        decide_checkbox_output(
+            data = regional_data[["Table 3a - Hospital Confirmed"]],
+            input = req(input[["regional_confirmed"]]),
+            id = "regional_confirmed_radio_select_in"
+        )
+    })
     output[["regional_confirmed_plot"]] <- renderPlotly({
         decide_plotly_output(
             data = regional_data[["Table 3a - Hospital Confirmed"]],
-            input = req(input[["regional_confirmed"]])
+            input = req(input[["regional_confirmed"]]),
+            type = req(input[["regional_confirmed_radio_select_in"]])
         )
     })
 
@@ -280,10 +360,18 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(regional_data[["Table 3b- Hospital Suspected"]]), "Date")
         )
     })
+    output[["regional_suspected_radio_select"]] <- renderUI({
+        decide_checkbox_output(
+            data = regional_data[["Table 3b- Hospital Suspected"]],
+            input = req(input[["regional_suspected"]]),
+            id = "regional_suspected_radio_select_in"
+        )
+    })
     output[["regional_suspected_plot"]] <- renderPlotly({
         decide_plotly_output(
             data = regional_data[["Table 3b- Hospital Suspected"]],
-            input = req(input[["regional_suspected"]])
+            input = req(input[["regional_suspected"]]),
+            type = req(input[["regional_suspected_radio_select_in"]])
         )
     })
 
