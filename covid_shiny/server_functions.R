@@ -51,7 +51,7 @@ tidy_trend_excel_sheets <- function(sheets) {
 
     # Care homes
     final_sheets[["Table 7a - Care Homes"]] <- tidy_table(
-        df = sheets[[grep("Table 7a - Care Homes", names(sheets))]],
+        df = select(sheets[[grep("Table 7a - Care Homes", names(sheets))]], -c(5:8)),
         row = 3
     )
 
