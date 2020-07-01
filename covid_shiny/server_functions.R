@@ -21,7 +21,18 @@ tidy_trend_excel_sheets <- function(sheets) {
         slice(4:nrow(.)) %>% 
         set_names(gsub("\\r|\\n", "", c("Date", paste(first_cat, c("Confirmed", "Suspected", "Total")), paste(second_cat, c("Confirmed", "Suspected", "Total"))))) %>% 
         mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>% 
-        mutate_if(is.character, as.numeric)
+        mutate_if(is.character, as.numeric) %>% 
+        find_daily_increase(df = ., column = "COVID-19 patients in ICU or combined ICU/HDU Total") %>% 
+        rename(`Daily Change in Intensive Care Combined` = "Daily Change") %>% 
+        find_daily_increase(df = ., column = "COVID-19 patients in hospital (including those in ICU) Total") %>% 
+        rename(`Daily Change in Total Hospital Patients` = "Daily Change") %>% 
+        select(
+            Date, `COVID-19 patients in ICU or combined ICU/HDU Confirmed`, 
+            `COVID-19 patients in ICU or combined ICU/HDU Suspected`, 
+            `COVID-19 patients in ICU or combined ICU/HDU Total`, 
+            `Daily Change in Intensive Care Combined`,
+            everything()      
+        )
     
     # Ambulance stats
     final_sheets[["Table 3 - Ambulance"]] <- tidy_table(
@@ -38,10 +49,12 @@ tidy_trend_excel_sheets <- function(sheets) {
 
     # # Testing 
     final_sheets[["Table 5 - Testing"]] <- sheets[[grep("Table 5 - Testing", names(sheets))]] %>% 
-        set_names(c("Date", "Negative", "Positive", "Total", "Daily_Positive", paste("NHS_labs", c("Daily", "Cumulative"), sep = "_"), paste("Regional_Centres", c("Daily", "Cumulative"), sep = "_"))) %>% 
+        set_names(c("Date", "Negative", "Positive", "Total", "Daily Positive", paste("NHS labs", c("Daily", "Cumulative"), sep = " "), paste("Regional Centres", c("Daily", "Cumulative"), sep = " "))) %>% 
         slice(4:nrow(.)) %>% 
         mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>% 
-        mutate_if(is.character, as.numeric)
+        mutate_if(is.character, as.numeric) %>% 
+        find_daily_increase(df = ., column = "Negative") %>% 
+        select(Date, Negative, `Daily Negative` = "Daily Change", Positive, `Daily Positive`, everything())
 
     # Workforce absences
     final_sheets[["Table 6 - Workforce"]] <- tidy_table(

@@ -33,17 +33,13 @@ shinyServer(function(input, output) {
         last(pull(regional_data[["Table 1 - Cumulative cases"]], Scotland))
     })
     output[["introduction_daily_cases"]] <- renderText({
-        last(pull(national_data[["Table 5 - Testing"]], Daily_Positive))
+        last(pull(national_data[["Table 5 - Testing"]], `Daily Positive`))
     })
     output[["introduction_deaths"]] <- renderText({
-        last(pull(select(national_data[["Table 8 - Deaths"]], -Date, -`Daily Change`)))
+        last(pull(select(national_data[["Table 8 - Deaths"]], `Number of COVID-19 confirmed deaths registered to date`)))
     })
     output[["introduction_daily_deaths"]] <- renderText({
-        df <- find_daily_increase(
-            df = national_data[["Table 8 - Deaths"]], 
-            column = "`Number of COVID-19 confirmed deaths registered to date`"
-        )
-        last(pull(df, `Daily Change`))
+        last(pull(national_data[["Table 8 - Deaths"]], `Daily Change`))
     })
 
     # National analysis
@@ -58,48 +54,59 @@ shinyServer(function(input, output) {
     output[["Deaths"]] <- render_custom_datatable(find_daily_increase(national_data[["Table 8 - Deaths"]], "`Number of COVID-19 confirmed deaths registered to date`"), "COVID19_Deaths")
 
     # Testing plots
-    output[["daily_tests"]] <- renderPlotly({
-        positive <- find_daily_increase(national_data[["Table 5 - Testing"]], "Positive") %>% 
-            select(Date, Positive = "Daily Change")
-        negative <- find_daily_increase(national_data[["Table 5 - Testing"]], "Negative") %>% 
-            select(Date, Negative = "Daily Change")
-        df <- inner_join(positive, negative, by = "Date") %>% 
-            pivot_longer(-Date)
-        stacked_barplot(df, x = "Date", y = "value")
-    })
-    output[["cumulative_testing"]] <- renderPlotly({
-        df <- select(national_data[["Table 5 - Testing"]], Date, Negative, Positive) %>% 
-            pivot_longer(-Date)
-        stacked_barplot(df, x = "Date", y = "value")
-    })
+    output[["tests_select"]] <- renderUI(
+        selectizeInput(
+            inputId = "tests", 
+            label = "Choose Y Axis Variables", 
+            width = "100%", 
+            multiple = TRUE,
+            choices = setdiff(colnames(national_data[["Table 5 - Testing"]]), "Date"),
+            selected = setdiff(colnames(national_data[["Table 5 - Testing"]]), "Date")[4]
+        )
+    )
+    output[["tests_radio_select"]] <- renderUI(
+        decide_checkbox_output(
+            data = national_data[["Table 5 - Testing"]],
+            input = req(input[["tests"]]),
+            id = "tests_radio_select_in"
+        ) 
+    )
+    output[["tests_plot"]] <- renderPlotly(
+        decide_plotly_output(
+            data = national_data[["Table 5 - Testing"]],
+            input = req(input[["tests"]]),
+            type = req(input[["tests_radio_select_in"]])
+        )
+    )
 
     # Hospital Care plots
-    output[["daily_intensive_increase"]] <- renderPlotly({
-        df <- find_daily_increase(
-            national_data[["Table 2 - Hospital Care"]], 
-            column = "`COVID-19 patients in ICU or combined ICU/HDU Total`"
+    output[["hospital_select"]] <- renderUI(
+        selectizeInput(
+            inputId = "hospital",
+            label = "Choose Y Axis Variables",
+            width = "100%",
+            multiple = TRUE,
+            choices = setdiff(colnames(national_data[["Table 2 - Hospital Care"]]), "Date"),
+            selected = setdiff(colnames(national_data[["Table 2 - Hospital Care"]]), "Date")[c(3, 7)]
         )
-        daily_barplot(df, x = "Date", y = "`Daily Change`")
-    })
-
-    output[["daily_hospital_increase"]] <- renderPlotly({
-        df <- find_daily_increase(
-            national_data[["Table 2 - Hospital Care"]], 
-            column = "`COVID-19 patients in hospital (including those in ICU) Total`"
+    )
+    output[["hospital_radio_select"]] <- renderUI(
+        decide_checkbox_output(
+            data = national_data[["Table 2 - Hospital Care"]],
+            input = req(input[["hospital"]]),
+            id = "hospital_radio_select_in"
         )
-        daily_barplot(df, x = "Date", y = "`Daily Change`")
-    })
-    output[["cumulative_hospital"]] <- renderPlotly({
-        df <- select(national_data[["Table 2 - Hospital Care"]], 
-            Date, 
-            `COVID-19 patients in ICU or combined ICU/HDU Total`, 
-            `COVID-19 patients in hospital (including those in ICU) Total`
+    )
+    output[["hospital_plot"]] <- renderPlotly(
+        decide_plotly_output(
+            data = national_data[["Table 2 - Hospital Care"]],
+            input = req(input[["hospital"]]),
+            type = req(input[["hospital_radio_select_in"]])
         )
-        cumulative_group_plot(df, x = "Date", y = "value")
-    })
+    )
 
     # NHS 24 plots
-    output[["nhs_calls_select"]] <- renderUI({
+    output[["nhs_calls_select"]] <- renderUI(
         selectizeInput(
             inputId = "nhs_calls", 
             label = "Choose Y Axis Variables", 
@@ -108,24 +115,24 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date"),
             selected = setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date")[1]
         )
-    })
-    output[["nhs_calls_radio_select"]] <- renderUI({
+    )
+    output[["nhs_calls_radio_select"]] <- renderUI(
         decide_checkbox_output(
             data = national_data[["Table 1 - NHS 24"]],
             input = req(input[["nhs_calls"]]),
             id = "nhs_radio_select_in"
         )    
-    })
-    output[["nhs_calls_plot"]] <- renderPlotly({
+    )
+    output[["nhs_calls_plot"]] <- renderPlotly(
         decide_plotly_output(
             data = national_data[["Table 1 - NHS 24"]],
             input = req(input[["nhs_calls"]]),
             type = req(input[["nhs_radio_select_in"]])
         )
-    })
+    )
 
     # Ambulance plots
-    output[["ambulance_select"]] <- renderUI({
+    output[["ambulance_select"]] <- renderUI(
         selectizeInput(
             inputId = "ambulance", 
             label = "Choose Y Axis Variables", 
@@ -134,24 +141,24 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(national_data[["Table 3 - Ambulance"]]), "Date"),
             selected = setdiff(colnames(national_data[["Table 3 - Ambulance"]]), "Date")[1]
         )
-    })
-    output[["ambulance_radio_select"]] <- renderUI({
+    )
+    output[["ambulance_radio_select"]] <- renderUI(
         decide_checkbox_output(
             data = national_data[["Table 3 - Ambulance"]],
             input = req(input[["ambulance"]]),
             id = "ambulance_radio_select_in"
         )
-    })
-    output[["ambulance_plot"]] <- renderPlotly({
+    )
+    output[["ambulance_plot"]] <- renderPlotly(
         decide_plotly_output(
             data = national_data[["Table 3 - Ambulance"]],
             input = req(input[["ambulance"]]),
             type = req(input[["ambulance_radio_select_in"]])
         )
-    })
+    )
 
     # Delayed Discharge plots
-    output[["discharge_select"]] <- renderUI({
+    output[["discharge_select"]] <- renderUI(
         selectizeInput(
             inputId = "discharge", 
             label = "Choose Y Axis Variables", 
@@ -160,50 +167,50 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(national_data[["Table 4 - Delayed Discharges"]]), "Date"),
             selected = setdiff(colnames(national_data[["Table 4 - Delayed Discharges"]]), "Date")[1]
         )
-    })
-    output[["discharge_radio_select"]] <- renderUI({
+    )
+    output[["discharge_radio_select"]] <- renderUI(
         decide_checkbox_output(
             data = national_data[["Table 4 - Delayed Discharges"]],
             input = req(input[["discharge"]]),
             id = "discharge_radio_select_in"
         )
-    })
-    output[["discharge_plot"]] <- renderPlotly({
+    )
+    output[["discharge_plot"]] <- renderPlotly(
         decide_plotly_output(
             data = national_data[["Table 4 - Delayed Discharges"]],
             input = req(input[["discharge"]]),
             type = req(input[["discharge_radio_select_in"]])
         )
-    })
+    )
 
     # Workforce Absences plots
-    output[["workforce_absence_select"]] <- renderUI({
+    output[["workforce_absence_select"]] <- renderUI(
         selectizeInput(
             inputId = "workforce_absence", 
             label = "Choose Y Axis Variables", 
             width = "100%", 
             multiple = TRUE,
             choices = setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date"),
-            setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date")[1]
+            selected = setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date")[1]
         )
-    })
-    output[["workforce_absence_radio_select"]] <- renderUI({
+    )
+    output[["workforce_absence_radio_select"]] <- renderUI(
         decide_checkbox_output(
             data = national_data[["Table 6 - Workforce"]],
             input = req(input[["workforce_absence"]]),
             id = "workforce_absence_radio_select_in"
         )
-    })
-    output[["workforce_absence_plot"]] <- renderPlotly({
+    )
+    output[["workforce_absence_plot"]] <- renderPlotly(
         decide_plotly_output(
             data = national_data[["Table 6 - Workforce"]],
             input = req(input[["workforce_absence"]]),
             type = req(input[["workforce_absence_radio_select_in"]])
         )
-    })
+    )
 
     # Adult care homes plots
-    output[["carehome_cases_select"]] <- renderUI({
+    output[["carehome_cases_select"]] <- renderUI(
         selectizeInput(
             inputId = "care_cases", 
             label = "Choose Y Axis Variables", 
@@ -212,24 +219,24 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date"),
             selected = setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date")[1]
         )
-    })
-    output[["casehome_cases_radio_select"]] <- renderUI({
+    )
+    output[["casehome_cases_radio_select"]] <- renderUI(
         decide_checkbox_output(
             data = national_data[["Table 7a - Care Homes"]],
             input = req(input[["care_cases"]]),
             id = "carehome_cases_radio_select_in"
         )
-    })
-    output[["carehome_cases_plot"]] <- renderPlotly({
+    )
+    output[["carehome_cases_plot"]] <- renderPlotly(
         decide_plotly_output(
             data = national_data[["Table 7a - Care Homes"]],
             input = req(input[["care_cases"]]),
             type = req(input[["carehome_cases_radio_select_in"]])
         )
-    })
+    )
 
     # Carehome workforce plots
-    output[["care_workforce_select"]] <- renderUI({
+    output[["care_workforce_select"]] <- renderUI(
         selectizeInput(
             inputId = "care_work", 
             label = "Choose Y Axis Variables:", 
@@ -238,24 +245,24 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date"),
             selected = setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date")[1]
         )
-    })
-    output[["care_workforce_radio_select"]] <- renderUI({
+    )
+    output[["care_workforce_radio_select"]] <- renderUI(
         decide_checkbox_output(
             data = national_data[["Table 7b - Care Home Workforce"]],
             input = req(input[["care_work"]]),
             id = "care_workforce_radio_select_in"
         )
-    })
-    output[["care_workforce_plot"]] <- renderPlotly({
+    )
+    output[["care_workforce_plot"]] <- renderPlotly(
         decide_plotly_output(
             data = national_data[["Table 7b - Care Home Workforce"]],
             input = req(input[["care_work"]]),
             type = req(input[["care_workforce_radio_select_in"]])
         )
-    })
+    )
 
     # Deaths plots
-    output[["deaths_select"]] <- renderUI({
+    output[["deaths_select"]] <- renderUI(
         selectizeInput(
             inputId = "deaths", 
             label = "Choose Y Axis Variables:", 
@@ -264,21 +271,21 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date"),
             selected = setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date")[1]
         )
-    })
-    output[["deaths_radio_select"]] <- renderUI({
+    )
+    output[["deaths_radio_select"]] <- renderUI(
         decide_checkbox_output(
             data = national_data[["Table 8 - Deaths"]],
             input = req(input[["deaths"]]),
             id = "deaths_radio_select_in"
         )
-    })
-    output[["deaths_plot"]] <- renderPlotly({
+    )
+    output[["deaths_plot"]] <- renderPlotly(
         decide_plotly_output(
             data = national_data[["Table 8 - Deaths"]],
             input = req(input[["deaths"]]),
             type = req(input[["deaths_radio_select_in"]])
         )
-    })
+    )
 
     # Regional analysis
     output[["regional_cumulative_cases"]] <- render_custom_datatable(regional_data[["Table 1 - Cumulative cases"]], "regional_cumulative_cases") 
@@ -286,7 +293,7 @@ shinyServer(function(input, output) {
     output[["regional_hospital_confirmed"]] <- render_custom_datatable(regional_data[["Table 3a - Hospital Confirmed"]], "regional_hospital_confirmed")
     output[["regional_hospital_suspected"]] <- render_custom_datatable(regional_data[["Table 3b- Hospital Suspected"]], "regional_hospital_suspected")
     
-    output[["regional_cumulative_select"]] <- renderUI({
+    output[["regional_cumulative_select"]] <- renderUI(
         selectizeInput(
             inputId = "regional_cumulative", 
             label = "Choose Y Axis Variables:", 
@@ -295,23 +302,23 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(regional_data[["Table 1 - Cumulative cases"]]), "Date"),
             selected = setdiff(colnames(regional_data[["Table 1 - Cumulative cases"]]), "Date")[15]
         )
-    })
-    output[["regional_cumulative_radio_select"]] <- renderUI({
+    )
+    output[["regional_cumulative_radio_select"]] <- renderUI(
         decide_checkbox_output(
             data = regional_data[["Table 1 - Cumulative cases"]],
             input = req(input[["regional_cumulative"]]),
             id = "regional_cumulative_radio_select_in"
         )
-    })
-    output[["regional_cumulative_plot"]] <- renderPlotly({
+    )
+    output[["regional_cumulative_plot"]] <- renderPlotly(
         decide_plotly_output(
             data = regional_data[["Table 1 - Cumulative cases"]],
             input = req(input[["regional_cumulative"]]),
             type = req(input[["regional_cumulative_radio_select_in"]])
         )
-    })
+    )
 
-    output[["regional_icu_select"]] <- renderUI({
+    output[["regional_icu_select"]] <- renderUI(
         selectizeInput(
             inputId = "regional_icu", 
             label = "Choose Y Axis Variables:", 
@@ -320,23 +327,23 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(regional_data[["Table 2 - ICU patients"]]), "Date"),
             selected = setdiff(colnames(regional_data[["Table 2 - ICU patients"]]), "Date")[16]
         )
-    })
-    output[["regional_icu_radio_select"]] <- renderUI({
+    )
+    output[["regional_icu_radio_select"]] <- renderUI(
         decide_checkbox_output(
             data = regional_data[["Table 2 - ICU patients"]],
             input = req(input[["regional_icu"]]),
             id = "regional_icu_radio_select_in"
         )
-    })
-    output[["regional_icu_plot"]] <- renderPlotly({
+    )
+    output[["regional_icu_plot"]] <- renderPlotly(
         decide_plotly_output(
             data = regional_data[["Table 2 - ICU patients"]],
             input = req(input[["regional_icu"]]),
             type = req(input[["regional_icu_radio_select_in"]])
         )
-    })
+    )
 
-    output[["regional_confirmed_select"]] <- renderUI({
+    output[["regional_confirmed_select"]] <- renderUI(
         selectizeInput(
             inputId = "regional_confirmed", 
             label = "Choose Y Axis Variable:", 
@@ -345,23 +352,23 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(regional_data[["Table 3a - Hospital Confirmed"]]), "Date"),
             selected = setdiff(colnames(regional_data[["Table 3a - Hospital Confirmed"]]), "Date")[16]
         )
-    })
-    output[["regional_confirmed_radio_select"]] <- renderUI({
+    )
+    output[["regional_confirmed_radio_select"]] <- renderUI(
         decide_checkbox_output(
             data = regional_data[["Table 3a - Hospital Confirmed"]],
             input = req(input[["regional_confirmed"]]),
             id = "regional_confirmed_radio_select_in"
         )
-    })
-    output[["regional_confirmed_plot"]] <- renderPlotly({
+    )
+    output[["regional_confirmed_plot"]] <- renderPlotly(
         decide_plotly_output(
             data = regional_data[["Table 3a - Hospital Confirmed"]],
             input = req(input[["regional_confirmed"]]),
             type = req(input[["regional_confirmed_radio_select_in"]])
         )
-    })
+    )
 
-    output[["regional_suspected_select"]] <- renderUI({
+    output[["regional_suspected_select"]] <- renderUI(
         selectizeInput(
             inputId = "regional_suspected", 
             label = "Choose Y Axis Variable:", 
@@ -370,21 +377,21 @@ shinyServer(function(input, output) {
             choices = setdiff(colnames(regional_data[["Table 3b- Hospital Suspected"]]), "Date"),
             selected = setdiff(colnames(regional_data[["Table 3b- Hospital Suspected"]]), "Date")[16]
         )
-    })
-    output[["regional_suspected_radio_select"]] <- renderUI({
+    )
+    output[["regional_suspected_radio_select"]] <- renderUI(
         decide_checkbox_output(
             data = regional_data[["Table 3b- Hospital Suspected"]],
             input = req(input[["regional_suspected"]]),
             id = "regional_suspected_radio_select_in"
         )
-    })
-    output[["regional_suspected_plot"]] <- renderPlotly({
+    )
+    output[["regional_suspected_plot"]] <- renderPlotly(
         decide_plotly_output(
             data = regional_data[["Table 3b- Hospital Suspected"]],
             input = req(input[["regional_suspected"]]),
             type = req(input[["regional_suspected_radio_select_in"]])
         )
-    })
+    )
 
     output[["map"]] <- renderLeaflet({
         coords <- tribble(

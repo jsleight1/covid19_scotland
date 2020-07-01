@@ -63,14 +63,14 @@ shinyUI(fluidPage(
                         DT::dataTableOutput(outputId = "Testing")
                     ),
                     tabPanel(
-                        h6("Cumulative Testing"),
-                        plotlyOutput(outputId = "cumulative_testing", height = "700px")
-                    ),
-                    tabPanel(
-                        h6("Daily Testing"),
-                        plotlyOutput(outputId = "daily_tests", height = "700px")
-                    )
-                )       
+                        h6("Plot"),
+                        fluidRow(
+                            column(uiOutput("tests_select"), width = 8),
+                            column(uiOutput("tests_radio_select"), width = 4)
+                        ),
+                        plotlyOutput(outputId = "tests_plot", height = "700px")
+                    )  
+                )     
             ), 
             tabPanel(
                 h5("Hospital Care"),
@@ -80,17 +80,13 @@ shinyUI(fluidPage(
                          DT::dataTableOutput(outputId = "Hospital Care")
                      ), 
                      tabPanel(
-                         h6("Daily Increase in Patients in Intensive Care"),
-                         plotlyOutput(outputId = "daily_intensive_increase", height = "700px")
-                     ),
-                     tabPanel(
-                         h6("Daily Increase in Patients in Hospital (including intensive care)"),
-                         plotlyOutput(outputId = "daily_hospital_increase", height = "700px")
-                     ),
-                     tabPanel(
-                         h6("Total Patients in Hospitals"),
-                         plotlyOutput(outputId = "cumulative_hospital", height = "700px")
-                     )
+                        h6("Plot"),
+                        fluidRow(
+                            column(uiOutput("hospital_select"), width = 8),
+                            column(uiOutput("hospital_radio_select"), width = 4)
+                        ),
+                        plotlyOutput(outputId = "hospital_plot", height = "700px")
+                    )
                 )            
             ),
             tabPanel(
