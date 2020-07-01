@@ -61,7 +61,7 @@ shinyServer(function(input, output) {
             width = "100%", 
             multiple = TRUE,
             choices = setdiff(colnames(national_data[["Table 5 - Testing"]]), "Date"),
-            selected = setdiff(colnames(national_data[["Table 5 - Testing"]]), "Date")[1]
+            selected = setdiff(colnames(national_data[["Table 5 - Testing"]]), "Date")[4]
         )
     )
     output[["tests_radio_select"]] <- renderUI(
@@ -87,7 +87,7 @@ shinyServer(function(input, output) {
             width = "100%",
             multiple = TRUE,
             choices = setdiff(colnames(national_data[["Table 2 - Hospital Care"]]), "Date"),
-            selected = setdiff(colnames(national_data[["Table 2 - Hospital Care"]]), "Date")[1]
+            selected = setdiff(colnames(national_data[["Table 2 - Hospital Care"]]), "Date")[c(3, 7)]
         )
     )
     output[["hospital_radio_select"]] <- renderUI(
@@ -191,7 +191,7 @@ shinyServer(function(input, output) {
             width = "100%", 
             multiple = TRUE,
             choices = setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date"),
-            setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date")[1]
+            selected = setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date")[1]
         )
     )
     output[["workforce_absence_radio_select"]] <- renderUI(
