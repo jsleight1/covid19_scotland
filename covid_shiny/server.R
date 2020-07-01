@@ -105,7 +105,8 @@ shinyServer(function(input, output) {
             label = "Choose Y Axis Variables", 
             width = "100%", 
             multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date")
+            choices = setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date"),
+            selected = setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date")[1]
         )
     })
     output[["nhs_calls_radio_select"]] <- renderUI({
@@ -130,7 +131,8 @@ shinyServer(function(input, output) {
             label = "Choose Y Axis Variables", 
             width = "100%", 
             multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 3 - Ambulance"]]), "Date")
+            choices = setdiff(colnames(national_data[["Table 3 - Ambulance"]]), "Date"),
+            selected = setdiff(colnames(national_data[["Table 3 - Ambulance"]]), "Date")[1]
         )
     })
     output[["ambulance_radio_select"]] <- renderUI({
@@ -155,7 +157,8 @@ shinyServer(function(input, output) {
             label = "Choose Y Axis Variables", 
             width = "100%", 
             multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 4 - Delayed Discharges"]]), "Date")
+            choices = setdiff(colnames(national_data[["Table 4 - Delayed Discharges"]]), "Date"),
+            selected = setdiff(colnames(national_data[["Table 4 - Delayed Discharges"]]), "Date")[1]
         )
     })
     output[["discharge_radio_select"]] <- renderUI({
@@ -180,7 +183,8 @@ shinyServer(function(input, output) {
             label = "Choose Y Axis Variables", 
             width = "100%", 
             multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date")
+            choices = setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date"),
+            setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date")[1]
         )
     })
     output[["workforce_absence_radio_select"]] <- renderUI({
@@ -205,7 +209,8 @@ shinyServer(function(input, output) {
             label = "Choose Y Axis Variables", 
             width = "100%", 
             multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date")
+            choices = setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date"),
+            selected = setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date")[1]
         )
     })
     output[["casehome_cases_radio_select"]] <- renderUI({
@@ -230,7 +235,8 @@ shinyServer(function(input, output) {
             label = "Choose Y Axis Variables:", 
             width = "100%", 
             multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date")
+            choices = setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date"),
+            selected = setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date")[1]
         )
     })
     output[["care_workforce_radio_select"]] <- renderUI({
@@ -255,7 +261,8 @@ shinyServer(function(input, output) {
             label = "Choose Y Axis Variables:", 
             width = "100%", 
             multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date")
+            choices = setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date"),
+            selected = setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date")[1]
         )
     })
     output[["deaths_radio_select"]] <- renderUI({
@@ -285,7 +292,8 @@ shinyServer(function(input, output) {
             label = "Choose Y Axis Variables:", 
             width = "100%", 
             multiple = TRUE,
-            choices = setdiff(colnames(regional_data[["Table 1 - Cumulative cases"]]), "Date")
+            choices = setdiff(colnames(regional_data[["Table 1 - Cumulative cases"]]), "Date"),
+            selected = setdiff(colnames(regional_data[["Table 1 - Cumulative cases"]]), "Date")[15]
         )
     })
     output[["regional_cumulative_radio_select"]] <- renderUI({
@@ -309,7 +317,8 @@ shinyServer(function(input, output) {
             label = "Choose Y Axis Variables:", 
             width = "100%", 
             multiple = TRUE,
-            choices = setdiff(colnames(regional_data[["Table 2 - ICU patients"]]), "Date")
+            choices = setdiff(colnames(regional_data[["Table 2 - ICU patients"]]), "Date"),
+            selected = setdiff(colnames(regional_data[["Table 2 - ICU patients"]]), "Date")[16]
         )
     })
     output[["regional_icu_radio_select"]] <- renderUI({
@@ -333,7 +342,8 @@ shinyServer(function(input, output) {
             label = "Choose Y Axis Variable:", 
             width = "100%", 
             multiple = TRUE,
-            choices = setdiff(colnames(regional_data[["Table 3a - Hospital Confirmed"]]), "Date")
+            choices = setdiff(colnames(regional_data[["Table 3a - Hospital Confirmed"]]), "Date"),
+            selected = setdiff(colnames(regional_data[["Table 3a - Hospital Confirmed"]]), "Date")[16]
         )
     })
     output[["regional_confirmed_radio_select"]] <- renderUI({
@@ -357,7 +367,8 @@ shinyServer(function(input, output) {
             label = "Choose Y Axis Variable:", 
             width = "100%", 
             multiple = TRUE,
-            choices = setdiff(colnames(regional_data[["Table 3b- Hospital Suspected"]]), "Date")
+            choices = setdiff(colnames(regional_data[["Table 3b- Hospital Suspected"]]), "Date"),
+            selected = setdiff(colnames(regional_data[["Table 3b- Hospital Suspected"]]), "Date")[16]
         )
     })
     output[["regional_suspected_radio_select"]] <- renderUI({
