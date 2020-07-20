@@ -51,7 +51,7 @@ shinyServer(function(input, output) {
     output[["Workforce Absences"]] <- render_custom_datatable(national_data[["Table 6 - Workforce"]], "Workforce_Absences")
     output[["Adult Care Homes"]] <- render_custom_datatable(national_data[["Table 7a - Care Homes"]], "Adult_Care_Homes")
     output[["Care Home Workforce"]] <- render_custom_datatable(national_data[["Table 7b - Care Home Workforce"]], "Care_Home_Workforce")
-    output[["Deaths"]] <- render_custom_datatable(find_daily_increase(national_data[["Table 8 - Deaths"]], "`Number of COVID-19 confirmed deaths registered to date`"), "COVID19_Deaths")
+    output[["Deaths"]] <- render_custom_datatable(national_data[["Table 8 - Deaths"]], "COVID19_Deaths")
 
     # Testing plots
     output[["tests_select"]] <- renderUI(
