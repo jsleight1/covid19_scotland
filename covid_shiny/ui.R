@@ -33,7 +33,7 @@ shinyUI(fluidPage(
                     width = 1,
                     div(textOutput(outputId = "introduction_daily_deaths"), style = "font-size:20px; color:red")
                 ),
-                style = "padding-top:30px; padding-bottom:30px"
+                style = "padding-top:15px; padding-bottom:15px"
 
             ),
             fluidRow(
@@ -41,7 +41,13 @@ shinyUI(fluidPage(
                     "NOTE: As of 15 June, confirmed cases include confirmed cases at UK government regional testing centres.
                     Previous data have not been updated to account for this hence the significant increase in testing capacity
                     and positive cases on this day.",
-                    style = "padding-top:30px; padding-bottom:30px")
+                    style = "padding-top:15px; padding-bottom:5px")
+            ),
+            fluidRow(
+                div(
+                    "NOTE: Please note that suspected COVID-19 patients in hospital 
+                    and suspected Covid-19 patients in ICU will no longer be published from 22 July",
+                    style = "padding-top:5px; padding-bottom:15px")
             ),
             fluidRow(
                 div("Reference:"),

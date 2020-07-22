@@ -87,7 +87,7 @@ shinyServer(function(input, output) {
             width = "100%",
             multiple = TRUE,
             choices = setdiff(colnames(national_data[["Table 2 - Hospital Care"]]), "Date"),
-            selected = setdiff(colnames(national_data[["Table 2 - Hospital Care"]]), "Date")[c(3, 7)]
+            selected = setdiff(colnames(national_data[["Table 2 - Hospital Care"]]), "Date")[c(1, 5)]
         )
     )
     output[["hospital_radio_select"]] <- renderUI(
