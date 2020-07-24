@@ -50,7 +50,7 @@ tidy_trend_excel_sheets <- function(sheets) {
 
     # Testing 
     final_sheets[["Table 5 - Testing"]] <- sheets[[grep("Table 5 - Testing", names(sheets))]] %>% 
-        select_if(~sum(!is.na(.)) > 1) %>% 
+        select_if(~sum(!is.na(.)) > 2) %>% 
         set_names(
             c("Date", "Negative", "Positive", "Total", "Daily Positive", 
             paste("NHS labs", c("Daily", "Cumulative"), sep = " "), 
