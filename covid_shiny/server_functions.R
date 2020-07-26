@@ -19,7 +19,7 @@ tidy_trend_excel_sheets <- function(sheets) {
             
     final_sheets[["Table 2 - Hospital Care"]] <- sheets[[grep("Table 2 - Hospital Care", names(sheets))]] %>% 
         slice(4:nrow(.)) %>% 
-        select_if(~sum(!is.na(.)) > 2) %>%
+        select_if(~sum(!is.na(.)) > 10) %>%
         set_names(gsub("\\r|\\n", "", c("Date", paste(first_cat, c("Confirmed", "Suspected", "Total")), paste(second_cat, c("Confirmed", "Suspected", "Total"))))) %>% 
         mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>% 
         mutate_if(is.character, as.numeric) %>% 
@@ -50,7 +50,7 @@ tidy_trend_excel_sheets <- function(sheets) {
 
     # Testing 
     final_sheets[["Table 5 - Testing"]] <- sheets[[grep("Table 5 - Testing", names(sheets))]] %>% 
-        select_if(~sum(!is.na(.)) > 2) %>% 
+        select_if(~sum(!is.na(.)) > 10) %>% 
         set_names(
             c("Date", "Negative", "Positive", "Total", "Daily Positive", 
             paste("NHS labs", c("Daily", "Cumulative"), sep = " "), 
