@@ -12,25 +12,22 @@ tidy_trend_excel_sheets <- function(sheets) {
     )
 
     # Hospital care stats
-    first_cat <- sheets[[grep("Table 2 - Hospital Care", names(sheets))]][[2, 2]] %>% 
-        str_remove("\\(i\\) |\\(ii\\) ")
-    second_cat <- sheets[[grep("Table 2 - Hospital Care", names(sheets))]][[2, 5]] %>% 
-        str_remove("\\(i\\) |\\(ii\\) ")
-            
     final_sheets[["Table 2 - Hospital Care"]] <- sheets[[grep("Table 2 - Hospital Care", names(sheets))]] %>% 
         slice(4:nrow(.)) %>% 
-        select_if(~sum(!is.na(.)) > 10) %>%
-        set_names(gsub("\\r|\\n", "", c("Date", paste(first_cat, c("Confirmed", "Suspected", "Total")), paste(second_cat, c("Confirmed", "Suspected", "Total"))))) %>% 
+        select(1, 2, 5) %>% 
+        set_names(
+            "Date", 
+            "COVID-19 patients in ICU or combined ICU/HDU Confirmed",
+            "COVID-19 patients in hopsital (including those in ICU) Confirmed"
+        ) %>% 
         mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>% 
         mutate_if(is.character, as.numeric) %>% 
         find_daily_increase(df = ., column = "COVID-19 patients in ICU or combined ICU/HDU Confirmed") %>% 
         rename(`Daily Change in Intensive Care Confirmed` = "Daily Change") %>% 
-        find_daily_increase(df = ., column = "COVID-19 patients in hospital (including those in ICU) Confirmed") %>% 
+        find_daily_increase(df = ., column = "COVID-19 patients in hopsital (including those in ICU) Confirmed") %>% 
         rename(`Daily Change in Total Hospital Patients Confirmed` = "Daily Change") %>% 
         select(
             Date, `COVID-19 patients in ICU or combined ICU/HDU Confirmed`, 
-            `COVID-19 patients in ICU or combined ICU/HDU Suspected`, 
-            `COVID-19 patients in ICU or combined ICU/HDU Total`, 
             `Daily Change in Intensive Care Confirmed`,
             everything()      
         )
@@ -50,7 +47,6 @@ tidy_trend_excel_sheets <- function(sheets) {
 
     # Testing 
     final_sheets[["Table 5 - Testing"]] <- sheets[[grep("Table 5 - Testing", names(sheets))]] %>% 
-        select_if(~sum(!is.na(.)) > 10) %>% 
         set_names(
             c("Date", "Negative", "Positive", "Total", "Daily Positive", 
             paste("NHS labs", c("Daily", "Cumulative"), sep = " "), 
@@ -64,22 +60,25 @@ tidy_trend_excel_sheets <- function(sheets) {
         select(Date, Negative, `Daily Negative` = "Daily Change", Positive, `Daily Positive`, everything())
 
     # Workforce absences
-    final_sheets[["Table 6 - Workforce"]] <- tidy_table(
-        df = sheets[[grep("Table 6 - Workforce", names(sheets))]],
-        row = 2
-    )
+    cols <- na.omit(unlist(slice(sheets[[grep("Table 6 - Workforce", names(sheets))]], 1)))
+    final_sheets[["Table 6 - Workforce"]] <- sheets[[grep("Table 6 - Workforce", names(sheets))]] %>% 
+        slice(grep("Weekly", .data$"Table 6 - Number of NHS staff reporting as absent due to Covid-19") + 1:nrow(.)) %>% 
+        set_names(cols) %>% 
+        mutate(Date = lubridate::dmy(gsub("week to ", "", .data$Date))) %>% 
+        mutate_if(is.character, ~round(as.numeric(.), 2))
 
     # Care homes
     final_sheets[["Table 7a - Care Homes"]] <- tidy_table(
-        df = select(sheets[[grep("Table 7a - Care Homes", names(sheets))]], -c(5:8)),
+        df = select(sheets[[grep("Table 7a - Care Homes", names(sheets))]], 1, 7, 8),
         row = 3
     )
 
     # Care home workforce
     final_sheets[["Table 7b - Care Home Workforce"]] <- tidy_table(
-        df = sheets[[grep("Table 7b - Care Home Workforce", names(sheets))]],
-        row = 2
-    )
+            df = sheets[[grep("Table 7b - Care Home Workforce", names(sheets))]],
+            row = 2
+        ) %>% 
+        mutate_if(is.numeric, ~round(., 2))
 
     # Deaths
     final_sheets[["Table 8 - Deaths"]] <- tidy_table(
