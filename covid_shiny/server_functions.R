@@ -69,7 +69,7 @@ tidy_trend_excel_sheets <- function(sheets) {
 
     # Care homes
     final_sheets[["Table 7a - Care Homes"]] <- tidy_table(
-        df = select(sheets[[grep("Table 7a - Care Homes", names(sheets))]], 1, 7, 8),
+        df = select(sheets[[grep("Table 7a - Care Homes", names(sheets))]], 1:3),
         row = 3
     )
 
@@ -87,7 +87,7 @@ tidy_trend_excel_sheets <- function(sheets) {
         ) %>% 
         find_daily_increase(df = ., column = setdiff(colnames(.), "Date"))
 
-    names(final_sheets) <- names(sheets)
+    names(final_sheets) <- setdiff(names(sheets), "Table 7c - Care Homes (Archive)")
     final_sheets
 }
 
