@@ -39,15 +39,9 @@ shinyUI(fluidPage(
             fluidRow(
                 div(
                     "NOTE: As of 15 June, confirmed cases include confirmed cases at UK government regional testing centres.
-                    Previous data have not been updated to account for this hence the significant increase in testing capacity
+                    Previous data have note been updated to account for this hence the significant increase in testing capacity
                     and positive cases on this day.",
                     style = "padding-top:15px; padding-bottom:5px")
-            ),
-            fluidRow(
-                div(
-                    "NOTE: Please note that suspected COVID-19 patients in hospital 
-                    and suspected Covid-19 patients in ICU will no longer be published from 22 July",
-                    style = "padding-top:5px; padding-bottom:15px")
             ),
             fluidRow(
                 div("Reference:"),
@@ -80,9 +74,17 @@ shinyUI(fluidPage(
             tabPanel(
                 h5("Hospital Care"),
                 tabsetPanel(type = "tabs",
-                     tabPanel(
-                         h6("Table"),
-                         DT::dataTableOutput(outputId = "Hospital Care")
+                    tabPanel(
+                        h6("Table"),
+                        DT::dataTableOutput(outputId = "Hospital Care"),
+                        fluidRow(
+                            div(
+                                "NOTE: Please note that as of 22/07/20 suspected
+                                COVID-19 patients in hospital and ICU will no 
+                                longer be reported",
+                                style = "padding-top:5px; padding-bottom:15px"
+                            )
+                        )
                      ), 
                      tabPanel(
                         h6("Plot"),
@@ -99,7 +101,14 @@ shinyUI(fluidPage(
                 tabsetPanel(type = "tabs", 
                     tabPanel(
                         h6("Table"),
-                        DT::dataTableOutput(outputId = "NHS 24")
+                        DT::dataTableOutput(outputId = "NHS 24"),
+                        fluidRow(
+                            div(
+                                "NOTE: Please note that as of 22/07/20 this table is 
+                                no longer updated by the Scottish Government", 
+                                style = "padding-top:5px; padding-bottom:15px"
+                            )
+                        )
                     ),
                     tabPanel(
                         h6("Plot"),
@@ -116,7 +125,14 @@ shinyUI(fluidPage(
                 tabsetPanel(type = "tabs",
                     tabPanel(
                         h6("Table"),
-                        DT::dataTableOutput(outputId = "Ambulance Attendances")
+                        DT::dataTableOutput(outputId = "Ambulance Attendances"),
+                        fluidRow(
+                            div(
+                                "NOTE: Please note that as of 22/07/20 this table is 
+                                no longer updated by the Scottish Government", 
+                                style = "padding-top:5px; padding-bottom:15px"
+                            )
+                        )
                     ),
                     tabPanel(
                         h6("Plot"),
@@ -151,7 +167,15 @@ shinyUI(fluidPage(
                 tabsetPanel(type = "tabs",
                     tabPanel(
                         h6("Table"),
-                        DT::dataTableOutput(outputId = "Workforce Absences")
+                        DT::dataTableOutput(outputId = "Workforce Absences"),
+                        fluidRow(
+                            div(
+                                "NOTE: Please note that as of 22/07/20 this table is 
+                                updated on a weekly basis rather than a daily 
+                                basis by the Scottish Government", 
+                                style = "padding-top:5px; padding-bottom:15px"
+                            )
+                        )
                     ),
                     tabPanel(
                         h6("Plot"),
@@ -168,7 +192,18 @@ shinyUI(fluidPage(
                 tabsetPanel(type = "tabs",
                     tabPanel(
                         h6("Table"),
-                        DT::dataTableOutput(outputId = "Adult Care Homes")
+                        DT::dataTableOutput(outputId = "Adult Care Homes"),
+                        fluidRow(
+                            div(
+                                "NOTE: Please note that as of 23/07/20 this table 
+                                only includes the number of adult care homes with a
+                                current suspected case and the proportion of all 
+                                adult care homes with a current suspected case.
+                                In addition, the Scottish Government will only
+                                updated this on a weekly basis",
+                                style = "padding-top:5px; padding-bottom:15px"
+                            )
+                        )
                     ), 
                     tabPanel(
                         h6("Plot"), 

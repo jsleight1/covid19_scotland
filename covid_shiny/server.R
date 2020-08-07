@@ -87,7 +87,7 @@ shinyServer(function(input, output) {
             width = "100%",
             multiple = TRUE,
             choices = setdiff(colnames(national_data[["Table 2 - Hospital Care"]]), "Date"),
-            selected = setdiff(colnames(national_data[["Table 2 - Hospital Care"]]), "Date")[c(1, 5)]
+            selected = setdiff(colnames(national_data[["Table 2 - Hospital Care"]]), "Date")[c(1, 3)]
         )
     )
     output[["hospital_radio_select"]] <- renderUI(
@@ -289,7 +289,7 @@ shinyServer(function(input, output) {
 
     # Regional analysis
     output[["regional_cumulative_cases"]] <- render_custom_datatable(regional_data[["Table 1 - Cumulative cases"]], "regional_cumulative_cases") 
-    output[["regional_ICU"]] <- render_custom_datatable(regional_data[["Table 2 - ICU patients"]], "regional_ICU")
+    output[["regional_ICU"]] <- render_custom_datatable(regional_data[["Table 2a - ICU patients"]], "regional_ICU")
     output[["regional_hospital_confirmed"]] <- render_custom_datatable(regional_data[["Table 3a - Hospital Confirmed"]], "regional_hospital_confirmed")
     output[["regional_hospital_suspected"]] <- render_custom_datatable(regional_data[["Table 3b- Hospital Suspected"]], "regional_hospital_suspected")
     
@@ -324,20 +324,20 @@ shinyServer(function(input, output) {
             label = "Choose Y Axis Variables:", 
             width = "100%", 
             multiple = TRUE,
-            choices = setdiff(colnames(regional_data[["Table 2 - ICU patients"]]), "Date"),
-            selected = setdiff(colnames(regional_data[["Table 2 - ICU patients"]]), "Date")[16]
+            choices = setdiff(colnames(regional_data[["Table 2a - ICU patients"]]), "Date"),
+            selected = setdiff(colnames(regional_data[["Table 2a - ICU patients"]]), "Date")[16]
         )
     )
     output[["regional_icu_radio_select"]] <- renderUI(
         decide_checkbox_output(
-            data = regional_data[["Table 2 - ICU patients"]],
+            data = regional_data[["Table 2a - ICU patients"]],
             input = req(input[["regional_icu"]]),
             id = "regional_icu_radio_select_in"
         )
     )
     output[["regional_icu_plot"]] <- renderPlotly(
         decide_plotly_output(
-            data = regional_data[["Table 2 - ICU patients"]],
+            data = regional_data[["Table 2a - ICU patients"]],
             input = req(input[["regional_icu"]]),
             type = req(input[["regional_icu_radio_select_in"]])
         )
