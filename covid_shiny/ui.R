@@ -328,10 +328,10 @@ shinyUI(fluidPage(
                             inputId = "mapInput",
                             label = "Select Input",
                             choices = c(
-                                "Regional Cases" = "cases",
-                                "Regional ICU Patients" = "icu",
-                                "Regional Hospital Confirmed" = "regional_confirmed",
-                                "Regional Hospital Suspected" = "regional_suspected"
+                                "Regional Cases" = "Table 1 - Cumulative cases",
+                                "Regional ICU Patients" = "Table 2a - ICU patients",
+                                "Regional Hospital Confirmed" = "Table 3a - Hospital Confirmed",
+                                "Regional Hospital Suspected" = "Table 3b- Hospital Suspected"
                             ),
                             inline = TRUE
                         )

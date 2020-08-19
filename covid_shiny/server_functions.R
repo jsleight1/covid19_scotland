@@ -56,8 +56,10 @@ tidy_trend_excel_sheets <- function(sheets) {
         slice(4:nrow(.)) %>% 
         mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>% 
         mutate_if(is.character, as.numeric) %>% 
+        mutate(`NHS % Positive` = round(`Daily Positive` / `NHS labs Daily` * 100, 2)) %>% 
         find_daily_increase(df = ., column = "Negative") %>% 
-        select(Date, Negative, `Daily Negative` = "Daily Change", Positive, `Daily Positive`, everything())
+        select(Date, Negative, `Daily Negative` = "Daily Change", Positive, 
+            `Daily Positive`, `NHS % Positive`, everything())
 
     # Workforce absences
     cols <- na.omit(unlist(slice(sheets[[grep("Table 6 - Workforce", names(sheets))]], 1)))
@@ -135,7 +137,7 @@ stacked_barplot <- function(df, x, y) {
     ggplotly(p)
 }
 
-render_custom_datatable <- function(df, title) {
+render_custom_datatable <- function(df, title, ...) {
     DT::renderDataTable(
         df,
         extensions = c("Buttons", "Scroller", "FixedColumns"), 
@@ -147,7 +149,8 @@ render_custom_datatable <- function(df, title) {
             scroller = TRUE,
             buttons = list(list(extend = "excel", filename = title)),
             fixedColumns = list(leftColumn = 1)
-        )
+        ), 
+        ...
     )
 }
 
@@ -166,7 +169,7 @@ decide_plotly_output <- function(data, input, type) {
     } 
 }
 
-decide_checkbox_output <- function(data, input, id) {
+decide_checkbox_output <- function(data, input, id, ...) {
     data <- select(data, all_of(input))
     if (ncol(data) == 1) {
         radioButtons(
@@ -174,7 +177,8 @@ decide_checkbox_output <- function(data, input, id) {
             label = "Select Plot Type",
             choices = c("Bar Plot", "Line Plot"),
             inline = TRUE,
-            width = "100%"            
+            width = "100%",
+            ...          
         )  
     } else {
         radioButtons(
@@ -182,7 +186,8 @@ decide_checkbox_output <- function(data, input, id) {
             label = "Select Plot Type",
             choices = c("Line Plot", "Stacked Barplot"),
             inline = TRUE,
-            width = "100%"            
+            width = "100%",
+            ...            
         )  
     }
 }

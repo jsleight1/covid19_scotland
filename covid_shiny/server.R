@@ -395,7 +395,7 @@ shinyServer(function(input, output) {
 
     output[["map"]] <- renderLeaflet({
         coords <- tribble(
-            ~Region,                            ~Latitude,         ~Longitude,
+            ~name,                            ~latitude,         ~longitude,
             "NHS Ayrshire & Arran",             55.4586,             -4.6292,
             "NHS Borders",                      55.5486,             -2.7861,
             "NHS Dumfries & Galloway",          55.0709,             -3.6051,
@@ -412,30 +412,16 @@ shinyServer(function(input, output) {
             "NHS Western Isles",                58.2094,             -6.3849,
             "Golden Jubilee National Hospital", 55.9060,             -4.4262
         )
-        type <- switch(input$mapInput,
-            "cases" = "Cumulative cases",   
-            "icu" = "ICU patients",   
-            "regional_confirmed" = "Hospital Confirmed",
-            "regional_suspected" =  "Hospital Suspected"  
-        )
-        df <- regional_data[[grep(type, names(regional_data))]] %>% 
-            slice(nrow(.)) %>% 
-            select(-Date) %>% 
-            t() %>% 
-            as.data.frame() %>% 
-            rownames_to_column("Region") %>% 
-            rename(Cases_to_date = "V1") %>% 
-            inner_join(., coords, by = "Region") %>% 
-            mutate(Circle_size = scales::rescale(Cases_to_date, to = c(2000, 18000)))
+        df <- tail(regional_data[[input[["mapInput"]]]], 1) %>% 
+            pivot_longer(-Date) %>%
+            inner_join(., coords, by = "name") %>% 
+            mutate(Circle_size = scales::rescale(value, to = c(2000, 18000)))
         leaflet(df) %>% 
             addTiles(options = providerTileOptions(minZoom = 5, maxZoom = 9)) %>% 
             setView(lat = 56.4907, lng = -4.2026, zoom = 6) %>% 
-            addCircles(
-                lat = ~Latitude, 
-                lng = ~Longitude, 
-                radius = ~Circle_size,
-                popup = paste(df$Region, "<br>",
-                           type, df$Cases_to_date, "<br>")
+            addCircles(lat = ~latitude, lng = ~longitude, radius = ~Circle_size,
+                popup = paste(df[["name"]], "<br>",
+                           input[["mapInput"]], df[["value"]], "<br>")
             ) 
     })
 })
