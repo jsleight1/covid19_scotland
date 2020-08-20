@@ -22,7 +22,7 @@ panelUI <- function(id, text) {
 }
 
 # Server
-panelServer <- function(id, select = 1, table) {
+panelServer <- function(id, table) {
     moduleServer(
         id, 
         function(input, output, session) {
@@ -35,7 +35,7 @@ panelServer <- function(id, select = 1, table) {
                     width = "100%", 
                     multiple = TRUE,
                     choices = setdiff(colnames(table), "Date"),
-                    selected = setdiff(colnames(table), "Date")[select]
+                    selected = setdiff(colnames(table), "Date")[1]
                 )
             )
             output[[paste0(id, "_radio_select")]] <- renderUI(

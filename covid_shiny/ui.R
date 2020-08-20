@@ -42,9 +42,10 @@ shinyUI(fluidPage(
             ),
             fluidRow(
                 div(
-                    "NOTE: As of 15 June, confirmed cases include confirmed cases at UK government regional testing centres.
-                    Previous data have note been updated to account for this hence the significant increase in testing capacity
-                    and positive cases on this day.",
+                    "NOTE: As of 15 June, confirmed cases include confirmed cases at 
+                    UK government regional testing centres. Previous data have note 
+                    been updated to account for this hence the significant increase 
+                    in testing capacity and positive cases on this day.",
                     style = "padding-top:15px; padding-bottom:5px")
             ),
             fluidRow(
@@ -97,7 +98,7 @@ shinyUI(fluidPage(
                 panelUI(id = "Regional Confirmed",  text = ""),
                 panelUI(id = "Regional Suspected",  text = ""),
                 tabPanel(
-                h4("Map"),
+                h5("Map"),
                     leafletOutput("map", height = 700),
                     fluidRow(
                         radioButtons(
