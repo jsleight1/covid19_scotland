@@ -23,7 +23,7 @@ shinyServer(function(input, output) {
             `Number of COVID-19 confirmed deaths registered to date`)))
     })
     output[["introduction_daily_deaths"]] <- renderText({
-        last(pull(national_data[["Table 8 - Deaths"]], `Daily Change`))
+        last(pull(national_data[["Table 8 - Deaths"]], `Daily Deaths`))
     })
 
     # National analysis
@@ -31,11 +31,11 @@ shinyServer(function(input, output) {
     panelServer(id = "Hospital Care", table = national_data[["Table 2 - Hospital Care"]])
     panelServer(id = "Ambulance Attendances", table = national_data[["Table 3 - Ambulance"]])
     panelServer(id = "NHS Calls", table = national_data[["Table 1 - NHS 24"]])
-    panelServer(id = "Delayed Discharges", table = national_data[["Table 4 - Delated Discharges"]])
+    panelServer(id = "Delayed Discharges", table = national_data[["Table 4 - Delayed Discharges"]])
     panelServer(id = "Workforce", table = national_data[["Table 6 - Workforce"]])
     panelServer(id = "Care Homes", table = national_data[["Table 7a - Care Homes"]], x = "Week")
     panelServer(id = "Care Home Workforce", table = national_data[["Table 7b - Care Home Workforce"]])
-    panelServer(id = "Deaths",table = national_data[["Table 8 - Deaths"]])
+    panelServer(id = "Deaths", table = national_data[["Table 8 - Deaths"]])
 
     # Regional analysis
     panelServer(id = "Regional Cases", table = regional_data[["Table 1 - Cumulative cases"]])
@@ -52,8 +52,7 @@ shinyServer(function(input, output) {
             addTiles(options = providerTileOptions(minZoom = 5, maxZoom = 9)) %>% 
             setView(lat = 56.4907, lng = -4.2026, zoom = 6) %>% 
             addCircles(lat = ~latitude, lng = ~longitude, radius = ~Circle_size,
-                popup = paste(df[["name"]], "<br>",
-                           input[["mapInput"]], df[["value"]], "<br>")
+                popup = paste(df[["name"]], "<br>", input[["mapInput"]], df[["value"]], "<br>")
             ) 
     })
 })

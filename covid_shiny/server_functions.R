@@ -20,18 +20,15 @@ tidy_trend_excel_sheets <- function(sheets) {
             "COVID-19 patients in ICU or combined ICU/HDU Confirmed",
             "COVID-19 patients in hopsital (including those in ICU) Confirmed"
         ) %>% 
-        mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>% 
-        mutate_if(is.character, as.numeric) %>% 
-        find_daily_increase(df = ., column = "COVID-19 patients in ICU or combined ICU/HDU Confirmed") %>% 
-        rename(`Daily Change in Intensive Care Confirmed` = "Daily Change") %>% 
-        find_daily_increase(df = ., column = "COVID-19 patients in hopsital (including those in ICU) Confirmed") %>% 
-        rename(`Daily Change in Total Hospital Patients Confirmed` = "Daily Change") %>% 
-        select(
-            Date, `COVID-19 patients in ICU or combined ICU/HDU Confirmed`, 
-            `Daily Change in Intensive Care Confirmed`,
-            everything()      
+        mutate_all(~round(as.numeric(.))) %>% 
+        mutate(
+            Date = excel_numeric_to_date(Date),
+            `Daily Change in Intensive Care Confirmed` = `COVID-19 patients in ICU or combined ICU/HDU Confirmed` - 
+                lag(`COVID-19 patients in ICU or combined ICU/HDU Confirmed`),
+            `Daily Change in Total Hospital Patients Confirmed` = `COVID-19 patients in hopsital (including those in ICU) Confirmed` - 
+                lag(`COVID-19 patients in hopsital (including those in ICU) Confirmed`)
         )
-    
+
     # Ambulance stats
     final_sheets[["Table 3 - Ambulance"]] <- tidy_table(
         df = select(sheets[[grep("Table 3 - Ambulance", names(sheets))]], -1),
@@ -39,11 +36,10 @@ tidy_trend_excel_sheets <- function(sheets) {
     )
 
     # Delayed discharges 
-    final_sheets[["Table 4 - Delated Discharges"]] <- tidy_table(
+    final_sheets[["Table 4 - Delayed Discharges"]] <- tidy_table(
             df = select(sheets[[grep("Table 4 - Delayed Discharges", names(sheets))]], -1),
             row = 3
-        ) %>% 
-        find_daily_increase(df = ., column = setdiff(colnames(.), "Date"))
+        )
 
     # Testing 
     final_sheets[["Table 5 - Testing"]] <- sheets[[grep("Table 5 - Testing", names(sheets))]] %>% 
@@ -54,11 +50,13 @@ tidy_trend_excel_sheets <- function(sheets) {
             c("Total daily tests", "People tested in last 7 days", "Positive cases in last 7 days", "Tests in last 7 days")
         )) %>% 
         slice(4:nrow(.)) %>% 
-        mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>% 
-        mutate_if(is.character, as.numeric) %>% 
-        mutate(`NHS % Positive` = round(`Daily Positive` / `NHS labs Daily` * 100, 2)) %>% 
-        find_daily_increase(df = ., column = "Negative") %>% 
-        select(Date, Negative, `Daily Negative` = "Daily Change", Positive, 
+        mutate_all(~round(as.numeric(.))) %>% 
+        mutate(
+            Date = excel_numeric_to_date(Date), 
+            `NHS % Positive` = round(`Daily Positive` / `NHS labs Daily` * 100, 2),
+            `Daily Negative` = Negative - lag(Negative)
+        ) %>% 
+        select(Date, Negative, `Daily Negative`, Positive, 
             `Daily Positive`, `NHS % Positive`, everything())
 
     # Workforce absences
@@ -82,15 +80,16 @@ tidy_trend_excel_sheets <- function(sheets) {
     final_sheets[["Table 7b - Care Home Workforce"]] <- tidy_table(
             df = sheets[[grep("Table 7b - Care Home Workforce", names(sheets))]],
             row = 2
-        ) %>% 
-        mutate_if(is.numeric, ~round(., 2))
+        )
 
     # Deaths
     final_sheets[["Table 8 - Deaths"]] <- tidy_table(
             df = sheets[[grep("Table 8 - Deaths", names(sheets))]],
             row = 3
         ) %>% 
-        find_daily_increase(df = ., column = setdiff(colnames(.), "Date"))
+        mutate(`Daily Deaths` = `Number of COVID-19 confirmed deaths registered to date` - 
+            lag(`Number of COVID-19 confirmed deaths registered to date`)
+        )
 
     final_sheets
 }
@@ -102,13 +101,8 @@ tidy_table <- function(df, row) {
         select(1:length(col_names)) %>% 
         set_names(col_names) %>% 
         mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>% 
-        mutate_if(is.character, as.numeric) %>% 
+        mutate_if(is.character, ~round(as.numeric(.), 2)) %>% 
         filter(rowSums(is.na(.)) != ncol(.))
-}
-
-find_daily_increase <- function(df, column) {
-    df[["Daily Change"]] <- df[[gsub("\`", "", column)]] - lag(df[[gsub("\`", "", column)]])
-    df
 }
 
 daily_barplot <- function(df, x, y) {
@@ -170,6 +164,7 @@ render_custom_datatable <- function(df, title, ...) {
 }
 
 decide_plotly_output <- function(data, input, type, x, first_col) {
+    # browser()
     data <- select(data, all_of(c(first_col, input)))
     if (ncol(data) == 2) {
         switch(type,
