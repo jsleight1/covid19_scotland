@@ -1,26 +1,9 @@
 source("dependencies.R")
 source("server_functions.R")
+source("data_download.R")
+source("table_plot_module.R")
 
 shinyServer(function(input, output) {
-    # Read in national data
-    url_trend <- "https://www.gov.scot/binaries/content/documents/govscot/publications/statistics/2020/04/coronavirus-covid-19-trends-in-daily-data/documents/trends-in-number-of-people-in-hospital-with-confirmed-or-suspected-covid-19/trends-in-number-of-people-in-hospital-with-confirmed-or-suspected-covid-19/govscot%3Adocument/Trends%2Bin%2Bdaily%2BCOVID-19%2Bdata%2B28%2BMay%2B2020.xlsx"
-    GET(url_trend, write_disk(tf_national <- tempfile(fileext = ".xlsx"), overwrite = TRUE))
-    national_data <- readxl::excel_sheets(tf_national) %>% 
-        set_names() %>% 
-        map(readxl::read_excel, path = tf_national) %>% 
-        tidy_trend_excel_sheets()
-
-    # Read in regional data
-    url_regional = "https://www.gov.scot/binaries/content/documents/govscot/publications/statistics/2020/04/coronavirus-covid-19-trends-in-daily-data/documents/covid-19-data-by-nhs-board/covid-19-data-by-nhs-board/govscot%3Adocument/COVID-19%2Bdata%2Bby%2BNHS%2BBoard%2B28%2BMay%2B2020.xlsx"
-    GET(url_regional, write_disk(tf_regional <- tempfile(fileext = ".xlsx"), overwrite = TRUE))
-    sheets <- readxl::excel_sheets(tf_regional) %>% 
-        set_names() %>% 
-        map(readxl::read_excel, path = tf_regional)
-    regional_data <- sheets[grep("Table", names(sheets))] %>% 
-        map(., function(i) {
-            i <- select_if(i, ~sum(!is.na(.)) > 0)
-            tidy_table(df = i, row = 3)
-        })
     
     # Introduction
     output[["introduction_plot"]] <- renderPlotly({
@@ -36,385 +19,34 @@ shinyServer(function(input, output) {
         last(pull(national_data[["Table 5 - Testing"]], `Daily Positive`))
     })
     output[["introduction_deaths"]] <- renderText({
-        last(pull(select(national_data[["Table 8 - Deaths"]], `Number of COVID-19 confirmed deaths registered to date`)))
+        last(pull(select(national_data[["Table 8 - Deaths"]], 
+            `Number of COVID-19 confirmed deaths registered to date`)))
     })
     output[["introduction_daily_deaths"]] <- renderText({
         last(pull(national_data[["Table 8 - Deaths"]], `Daily Change`))
     })
 
     # National analysis
-    output[["Testing"]] <- render_custom_datatable(national_data[["Table 5 - Testing"]], "COVID19_Testing")
-    output[["Hospital Care"]] <- render_custom_datatable(national_data[["Table 2 - Hospital Care"]], "Hospital_Care")
-    output[["NHS 24"]] <- render_custom_datatable(national_data[["Table 1 - NHS 24"]], "NHS_24") 
-    output[["Ambulance Attendances"]] <- render_custom_datatable(national_data[["Table 3 - Ambulance"]], "Ambulance_Attendances")
-    output[["Delayed Discharges"]] <- render_custom_datatable(national_data[["Table 4 - Delayed Discharges"]], "Delayed_Discharges")
-    output[["Workforce Absences"]] <- render_custom_datatable(national_data[["Table 6 - Workforce"]], "Workforce_Absences")
-    output[["Adult Care Homes"]] <- render_custom_datatable(national_data[["Table 7a - Care Homes"]], "Adult_Care_Homes")
-    output[["Care Home Workforce"]] <- render_custom_datatable(national_data[["Table 7b - Care Home Workforce"]], "Care_Home_Workforce")
-    output[["Deaths"]] <- render_custom_datatable(national_data[["Table 8 - Deaths"]], "COVID19_Deaths")
-
-    # Testing plots
-    output[["tests_select"]] <- renderUI(
-        selectizeInput(
-            inputId = "tests", 
-            label = "Choose Y Axis Variables", 
-            width = "100%", 
-            multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 5 - Testing"]]), "Date"),
-            selected = setdiff(colnames(national_data[["Table 5 - Testing"]]), "Date")[4]
-        )
-    )
-    output[["tests_radio_select"]] <- renderUI(
-        decide_checkbox_output(
-            data = national_data[["Table 5 - Testing"]],
-            input = req(input[["tests"]]),
-            id = "tests_radio_select_in"
-        ) 
-    )
-    output[["tests_plot"]] <- renderPlotly(
-        decide_plotly_output(
-            data = national_data[["Table 5 - Testing"]],
-            input = req(input[["tests"]]),
-            type = req(input[["tests_radio_select_in"]])
-        )
-    )
-
-    # Hospital Care plots
-    output[["hospital_select"]] <- renderUI(
-        selectizeInput(
-            inputId = "hospital",
-            label = "Choose Y Axis Variables",
-            width = "100%",
-            multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 2 - Hospital Care"]]), "Date"),
-            selected = setdiff(colnames(national_data[["Table 2 - Hospital Care"]]), "Date")[c(1, 3)]
-        )
-    )
-    output[["hospital_radio_select"]] <- renderUI(
-        decide_checkbox_output(
-            data = national_data[["Table 2 - Hospital Care"]],
-            input = req(input[["hospital"]]),
-            id = "hospital_radio_select_in"
-        )
-    )
-    output[["hospital_plot"]] <- renderPlotly(
-        decide_plotly_output(
-            data = national_data[["Table 2 - Hospital Care"]],
-            input = req(input[["hospital"]]),
-            type = req(input[["hospital_radio_select_in"]])
-        )
-    )
-
-    # NHS 24 plots
-    output[["nhs_calls_select"]] <- renderUI(
-        selectizeInput(
-            inputId = "nhs_calls", 
-            label = "Choose Y Axis Variables", 
-            width = "100%", 
-            multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date"),
-            selected = setdiff(colnames(national_data[["Table 1 - NHS 24"]]), "Date")[1]
-        )
-    )
-    output[["nhs_calls_radio_select"]] <- renderUI(
-        decide_checkbox_output(
-            data = national_data[["Table 1 - NHS 24"]],
-            input = req(input[["nhs_calls"]]),
-            id = "nhs_radio_select_in"
-        )    
-    )
-    output[["nhs_calls_plot"]] <- renderPlotly(
-        decide_plotly_output(
-            data = national_data[["Table 1 - NHS 24"]],
-            input = req(input[["nhs_calls"]]),
-            type = req(input[["nhs_radio_select_in"]])
-        )
-    )
-
-    # Ambulance plots
-    output[["ambulance_select"]] <- renderUI(
-        selectizeInput(
-            inputId = "ambulance", 
-            label = "Choose Y Axis Variables", 
-            width = "100%", 
-            multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 3 - Ambulance"]]), "Date"),
-            selected = setdiff(colnames(national_data[["Table 3 - Ambulance"]]), "Date")[1]
-        )
-    )
-    output[["ambulance_radio_select"]] <- renderUI(
-        decide_checkbox_output(
-            data = national_data[["Table 3 - Ambulance"]],
-            input = req(input[["ambulance"]]),
-            id = "ambulance_radio_select_in"
-        )
-    )
-    output[["ambulance_plot"]] <- renderPlotly(
-        decide_plotly_output(
-            data = national_data[["Table 3 - Ambulance"]],
-            input = req(input[["ambulance"]]),
-            type = req(input[["ambulance_radio_select_in"]])
-        )
-    )
-
-    # Delayed Discharge plots
-    output[["discharge_select"]] <- renderUI(
-        selectizeInput(
-            inputId = "discharge", 
-            label = "Choose Y Axis Variables", 
-            width = "100%", 
-            multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 4 - Delayed Discharges"]]), "Date"),
-            selected = setdiff(colnames(national_data[["Table 4 - Delayed Discharges"]]), "Date")[1]
-        )
-    )
-    output[["discharge_radio_select"]] <- renderUI(
-        decide_checkbox_output(
-            data = national_data[["Table 4 - Delayed Discharges"]],
-            input = req(input[["discharge"]]),
-            id = "discharge_radio_select_in"
-        )
-    )
-    output[["discharge_plot"]] <- renderPlotly(
-        decide_plotly_output(
-            data = national_data[["Table 4 - Delayed Discharges"]],
-            input = req(input[["discharge"]]),
-            type = req(input[["discharge_radio_select_in"]])
-        )
-    )
-
-    # Workforce Absences plots
-    output[["workforce_absence_select"]] <- renderUI(
-        selectizeInput(
-            inputId = "workforce_absence", 
-            label = "Choose Y Axis Variables", 
-            width = "100%", 
-            multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date"),
-            selected = setdiff(colnames(national_data[["Table 6 - Workforce"]]), "Date")[1]
-        )
-    )
-    output[["workforce_absence_radio_select"]] <- renderUI(
-        decide_checkbox_output(
-            data = national_data[["Table 6 - Workforce"]],
-            input = req(input[["workforce_absence"]]),
-            id = "workforce_absence_radio_select_in"
-        )
-    )
-    output[["workforce_absence_plot"]] <- renderPlotly(
-        decide_plotly_output(
-            data = national_data[["Table 6 - Workforce"]],
-            input = req(input[["workforce_absence"]]),
-            type = req(input[["workforce_absence_radio_select_in"]])
-        )
-    )
-
-    # Adult care homes plots
-    output[["carehome_cases_select"]] <- renderUI(
-        selectizeInput(
-            inputId = "care_cases", 
-            label = "Choose Y Axis Variables", 
-            width = "100%", 
-            multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date"),
-            selected = setdiff(colnames(national_data[["Table 7a - Care Homes"]]), "Date")[1]
-        )
-    )
-    output[["casehome_cases_radio_select"]] <- renderUI(
-        decide_checkbox_output(
-            data = national_data[["Table 7a - Care Homes"]],
-            input = req(input[["care_cases"]]),
-            id = "carehome_cases_radio_select_in"
-        )
-    )
-    output[["carehome_cases_plot"]] <- renderPlotly(
-        decide_plotly_output(
-            data = national_data[["Table 7a - Care Homes"]],
-            input = req(input[["care_cases"]]),
-            type = req(input[["carehome_cases_radio_select_in"]])
-        )
-    )
-
-    # Carehome workforce plots
-    output[["care_workforce_select"]] <- renderUI(
-        selectizeInput(
-            inputId = "care_work", 
-            label = "Choose Y Axis Variables:", 
-            width = "100%", 
-            multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date"),
-            selected = setdiff(colnames(national_data[["Table 7b - Care Home Workforce"]]), "Date")[1]
-        )
-    )
-    output[["care_workforce_radio_select"]] <- renderUI(
-        decide_checkbox_output(
-            data = national_data[["Table 7b - Care Home Workforce"]],
-            input = req(input[["care_work"]]),
-            id = "care_workforce_radio_select_in"
-        )
-    )
-    output[["care_workforce_plot"]] <- renderPlotly(
-        decide_plotly_output(
-            data = national_data[["Table 7b - Care Home Workforce"]],
-            input = req(input[["care_work"]]),
-            type = req(input[["care_workforce_radio_select_in"]])
-        )
-    )
-
-    # Deaths plots
-    output[["deaths_select"]] <- renderUI(
-        selectizeInput(
-            inputId = "deaths", 
-            label = "Choose Y Axis Variables:", 
-            width = "100%", 
-            multiple = TRUE,
-            choices = setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date"),
-            selected = setdiff(colnames(national_data[["Table 8 - Deaths"]]), "Date")[1]
-        )
-    )
-    output[["deaths_radio_select"]] <- renderUI(
-        decide_checkbox_output(
-            data = national_data[["Table 8 - Deaths"]],
-            input = req(input[["deaths"]]),
-            id = "deaths_radio_select_in"
-        )
-    )
-    output[["deaths_plot"]] <- renderPlotly(
-        decide_plotly_output(
-            data = national_data[["Table 8 - Deaths"]],
-            input = req(input[["deaths"]]),
-            type = req(input[["deaths_radio_select_in"]])
-        )
-    )
+    panelServer(id = "Testing", table = national_data[["Table 5 - Testing"]])
+    panelServer(id = "Hospital Care", table = national_data[["Table 2 - Hospital Care"]])
+    panelServer(id = "Ambulance Attendances", table = national_data[["Table 3 - Ambulance"]])
+    panelServer(id = "NHS Calls", table = national_data[["Table 1 - NHS 24"]])
+    panelServer(id = "Delayed Discharges", table = national_data[["Table 4 - Delated Discharges"]])
+    panelServer(id = "Workforce", table = national_data[["Table 6 - Workforce"]])
+    panelServer(id = "Care Homes", table = national_data[["Table 7a - Care Homes"]], x = "Week")
+    panelServer(id = "Care Home Workforce", table = national_data[["Table 7b - Care Home Workforce"]])
+    panelServer(id = "Deaths",table = national_data[["Table 8 - Deaths"]])
 
     # Regional analysis
-    output[["regional_cumulative_cases"]] <- render_custom_datatable(regional_data[["Table 1 - Cumulative cases"]], "regional_cumulative_cases") 
-    output[["regional_ICU"]] <- render_custom_datatable(regional_data[["Table 2a - ICU patients"]], "regional_ICU")
-    output[["regional_hospital_confirmed"]] <- render_custom_datatable(regional_data[["Table 3a - Hospital Confirmed"]], "regional_hospital_confirmed")
-    output[["regional_hospital_suspected"]] <- render_custom_datatable(regional_data[["Table 3b- Hospital Suspected"]], "regional_hospital_suspected")
-    
-    output[["regional_cumulative_select"]] <- renderUI(
-        selectizeInput(
-            inputId = "regional_cumulative", 
-            label = "Choose Y Axis Variables:", 
-            width = "100%", 
-            multiple = TRUE,
-            choices = setdiff(colnames(regional_data[["Table 1 - Cumulative cases"]]), "Date"),
-            selected = setdiff(colnames(regional_data[["Table 1 - Cumulative cases"]]), "Date")[15]
-        )
-    )
-    output[["regional_cumulative_radio_select"]] <- renderUI(
-        decide_checkbox_output(
-            data = regional_data[["Table 1 - Cumulative cases"]],
-            input = req(input[["regional_cumulative"]]),
-            id = "regional_cumulative_radio_select_in"
-        )
-    )
-    output[["regional_cumulative_plot"]] <- renderPlotly(
-        decide_plotly_output(
-            data = regional_data[["Table 1 - Cumulative cases"]],
-            input = req(input[["regional_cumulative"]]),
-            type = req(input[["regional_cumulative_radio_select_in"]])
-        )
-    )
-
-    output[["regional_icu_select"]] <- renderUI(
-        selectizeInput(
-            inputId = "regional_icu", 
-            label = "Choose Y Axis Variables:", 
-            width = "100%", 
-            multiple = TRUE,
-            choices = setdiff(colnames(regional_data[["Table 2a - ICU patients"]]), "Date"),
-            selected = setdiff(colnames(regional_data[["Table 2a - ICU patients"]]), "Date")[16]
-        )
-    )
-    output[["regional_icu_radio_select"]] <- renderUI(
-        decide_checkbox_output(
-            data = regional_data[["Table 2a - ICU patients"]],
-            input = req(input[["regional_icu"]]),
-            id = "regional_icu_radio_select_in"
-        )
-    )
-    output[["regional_icu_plot"]] <- renderPlotly(
-        decide_plotly_output(
-            data = regional_data[["Table 2a - ICU patients"]],
-            input = req(input[["regional_icu"]]),
-            type = req(input[["regional_icu_radio_select_in"]])
-        )
-    )
-
-    output[["regional_confirmed_select"]] <- renderUI(
-        selectizeInput(
-            inputId = "regional_confirmed", 
-            label = "Choose Y Axis Variable:", 
-            width = "100%", 
-            multiple = TRUE,
-            choices = setdiff(colnames(regional_data[["Table 3a - Hospital Confirmed"]]), "Date"),
-            selected = setdiff(colnames(regional_data[["Table 3a - Hospital Confirmed"]]), "Date")[16]
-        )
-    )
-    output[["regional_confirmed_radio_select"]] <- renderUI(
-        decide_checkbox_output(
-            data = regional_data[["Table 3a - Hospital Confirmed"]],
-            input = req(input[["regional_confirmed"]]),
-            id = "regional_confirmed_radio_select_in"
-        )
-    )
-    output[["regional_confirmed_plot"]] <- renderPlotly(
-        decide_plotly_output(
-            data = regional_data[["Table 3a - Hospital Confirmed"]],
-            input = req(input[["regional_confirmed"]]),
-            type = req(input[["regional_confirmed_radio_select_in"]])
-        )
-    )
-
-    output[["regional_suspected_select"]] <- renderUI(
-        selectizeInput(
-            inputId = "regional_suspected", 
-            label = "Choose Y Axis Variable:", 
-            width = "100%", 
-            multiple = TRUE,
-            choices = setdiff(colnames(regional_data[["Table 3b- Hospital Suspected"]]), "Date"),
-            selected = setdiff(colnames(regional_data[["Table 3b- Hospital Suspected"]]), "Date")[16]
-        )
-    )
-    output[["regional_suspected_radio_select"]] <- renderUI(
-        decide_checkbox_output(
-            data = regional_data[["Table 3b- Hospital Suspected"]],
-            input = req(input[["regional_suspected"]]),
-            id = "regional_suspected_radio_select_in"
-        )
-    )
-    output[["regional_suspected_plot"]] <- renderPlotly(
-        decide_plotly_output(
-            data = regional_data[["Table 3b- Hospital Suspected"]],
-            input = req(input[["regional_suspected"]]),
-            type = req(input[["regional_suspected_radio_select_in"]])
-        )
-    )
+    panelServer(id = "Regional Cases", table = regional_data[["Table 1 - Cumulative cases"]])
+    panelServer(id = "Regional ICU", table = regional_data[["Table 2a - ICU patients"]])
+    panelServer(id = "Regional Confirmed", table = regional_data[["Table 3a - Hospital Confirmed"]])
+    panelServer(id = "Regional Suspected", table = regional_data[["Table 3b- Hospital Suspected"]])
 
     output[["map"]] <- renderLeaflet({
-        coords <- tribble(
-            ~name,                            ~latitude,         ~longitude,
-            "NHS Ayrshire & Arran",             55.4586,             -4.6292,
-            "NHS Borders",                      55.5486,             -2.7861,
-            "NHS Dumfries & Galloway",          55.0709,             -3.6051,
-            "NHS Fife",                         56.2082,             -3.1495,
-            "NHS Forth Valley",                 56.0253,             -3.8490,
-            "NHS Grampian",                     57.1497,             -2.0943,            
-            "NHS Greater Glasgow & Clyde",      55.8642,             -4.2518,
-            "NHS Highland",                     57.4778,             -4.2247, 
-            "NHS Lanarkshire",                  55.6736,             -3.7820,
-            "NHS Lothian",                      55.9533,             -3.1883,
-            "NHS Orkney",                       58.9809,             -2.9605,             
-            "NHS Shetland",                     60.5297,             -1.2659,
-            "NHS Tayside",                      56.4620,             -2.9707,
-            "NHS Western Isles",                58.2094,             -6.3849,
-            "Golden Jubilee National Hospital", 55.9060,             -4.4262
-        )
         df <- tail(regional_data[[input[["mapInput"]]]], 1) %>% 
             pivot_longer(-Date) %>%
-            inner_join(., coords, by = "name") %>% 
+            inner_join(., readRDS("regions_scotland.RDS"), by = "name") %>% 
             mutate(Circle_size = scales::rescale(value, to = c(2000, 18000)))
         leaflet(df) %>% 
             addTiles(options = providerTileOptions(minZoom = 5, maxZoom = 9)) %>% 

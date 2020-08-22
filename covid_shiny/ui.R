@@ -1,11 +1,16 @@
 source("dependencies.R")
+source("table_plot_module.R")
+
 shinyUI(fluidPage(
     tags$head(includeHTML(("google-analytics.html"))),
     navbarPage("COVID-19 Analysis",
         tabPanel("Introduction",
             shinyWidgets::setBackgroundColor(color = "66B2FF"),
             fluidRow(
-                column(width = 12, div("National Cumulative Cases", style = "font-size:20px;"), plotlyOutput(outputId = "introduction_plot", height = "500px"))
+                column(
+                    width = 12, div("National Cumulative Cases", style = "font-size:20px;"), 
+                    plotlyOutput(outputId = "introduction_plot", height = "500px")
+                )
             ),
             fluidRow(
                 column(width = 1, div("Date: ", style = "font-size:20px;")),
@@ -34,13 +39,13 @@ shinyUI(fluidPage(
                     div(textOutput(outputId = "introduction_daily_deaths"), style = "font-size:20px; color:red")
                 ),
                 style = "padding-top:15px; padding-bottom:15px"
-
             ),
             fluidRow(
                 div(
-                    "NOTE: As of 15 June, confirmed cases include confirmed cases at UK government regional testing centres.
-                    Previous data have note been updated to account for this hence the significant increase in testing capacity
-                    and positive cases on this day.",
+                    "NOTE: As of 15 June, confirmed cases include confirmed cases at 
+                    UK government regional testing centres. Previous data have note 
+                    been updated to account for this hence the significant increase 
+                    in testing capacity and positive cases on this day.",
                     style = "padding-top:15px; padding-bottom:5px")
             ),
             fluidRow(
@@ -54,274 +59,46 @@ shinyUI(fluidPage(
         ),
         tabPanel("National Data",
             tabsetPanel(type = "tabs",
-            tabPanel(
-                h5("Testing"),
-                tabsetPanel(type = "tabs",
-                    tabPanel(
-                        h6("Table"),
-                        DT::dataTableOutput(outputId = "Testing")
-                    ),
-                    tabPanel(
-                        h6("Plot"),
-                        fluidRow(
-                            column(uiOutput("tests_select"), width = 8),
-                            column(uiOutput("tests_radio_select"), width = 4)
-                        ),
-                        plotlyOutput(outputId = "tests_plot", height = "700px")
-                    )  
-                )     
-            ), 
-            tabPanel(
-                h5("Hospital Care"),
-                tabsetPanel(type = "tabs",
-                    tabPanel(
-                        h6("Table"),
-                        DT::dataTableOutput(outputId = "Hospital Care"),
-                        fluidRow(
-                            div(
-                                "NOTE: Please note that as of 22/07/20 suspected
-                                COVID-19 patients in hospital and ICU will no 
-                                longer be reported",
-                                style = "padding-top:5px; padding-bottom:15px"
-                            )
-                        )
-                     ), 
-                     tabPanel(
-                        h6("Plot"),
-                        fluidRow(
-                            column(uiOutput("hospital_select"), width = 8),
-                            column(uiOutput("hospital_radio_select"), width = 4)
-                        ),
-                        plotlyOutput(outputId = "hospital_plot", height = "700px")
-                    )
-                )            
-            ),
-            tabPanel(
-                h5("NHS 24"),
-                tabsetPanel(type = "tabs", 
-                    tabPanel(
-                        h6("Table"),
-                        DT::dataTableOutput(outputId = "NHS 24"),
-                        fluidRow(
-                            div(
-                                "NOTE: Please note that as of 22/07/20 this table is 
-                                no longer updated by the Scottish Government", 
-                                style = "padding-top:5px; padding-bottom:15px"
-                            )
-                        )
-                    ),
-                    tabPanel(
-                        h6("Plot"),
-                        fluidRow(
-                            column(uiOutput("nhs_calls_select"), width = 8), 
-                            column(uiOutput("nhs_calls_radio_select"), width = 4)
-                        ),
-                        plotlyOutput(outputId = "nhs_calls_plot", height = "700px")
-                    )   
-                )
-            ),
-            tabPanel(
-                h5("Ambulance Attendances"),
-                tabsetPanel(type = "tabs",
-                    tabPanel(
-                        h6("Table"),
-                        DT::dataTableOutput(outputId = "Ambulance Attendances"),
-                        fluidRow(
-                            div(
-                                "NOTE: Please note that as of 22/07/20 this table is 
-                                no longer updated by the Scottish Government", 
-                                style = "padding-top:5px; padding-bottom:15px"
-                            )
-                        )
-                    ),
-                    tabPanel(
-                        h6("Plot"),
-                        fluidRow(
-                            column(uiOutput("ambulance_select"), width = 8),
-                            column(uiOutput("ambulance_radio_select"), width = 4)
-                        ),
-                        plotlyOutput(outputId = "ambulance_plot", height = "700px")
-                    )
-                )
-            ),
-            tabPanel(
-                h5("Delayed Discharges"),
-                tabsetPanel(type = "tabs",
-                    tabPanel(
-                        h6("Table"),
-                        DT::dataTableOutput(outputId = "Delayed Discharges")
-                    ), 
-                    tabPanel(
-                        h6("Plot"),
-                        fluidRow(
-                            column(uiOutput("discharge_select"), width = 8),
-                            column(uiOutput("discharge_radio_select"), width = 4)
-
-                        ),
-                        plotlyOutput(outputId = "discharge_plot", height = "700px")
-                    )
-                )
-            ),
-            tabPanel(
-                h5("Workforce Absences"),
-                tabsetPanel(type = "tabs",
-                    tabPanel(
-                        h6("Table"),
-                        DT::dataTableOutput(outputId = "Workforce Absences"),
-                        fluidRow(
-                            div(
-                                "NOTE: Please note that as of 22/07/20 this table is 
-                                updated on a weekly basis rather than a daily 
-                                basis by the Scottish Government", 
-                                style = "padding-top:5px; padding-bottom:15px"
-                            )
-                        )
-                    ),
-                    tabPanel(
-                        h6("Plot"),
-                        fluidRow(
-                            column(uiOutput("workforce_absence_select"), width = 8),
-                            column(uiOutput("workforce_absence_radio_select"), width = 4)
-                        ),
-                        plotlyOutput(outputId = "workforce_absence_plot", height = "700px")
-                    )
-                )          
-            ), 
-            tabPanel(
-                h5("Adult Care Homes"),
-                tabsetPanel(type = "tabs",
-                    tabPanel(
-                        h6("Table"),
-                        DT::dataTableOutput(outputId = "Adult Care Homes"),
-                        fluidRow(
-                            div(
-                                "NOTE: Please note that as of 23/07/20 this table 
-                                only includes the number of adult care homes with a
-                                current suspected case and the proportion of all 
-                                adult care homes with a current suspected case.
-                                In addition, the Scottish Government will only
-                                updated this on a weekly basis",
-                                style = "padding-top:5px; padding-bottom:15px"
-                            )
-                        )
-                    ), 
-                    tabPanel(
-                        h6("Plot"), 
-                        fluidRow(
-                            column(uiOutput("carehome_cases_select"), width = 8),
-                            column(uiOutput("casehome_cases_radio_select"), width = 4)
-                        ),
-                        plotlyOutput(outputId = "carehome_cases_plot", height = "700px")
-                    )
-                )  
-            ),
-            tabPanel(
-                h5("Care Home Workforce"),
-                tabsetPanel(type = "tabs",
-                    tabPanel(
-                        h6("Table"),
-                        DT::dataTableOutput(outputId = "Care Home Workforce")
-                    ),
-                    tabPanel(
-                        h6("Plot"),
-                        fluidRow(
-                            column(uiOutput("care_workforce_select"), width = 8),
-                            column(uiOutput("care_workforce_radio_select"), width = 4)
-                        ),
-                        plotlyOutput(outputId = "care_workforce_plot", height = "700px")
-                    )
-                )  
-            ),
-            tabPanel(
-                h5("Deaths"),
-                tabsetPanel(type = "tabs",
-                    tabPanel(
-                        h6("Table"),
-                        DT::dataTableOutput(outputId = "Deaths")
-                    ), 
-                    tabPanel(
-                        h6("Plot"),
-                        fluidRow(
-                            column(uiOutput("deaths_select"), width = 8),
-                            column(uiOutput("deaths_radio_select"), width = 4)
-                        ),
-                        plotlyOutput(outputId = "deaths_plot", height = "700px")
-                    )    
-                )  
-            ))
+                panelUI(id = "Testing", text = ""),
+                panelUI(id = "Hospital Care", 
+                    text = "NOTE: Please note that as of 22/07/20 suspected
+                        COVID-19 patients in hospital and ICU will no 
+                        longer be reported"
+                ),
+                panelUI(id = "Ambulance Attendances",
+                    text = "NOTE: Please note that as of 22/07/20 this table is 
+                            no longer updated by the Scottish Government"
+                ),
+                panelUI(id = "NHS Calls", 
+                    text = "NOTE: Please note that as of 22/07/20 this table is 
+                            no longer updated by the Scottish Government"
+                ),
+                panelUI(id = "Delayed Discharges", text = ""),
+                panelUI(id = "Workforce", 
+                    text = "NOTE: Please note that as of 22/07/20 this table is 
+                            updated on a weekly basis rather than a daily 
+                            basis by the Scottish Government"
+                ),
+                panelUI(id = "Care Homes", 
+                    text = "NOTE: Please note that as of 23/07/20 this table 
+                            only includes the number of adult care homes with a
+                            current suspected case and the proportion of all 
+                            adult care homes with a current suspected case.
+                            In addition, the Scottish Government will only
+                            updated this on a weekly basis"    
+                ),
+                panelUI(id = "Care Home Workforce", text = ""),
+                panelUI(id = "Deaths", text = "")
+            )
         ), 
         tabPanel("Regional Data",
            tabsetPanel(type = "tabs",
+                panelUI(id = "Regional Cases",  text = ""),
+                panelUI(id = "Regional ICU",  text = ""),
+                panelUI(id = "Regional Confirmed",  text = ""),
+                panelUI(id = "Regional Suspected",  text = ""),
                 tabPanel(
-                    h5("Regional Cumulative Cases"),
-                    tabsetPanel(type = "tabs",
-                        tabPanel(
-                            h6("Table"),
-                            DT::dataTableOutput(outputId = "regional_cumulative_cases")
-                        ),
-                        tabPanel(
-                            h6("Plot"),
-                            fluidRow(
-                                column(uiOutput("regional_cumulative_select"), width = 8),
-                                column(uiOutput("regional_cumulative_radio_select"), width = 4)
-                            ),
-                            plotlyOutput(outputId = "regional_cumulative_plot", height = "700px")
-                        )    
-                    )
-                ),
-                tabPanel(
-                    h5("Regional COVID-19 Patients in ICU"),
-                    tabsetPanel(type = "tabs",
-                        tabPanel(
-                            h6("Table"),
-                            DT::dataTableOutput(outputId = "regional_ICU")
-                        ),
-                        tabPanel(
-                            h6("Plot"),
-                            fluidRow(
-                                column(uiOutput("regional_icu_select"), width = 8),
-                                column(uiOutput("regional_icu_radio_select"), width = 4)
-                            ),
-                            plotlyOutput(outputId = "regional_icu_plot", height = "700px")
-                        )                
-                    )
-                ),
-                tabPanel(
-                    h5("Regional Confirmed Hospital Cases"),
-                    tabsetPanel(type = "tabs",
-                        tabPanel(
-                            h6("Table"),
-                            DT::dataTableOutput(outputId = "regional_hospital_confirmed")
-                        ),
-                        tabPanel(
-                            h6("Plot"),
-                            fluidRow(
-                                column(uiOutput("regional_confirmed_select"), width = 8),
-                                column(uiOutput("regional_confirmed_radio_select"), width = 4)
-                            ),
-                            plotlyOutput(outputId = "regional_confirmed_plot", height = "700px")
-                        )
-                    )
-                ),
-                tabPanel(
-                    h5("Regional Suspected Hospital Cases"),
-                    tabsetPanel(type = "tabs",
-                        tabPanel(
-                        h6("Table"),
-                            DT::dataTableOutput(outputId = "regional_hospital_suspected")
-                        ),
-                        tabPanel(
-                            h6("Plot"),
-                            fluidRow(
-                                column(uiOutput("regional_suspected_select"), width = 8),
-                                column(uiOutput("regional_suspected_radio_select"), width = 4)
-                            ),
-                            plotlyOutput(outputId = "regional_suspected_plot", height = "700px")
-                        )
-                    )
-                ),
-                tabPanel(
-                h4("Map"),
+                h5("Map"),
                     leafletOutput("map", height = 700),
                     fluidRow(
                         radioButtons(

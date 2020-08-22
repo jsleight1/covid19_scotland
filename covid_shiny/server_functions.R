@@ -67,13 +67,16 @@ tidy_trend_excel_sheets <- function(sheets) {
         slice(grep("Weekly", .data$"Table 6 - Number of NHS staff reporting as absent due to Covid-19") + 1:nrow(.)) %>% 
         set_names(cols) %>% 
         mutate(Date = lubridate::dmy(gsub("week to ", "", .data$Date))) %>% 
-        mutate_if(is.character, ~round(as.numeric(.), 2))
-
+        mutate_if(is.character, ~round(as.numeric(.), 2)) 
+    
     # Care homes
-    final_sheets[["Table 7a - Care Homes"]] <- tidy_table(
-        df = select(sheets[[grep("Table 7a - Care Homes", names(sheets))]], 1:3),
-        row = 3
-    )
+    cols <- unlist(slice(sheets[[grep("Table 7a - Care Homes", names(sheets))]], 2))
+    final_sheets[["Table 7a - Care Homes"]] <- sheets[[grep("Table 7a - Care Homes", names(sheets))]] %>% 
+        slice(3:nrow(.)) %>% 
+        set_names(cols) %>% 
+        mutate_at(c(1, 3), as.numeric) %>% 
+        mutate(Week = factor(Week, levels = .data$Week)) %>% 
+        select(Week, everything())
 
     # Care home workforce
     final_sheets[["Table 7b - Care Home Workforce"]] <- tidy_table(
@@ -89,7 +92,6 @@ tidy_trend_excel_sheets <- function(sheets) {
         ) %>% 
         find_daily_increase(df = ., column = setdiff(colnames(.), "Date"))
 
-    names(final_sheets) <- setdiff(names(sheets), "Table 7c - Care Homes (Archive)")
     final_sheets
 }
 
@@ -104,37 +106,50 @@ tidy_table <- function(df, row) {
         filter(rowSums(is.na(.)) != ncol(.))
 }
 
-daily_barplot <- function(df, x, y) {
-    p <- ggplot(data = df, aes_string(x = x, y = y)) +
-        geom_bar(stat = "identity", fill = "#619CFF") 
-    ggplotly(p)
-}
-
 find_daily_increase <- function(df, column) {
     df[["Daily Change"]] <- df[[gsub("\`", "", column)]] - lag(df[[gsub("\`", "", column)]])
     df
 }
 
-cumulative_group_plot <- function(df, x, y) {
-    df <- pivot_longer(df, -Date)
-    p <- ggplot(data = df, aes_string(x = x, y = y, label1 = x, label2 = y, label3 = "name")) +
-        geom_line(aes(color = fct_reorder2(name, .data[[x]], .data[[y]]), linetype = name)) +
-        theme(legend.title = element_blank())
+daily_barplot <- function(df, x, y) {
+    p <- ggplot(data = df, aes_string(x = x, y = y)) +
+        geom_bar(stat = "identity", fill = "#619CFF") +
+        theme(axis.text.x = element_text(angle = xlab_angle(df, x)))
+    ggplotly(p)
+}
+
+cumulative_group_plot <- function(df, x) {
+    df <- pivot_longer(df, -x)
+    p <- ggplot(data = df, aes_string(x = x, y = "value", label1 = x, label2 = "value", label3 = "name")) +
+        geom_line(aes(group = name, color = fct_reorder2(name, .data[[x]], .data[["value"]]), linetype = name)) +
+        theme(
+            legend.title = element_blank(),
+            axis.text.x = element_text(angle = xlab_angle(df, x))
+        )
     ggplotly(p, tooltip = c("label1", "label2", "label3")) 
 }
 
 cumulative_plot <- function(df, x, y) {
     p <- ggplot(data = df, aes_string(x = x, y = y)) +
         geom_point(colour = "#619CFF") +
-        geom_line(colour = "#619CFF")
+        geom_line(aes(group = 1), colour = "#619CFF") +
+        theme(axis.text.x = element_text(angle = xlab_angle(df, x)))
     ggplotly(p)
 }
 
-stacked_barplot <- function(df, x, y) {
-    p <- ggplot(data = df, aes_string(x = x, y = y, fill = "name")) +
+stacked_barplot <- function(df, x) {
+    p <- ggplot(data = df, aes_string(x = x, y = "value", fill = "name")) +
             geom_bar(stat = "identity") +
-        theme(legend.title = element_blank())
+        theme(
+            legend.title = element_blank(), 
+            axis.text.x = element_text(angle = xlab_angle(df, x))
+        )
     ggplotly(p)
+}
+
+xlab_angle <- function(df, x) {
+    if (nchar(as.character(df[[x]][1])) > 8) 90
+    else 0
 }
 
 render_custom_datatable <- function(df, title, ...) {
@@ -154,17 +169,17 @@ render_custom_datatable <- function(df, title, ...) {
     )
 }
 
-decide_plotly_output <- function(data, input, type) {
-    data <- select(data, Date, all_of(input))
+decide_plotly_output <- function(data, input, type, x, first_col) {
+    data <- select(data, all_of(c(first_col, input)))
     if (ncol(data) == 2) {
         switch(type,
-            "Bar Plot" = daily_barplot(df = data, x = "Date", y = paste0("`", setdiff(input, "Date"), "`")),
-            "Line Plot" = cumulative_plot(df = data, x = "Date", y = paste0("`", setdiff(input, "Date"), "`"))
+            "Bar Plot" = daily_barplot(df = data, x = x, y = paste0("`", input, "`")),
+            "Line Plot" = cumulative_plot(df = data, x = x, y = paste0("`", input, "`"))
         )
     } else {
         switch(type,
-            "Stacked Barplot" = stacked_barplot(pivot_longer(data, -Date), x = "Date", y = "value"),
-            "Line Plot" = cumulative_group_plot(df = data, x = "Date", y = "value") 
+            "Stacked Barplot" = stacked_barplot(pivot_longer(data, -x), x = x),
+            "Line Plot" = cumulative_group_plot(df = data, x = x) 
         )
     } 
 }
