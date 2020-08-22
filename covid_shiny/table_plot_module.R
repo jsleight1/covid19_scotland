@@ -22,7 +22,7 @@ panelUI <- function(id, text) {
 }
 
 # Server
-panelServer <- function(id, table) {
+panelServer <- function(id, table, x = "Date", first_col = x) {
     moduleServer(
         id, 
         function(input, output, session) {
@@ -34,8 +34,8 @@ panelServer <- function(id, table) {
                     label = "Choose Y Axis Variables", 
                     width = "100%", 
                     multiple = TRUE,
-                    choices = setdiff(colnames(table), "Date"),
-                    selected = setdiff(colnames(table), "Date")[1]
+                    choices = setdiff(colnames(table), first_col),
+                    selected = setdiff(colnames(table), first_col)[1]
                 )
             )
             output[[paste0(id, "_radio_select")]] <- renderUI(
@@ -49,7 +49,9 @@ panelServer <- function(id, table) {
                 decide_plotly_output(
                     data = table,
                     input = req(input[[id]]),
-                    type = req(input[[paste0(id, "_radio_select_in")]])
+                    type = req(input[[paste0(id, "_radio_select_in")]]),
+                    x = x, 
+                    first_col = first_col
                 )
             )
         }

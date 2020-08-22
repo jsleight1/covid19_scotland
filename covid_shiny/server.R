@@ -7,7 +7,7 @@ shinyServer(function(input, output) {
     
     # Introduction
     output[["introduction_plot"]] <- renderPlotly({
-        daily_barplot(regional_data[["Table 1 - Cumulative cases"]], y = "Scotland")
+        daily_barplot(regional_data[["Table 1 - Cumulative cases"]], x = "Date", y = "Scotland")
     })
     output[["introduction_date"]] <- renderText({
         as.character(last(pull(national_data[["Table 8 - Deaths"]], Date)))
@@ -31,9 +31,9 @@ shinyServer(function(input, output) {
     panelServer(id = "Hospital Care", table = national_data[["Table 2 - Hospital Care"]])
     panelServer(id = "Ambulance Attendances", table = national_data[["Table 3 - Ambulance"]])
     panelServer(id = "NHS Calls", table = national_data[["Table 1 - NHS 24"]])
-    panelServer(id = "Delayed Discharges", table = national_data[["Table 4 - Delayed Discharges"]])
+    panelServer(id = "Delayed Discharges", table = national_data[["Table 4 - Delated Discharges"]])
     panelServer(id = "Workforce", table = national_data[["Table 6 - Workforce"]])
-    panelServer(id = "Care Homes", table = national_data[["Table 7a - Care Homes"]])
+    panelServer(id = "Care Homes", table = national_data[["Table 7a - Care Homes"]], x = "Week")
     panelServer(id = "Care Home Workforce", table = national_data[["Table 7b - Care Home Workforce"]])
     panelServer(id = "Deaths",table = national_data[["Table 8 - Deaths"]])
 
