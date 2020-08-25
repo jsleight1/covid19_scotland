@@ -1,8 +1,7 @@
 # UI
 panelUI <- function(id, text = "") {
     ns <- NS(id)
-    tabPanel(
-        h5(id),
+    tabPanel(id,
         tabsetPanel(type = "tabs",
             tabPanel(
                 h6("Table"),

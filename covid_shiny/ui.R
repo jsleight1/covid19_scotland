@@ -2,6 +2,7 @@ source("dependencies.R")
 source("table_plot_module.R")
 
 shinyUI(fluidPage(
+    theme = shinythemes::shinytheme("flatly"),
     tags$head(includeHTML(("google-analytics.html"))),
     navbarPage("COVID-19 Analysis",
         tabPanel("Introduction",
@@ -55,63 +56,60 @@ shinyUI(fluidPage(
                     href = "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/",
                     style = "color:blue; font-size:15px"
                 )
-            )
+            ), 
         ),
-        tabPanel("National Data",
-            tabsetPanel(type = "tabs",
-                panelUI(id = "Testing"),
-                panelUI(id = "Hospital Care", 
-                    text = "NOTE: Please note that as of 22/07/20 suspected
-                        COVID-19 patients in hospital and ICU will no 
-                        longer be reported"
-                ),
-                panelUI(id = "Ambulance Attendances",
-                    text = "NOTE: Please note that as of 22/07/20 this table is 
-                            no longer updated by the Scottish Government"
-                ),
-                panelUI(id = "NHS Calls", 
-                    text = "NOTE: Please note that as of 22/07/20 this table is 
-                            no longer updated by the Scottish Government"
-                ),
-                panelUI(id = "Delayed Discharges"),
-                panelUI(id = "Workforce", 
-                    text = "NOTE: Please note that as of 22/07/20 this table is 
-                            updated on a weekly basis rather than a daily 
-                            basis by the Scottish Government"
-                ),
-                panelUI(id = "Care Homes", 
-                    text = "NOTE: Please note that as of 23/07/20 this table 
-                            only includes the number of adult care homes with a
-                            current suspected case and the proportion of all 
-                            adult care homes with a current suspected case.
-                            In addition, the Scottish Government will only
-                            updated this on a weekly basis"    
-                ),
-                panelUI(id = "Care Home Workforce"),
-                panelUI(id = "Deaths")
-            )
+        navbarMenu("National Data",
+            panelUI(id = "Testing"),
+            panelUI(id = "Hospital Care", 
+                text = "NOTE: Please note that as of 22/07/20 suspected
+                    COVID-19 patients in hospital and ICU will no 
+                    longer be reported"
+            ),
+            panelUI(id = "Ambulance Attendances",
+                text = "NOTE: Please note that as of 22/07/20 this table is 
+                        no longer updated by the Scottish Government"
+            ),
+            panelUI(id = "NHS Calls", 
+                text = "NOTE: Please note that as of 22/07/20 this table is 
+                        no longer updated by the Scottish Government"
+            ),
+            panelUI(id = "Delayed Discharges"),
+            panelUI(id = "Workforce", 
+                text = "NOTE: Please note that as of 22/07/20 this table is 
+                        updated on a weekly basis rather than a daily 
+                        basis by the Scottish Government"
+            ),
+            panelUI(id = "Care Homes", 
+                text = "NOTE: Please note that as of 23/07/20 this table 
+                        only includes the number of adult care homes with a
+                        current suspected case and the proportion of all 
+                        adult care homes with a current suspected case.
+                        In addition, the Scottish Government will only
+                        updated this on a weekly basis"    
+            ),
+            panelUI(id = "Care Home Workforce"),
+            panelUI(id = "Deaths")
+            
         ), 
-        tabPanel("Regional Data",
-           tabsetPanel(type = "tabs",
-                panelUI(id = "Regional Cases"),
-                panelUI(id = "Regional ICU"),
-                panelUI(id = "Regional Confirmed"),
-                panelUI(id = "Regional Suspected"),
-                tabPanel(
-                    h5("Map"),
-                    leafletOutput("map", height = 700),
-                    fluidRow(
-                        radioButtons(
-                            inputId = "mapInput",
-                            label = "Select Input",
-                            choices = c(
-                                "Regional Cases" = "Table 1 - Cumulative cases",
-                                "Regional ICU Patients" = "Table 2a - ICU patients",
-                                "Regional Hospital Confirmed" = "Table 3a - Hospital Confirmed",
-                                "Regional Hospital Suspected" = "Table 3b- Hospital Suspected"
-                            ),
-                            inline = TRUE
-                        )
+        navbarMenu("Regional Data",
+            panelUI(id = "Regional Cases"),
+            panelUI(id = "Regional ICU"),
+            panelUI(id = "Regional Confirmed"),
+            panelUI(id = "Regional Suspected"),
+            tabPanel(
+                "Map",
+                leafletOutput("map", height = 700),
+                fluidRow(
+                    radioButtons(
+                        inputId = "mapInput",
+                        label = "Select Input",
+                        choices = c(
+                            "Regional Cases" = "Table 1 - Cumulative cases",
+                            "Regional ICU Patients" = "Table 2a - ICU patients",
+                            "Regional Hospital Confirmed" = "Table 3a - Hospital Confirmed",
+                            "Regional Hospital Suspected" = "Table 3b- Hospital Suspected"
+                        ),
+                        inline = TRUE
                     )
                 )
             )
