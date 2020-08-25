@@ -1,5 +1,5 @@
 # UI
-panelUI <- function(id, text) {
+panelUI <- function(id, text = "") {
     ns <- NS(id)
     tabPanel(
         h5(id),

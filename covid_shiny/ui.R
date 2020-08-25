@@ -59,7 +59,7 @@ shinyUI(fluidPage(
         ),
         tabPanel("National Data",
             tabsetPanel(type = "tabs",
-                panelUI(id = "Testing", text = ""),
+                panelUI(id = "Testing"),
                 panelUI(id = "Hospital Care", 
                     text = "NOTE: Please note that as of 22/07/20 suspected
                         COVID-19 patients in hospital and ICU will no 
@@ -73,7 +73,7 @@ shinyUI(fluidPage(
                     text = "NOTE: Please note that as of 22/07/20 this table is 
                             no longer updated by the Scottish Government"
                 ),
-                panelUI(id = "Delayed Discharges", text = ""),
+                panelUI(id = "Delayed Discharges"),
                 panelUI(id = "Workforce", 
                     text = "NOTE: Please note that as of 22/07/20 this table is 
                             updated on a weekly basis rather than a daily 
@@ -87,18 +87,18 @@ shinyUI(fluidPage(
                             In addition, the Scottish Government will only
                             updated this on a weekly basis"    
                 ),
-                panelUI(id = "Care Home Workforce", text = ""),
-                panelUI(id = "Deaths", text = "")
+                panelUI(id = "Care Home Workforce"),
+                panelUI(id = "Deaths")
             )
         ), 
         tabPanel("Regional Data",
            tabsetPanel(type = "tabs",
-                panelUI(id = "Regional Cases",  text = ""),
-                panelUI(id = "Regional ICU",  text = ""),
-                panelUI(id = "Regional Confirmed",  text = ""),
-                panelUI(id = "Regional Suspected",  text = ""),
+                panelUI(id = "Regional Cases"),
+                panelUI(id = "Regional ICU"),
+                panelUI(id = "Regional Confirmed"),
+                panelUI(id = "Regional Suspected"),
                 tabPanel(
-                h5("Map"),
+                    h5("Map"),
                     leafletOutput("map", height = 700),
                     fluidRow(
                         radioButtons(

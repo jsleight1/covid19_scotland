@@ -44,15 +44,15 @@ shinyServer(function(input, output) {
     panelServer(id = "Regional Suspected", table = regional_data[["Table 3b- Hospital Suspected"]])
 
     output[["map"]] <- renderLeaflet({
-        df <- tail(regional_data[[input[["mapInput"]]]], 1) %>% 
+        tail(regional_data[["Table 1 - Cumulative cases"]], 1) %>% 
             pivot_longer(-Date) %>%
             inner_join(., readRDS("regions_scotland.RDS"), by = "name") %>% 
-            mutate(Circle_size = scales::rescale(value, to = c(2000, 18000)))
-        leaflet(df) %>% 
+            mutate(Circle_size = scales::rescale(value, to = c(2000, 18000))) %>% 
+            leaflet(.) %>% 
             addTiles(options = providerTileOptions(minZoom = 5, maxZoom = 9)) %>% 
             setView(lat = 56.4907, lng = -4.2026, zoom = 6) %>% 
             addCircles(lat = ~latitude, lng = ~longitude, radius = ~Circle_size,
-                popup = paste(df[["name"]], "<br>", input[["mapInput"]], df[["value"]], "<br>")
+                popup = paste(.data[["x"]][["name"]], "<br>", input[["mapInput"]], .data[["x"]][["value"]], "<br>")
             ) 
     })
 })

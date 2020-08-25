@@ -7,12 +7,12 @@ tidy_trend_excel_sheets <- function(sheets) {
 
     # NHS 24 stats
     final_sheets[["Table 1 - NHS 24"]] <- tidy_table(
-        df = sheets[[grep("Table 1 - NHS 24", names(sheets))]],
+        df = sheets[["Table 1 - NHS 24"]],
         row = 3
     )
 
     # Hospital care stats
-    final_sheets[["Table 2 - Hospital Care"]] <- sheets[[grep("Table 2 - Hospital Care", names(sheets))]] %>% 
+    final_sheets[["Table 2 - Hospital Care"]] <- sheets[["Table 2 - Hospital Care"]] %>% 
         slice(4:nrow(.)) %>% 
         select(1, 2, 5) %>% 
         set_names(
@@ -31,18 +31,18 @@ tidy_trend_excel_sheets <- function(sheets) {
 
     # Ambulance stats
     final_sheets[["Table 3 - Ambulance"]] <- tidy_table(
-        df = select(sheets[[grep("Table 3 - Ambulance", names(sheets))]], -1),
+        df = select(sheets[["Table 3 - Ambulance"]], -1),
         row = 3
     )
 
     # Delayed discharges 
     final_sheets[["Table 4 - Delayed Discharges"]] <- tidy_table(
-            df = select(sheets[[grep("Table 4 - Delayed Discharges", names(sheets))]], -1),
+            df = select(sheets[["Table 4 - Delayed Discharges"]], -1),
             row = 3
         )
 
     # Testing 
-    final_sheets[["Table 5 - Testing"]] <- sheets[[grep("Table 5 - Testing", names(sheets))]] %>% 
+    final_sheets[["Table 5 - Testing"]] <- sheets[["Table 5 - Testing"]] %>% 
         set_names(
             c("Date", "Negative", "Positive", "Total", "Daily Positive", 
             paste("NHS labs", c("Daily", "Cumulative"), sep = " "), 
@@ -60,31 +60,31 @@ tidy_trend_excel_sheets <- function(sheets) {
             `Daily Positive`, `NHS % Positive`, everything())
 
     # Workforce absences
-    cols <- na.omit(unlist(slice(sheets[[grep("Table 6 - Workforce", names(sheets))]], 1)))
-    final_sheets[["Table 6 - Workforce"]] <- sheets[[grep("Table 6 - Workforce", names(sheets))]] %>% 
-        slice(grep("Weekly", .data$"Table 6 - Number of NHS staff reporting as absent due to Covid-19") + 1:nrow(.)) %>% 
+    cols <- na.omit(unlist(slice(sheets[["Table 6 - Workforce"]], 1)))
+    final_sheets[["Table 6 - Workforce"]] <- sheets[["Table 6 - Workforce"]] %>% 
+        slice(grep("Weekly", .data[["Table 6 - Number of NHS staff reporting as absent due to Covid-19"]]) + 1:nrow(.)) %>% 
         set_names(cols) %>% 
-        mutate(Date = lubridate::dmy(gsub("week to ", "", .data$Date))) %>% 
+        mutate(Date = lubridate::dmy(gsub("week to ", "", .data[["Date"]]))) %>% 
         mutate_if(is.character, ~round(as.numeric(.), 2)) 
     
     # Care homes
-    cols <- unlist(slice(sheets[[grep("Table 7a - Care Homes", names(sheets))]], 2))
-    final_sheets[["Table 7a - Care Homes"]] <- sheets[[grep("Table 7a - Care Homes", names(sheets))]] %>% 
+    cols <- unlist(slice(sheets[["Table 7a - Care Homes (Cases)"]], 2))
+    final_sheets[["Table 7a - Care Homes"]] <- sheets[["Table 7a - Care Homes (Cases)"]] %>% 
         slice(3:nrow(.)) %>% 
         set_names(cols) %>% 
         mutate_at(c(1, 3), as.numeric) %>% 
-        mutate(Week = factor(Week, levels = .data$Week)) %>% 
+        mutate(Week = factor(Week, levels = .data[["Week"]])) %>% 
         select(Week, everything())
 
     # Care home workforce
     final_sheets[["Table 7b - Care Home Workforce"]] <- tidy_table(
-            df = sheets[[grep("Table 7b - Care Home Workforce", names(sheets))]],
+            df = sheets[["Table 7b - Care Home Workforce"]],
             row = 2
         )
 
     # Deaths
     final_sheets[["Table 8 - Deaths"]] <- tidy_table(
-            df = sheets[[grep("Table 8 - Deaths", names(sheets))]],
+            df = sheets[["Table 8 - Deaths"]],
             row = 3
         ) %>% 
         mutate(`Daily Deaths` = `Number of COVID-19 confirmed deaths registered to date` - 
@@ -164,7 +164,6 @@ render_custom_datatable <- function(df, title, ...) {
 }
 
 decide_plotly_output <- function(data, input, type, x, first_col) {
-    # browser()
     data <- select(data, all_of(c(first_col, input)))
     if (ncol(data) == 2) {
         switch(type,
