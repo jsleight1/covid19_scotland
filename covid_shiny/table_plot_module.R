@@ -1,12 +1,12 @@
 # UI
-panelUI <- function(id, text = "") {
+panelUI <- function(id, message = "") {
     ns <- NS(id)
     tabPanel(id,
         tabsetPanel(type = "tabs",
             tabPanel(
                 h6("Table"),
                 DT::dataTableOutput(outputId = ns(id)),
-                fluidRow(div(text, style = "padding-top:5px; padding-bottom:15px"))
+                fluidRow(div(message, style = "padding-top:5px; padding-bottom:15px"))
             ),
             tabPanel(
                 h6("Plot"),

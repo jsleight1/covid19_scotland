@@ -6,7 +6,6 @@ shinyUI(fluidPage(
     tags$head(includeHTML(("google-analytics.html"))),
     navbarPage("COVID-19 Analysis",
         tabPanel("Introduction",
-            shinyWidgets::setBackgroundColor(color = "66B2FF"),
             fluidRow(
                 column(
                     width = 12, div("National Cumulative Cases", style = "font-size:20px;"), 
@@ -47,40 +46,39 @@ shinyUI(fluidPage(
                     UK government regional testing centres. Previous data have note 
                     been updated to account for this hence the significant increase 
                     in testing capacity and positive cases on this day.",
-                    style = "padding-top:15px; padding-bottom:5px")
-            ),
-            fluidRow(
+                    style = " padding-top:15px; padding-bottom:5px"
+                ), 
                 div("Reference:"),
                 a(
                     "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/", 
                     href = "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/",
                     style = "color:blue; font-size:15px"
                 )
-            ), 
+            ),
         ),
         navbarMenu("National Data",
             panelUI(id = "Testing"),
             panelUI(id = "Hospital Care", 
-                text = "NOTE: Please note that as of 22/07/20 suspected
+                message = "NOTE: Please note that as of 22/07/20 suspected
                     COVID-19 patients in hospital and ICU will no 
                     longer be reported"
             ),
             panelUI(id = "Ambulance Attendances",
-                text = "NOTE: Please note that as of 22/07/20 this table is 
+                message = "NOTE: Please note that as of 22/07/20 this table is 
                         no longer updated by the Scottish Government"
             ),
             panelUI(id = "NHS Calls", 
-                text = "NOTE: Please note that as of 22/07/20 this table is 
+                message = "NOTE: Please note that as of 22/07/20 this table is 
                         no longer updated by the Scottish Government"
             ),
             panelUI(id = "Delayed Discharges"),
             panelUI(id = "Workforce", 
-                text = "NOTE: Please note that as of 22/07/20 this table is 
+                message = "NOTE: Please note that as of 22/07/20 this table is 
                         updated on a weekly basis rather than a daily 
                         basis by the Scottish Government"
             ),
             panelUI(id = "Care Homes", 
-                text = "NOTE: Please note that as of 23/07/20 this table 
+                message = "NOTE: Please note that as of 23/07/20 this table 
                         only includes the number of adult care homes with a
                         current suspected case and the proportion of all 
                         adult care homes with a current suspected case.
