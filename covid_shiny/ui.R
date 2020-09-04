@@ -4,7 +4,7 @@ source("table_plot_module.R")
 shinyUI(fluidPage(
     theme = shinythemes::shinytheme("flatly"),
     tags$head(includeHTML(("google-analytics.html"))),
-    navbarPage(HTML("<a href=\"https://github.com/jsleight1/covid19_scotland\"> COVID-19 Analysis </a>"),
+    navbarPage("COVID-19 Analysis",
         tabPanel("Introduction",
             fluidRow(
                 column(
@@ -38,22 +38,16 @@ shinyUI(fluidPage(
                     width = 1,
                     div(textOutput(outputId = "introduction_daily_deaths"), style = "font-size:20px; color:red")
                 ),
-                style = "padding-top:15px; padding-bottom:15px"
+                style = "padding-top:15px"
             ),
             fluidRow(
                 div(
                     "NOTE: As of 15 June, confirmed cases include confirmed cases at 
-                    UK government regional testing centres. Previous data have note 
+                    UK government regional testing centres. Previous data have not 
                     been updated to account for this hence the significant increase 
-                    in testing capacity and positive cases on this day.",
-                    style = " padding-top:15px; padding-bottom:5px"
-                ), 
-                div("Reference:"),
-                a(
-                    "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/", 
-                    href = "https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/",
-                    style = "color:blue; font-size:15px"
-                )
+                    in testing capacity and positive cases on this day."
+                ),
+                style = "padding-top:15px"
             ),
         ),
         navbarMenu("National Data",
@@ -111,6 +105,10 @@ shinyUI(fluidPage(
                     )
                 )
             )
+        ),
+        navbarMenu("References",
+            HTML("<a href=\"https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/\" style=\"font-size: 15px\"> Government Data </a>"),
+            HTML("<a href=\"https://github.com/jsleight1/covid19_scotland\" style=\"font-size: 15px\"> Source Code </a>")
         )
     )
 ))
