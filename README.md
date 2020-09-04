@@ -1,6 +1,5 @@
 # COVID-19 Scotland Analysis tool
 
-The Scottish Government releases COVID-19 trend data daily split into both National and Regional releases within two separate excel spreadsheets found here:
-https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/.
+The Scottish Government releases COVID-19 daily trend data split into both National and Regional releases. This analysis tool written in R using the shiny package automatically downloads and processes these datasets and allows users to explore them using summary plot functions.
 
-Upload these datasets and view summary plots of both regional and national statistics
+Reference: https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/
