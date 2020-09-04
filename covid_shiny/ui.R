@@ -4,7 +4,7 @@ source("table_plot_module.R")
 shinyUI(fluidPage(
     theme = shinythemes::shinytheme("flatly"),
     tags$head(includeHTML(("google-analytics.html"))),
-    navbarPage("COVID-19 Analysis",
+    navbarPage(HTML("<a href=\"https://github.com/jsleight1/covid19_scotland\"> COVID-19 Analysis </a>"),
         tabPanel("Introduction",
             fluidRow(
                 column(
