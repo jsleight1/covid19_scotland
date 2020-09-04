@@ -6,7 +6,7 @@ panelUI <- function(id, message = "") {
             tabPanel(
                 h6("Table"),
                 DT::dataTableOutput(outputId = ns(id)),
-                fluidRow(div(message, style = "padding-top:5px; padding-bottom:15px"))
+                fluidRow(div(message), style = "padding-top:15px")
             ),
             tabPanel(
                 h6("Plot"),
