@@ -10,10 +10,10 @@ tidy_table <- function(df, row) {
 }
 
 daily_barplot <- function(df, x, y) {
-    p <- ggplot(data = df, aes_string(x = x, y = y)) +
+    p <- ggplot(data = df, aes_string(x = x, y = y, label1 = x, label2 = y)) +
         geom_bar(stat = "identity", fill = "#619CFF") +
         theme(axis.text.x = element_text(angle = xlab_angle(df, x)))
-    ggplotly(p)
+    ggplotly(p, tooltip = c("label1", "label2"))
 }
 
 cumulative_group_plot <- function(df, x) {
