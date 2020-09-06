@@ -12,8 +12,28 @@ tidy_table <- function(df, row) {
 daily_barplot <- function(df, x, y) {
     p <- ggplot(data = df, aes_string(x = x, y = y, label1 = x, label2 = y)) +
         geom_bar(stat = "identity", fill = "#619CFF") +
-        theme(axis.text.x = element_text(angle = xlab_angle(df, x)))
+        labs(y = gsub("`", "", stringr::str_wrap(y, 70))) +
+        theme(axis.text.x = element_text(angle = xlab_format(df, x)))
     ggplotly(p, tooltip = c("label1", "label2"))
+}
+
+stacked_barplot <- function(df, x) {
+    p <- ggplot(data = df, aes_string(x = x, y = "value", fill = "name")) +
+            geom_bar(stat = "identity") +
+        theme(
+            legend.title = element_blank(), 
+            axis.text.x = element_text(angle = xlab_format(df, x))
+        )
+    ggplotly(p)
+}
+
+cumulative_plot <- function(df, x, y) {
+    p <- ggplot(data = df, aes_string(x = x, y = y)) +
+        geom_point(colour = "#619CFF") +
+        geom_line(aes(group = 1), colour = "#619CFF") +
+        labs(y = gsub("`", "", stringr::str_wrap(y, 70))) +
+        theme(axis.text.x = element_text(angle = xlab_format(df, x)))
+    ggplotly(p)
 }
 
 cumulative_group_plot <- function(df, x) {
@@ -22,30 +42,12 @@ cumulative_group_plot <- function(df, x) {
         geom_line(aes(group = name, color = fct_reorder2(name, .data[[x]], .data[["value"]]), linetype = name)) +
         theme(
             legend.title = element_blank(),
-            axis.text.x = element_text(angle = xlab_angle(df, x))
+            axis.text.x = element_text(angle = xlab_format(df, x))
         )
     ggplotly(p, tooltip = c("label1", "label2", "label3")) 
 }
 
-cumulative_plot <- function(df, x, y) {
-    p <- ggplot(data = df, aes_string(x = x, y = y)) +
-        geom_point(colour = "#619CFF") +
-        geom_line(aes(group = 1), colour = "#619CFF") +
-        theme(axis.text.x = element_text(angle = xlab_angle(df, x)))
-    ggplotly(p)
-}
-
-stacked_barplot <- function(df, x) {
-    p <- ggplot(data = df, aes_string(x = x, y = "value", fill = "name")) +
-            geom_bar(stat = "identity") +
-        theme(
-            legend.title = element_blank(), 
-            axis.text.x = element_text(angle = xlab_angle(df, x))
-        )
-    ggplotly(p)
-}
-
-xlab_angle <- function(df, x) {
+xlab_format <- function(df, x) {
     if (nchar(as.character(df[[x]][1])) > 8 & class(df[[x]]) != "Date") 90
     else 0
 }

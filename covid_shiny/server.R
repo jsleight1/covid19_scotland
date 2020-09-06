@@ -33,9 +33,11 @@ shinyServer(function(input, output) {
     panelServer(id = "NHS Calls", table = national_data[["Table 1 - NHS 24"]])
     panelServer(id = "Delayed Discharges", table = national_data[["Table 4 - Delayed Discharges"]])
     panelServer(id = "Workforce", table = national_data[["Table 6 - Workforce"]])
-    panelServer(id = "Care Homes", table = national_data[["Table 7a - Care Homes"]], x = "Week")
+    panelServer(id = "Care Home (Cases)", table = national_data[["Table 7a - Care Homes"]], x = "Week")
+    panelServer(id = "Care Home (Homes)", table = national_data[["Table 7c - Care Homes (Homes)"]])
     panelServer(id = "Care Home Workforce", table = national_data[["Table 7b - Care Home Workforce"]])
     panelServer(id = "Deaths", table = national_data[["Table 8 - Deaths"]])
+    panelServer(id = "Education", table = national_data[["Table 9 - School education"]])
 
     # Regional analysis
     panelServer(id = "Regional Cases", table = regional_data[["Table 1 - Cumulative cases"]])

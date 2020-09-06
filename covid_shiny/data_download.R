@@ -96,7 +96,7 @@ national_data[["Table 6 - Workforce"]] <- national_data[["Table 6 - Workforce"]]
     mutate(Date = lubridate::dmy(gsub("week to ", "", .data[["Date"]]))) %>% 
     mutate_if(is.character, ~round(as.numeric(.), 2)) 
     
-# Care homes
+# Care homes Cases
 cols <- unlist(slice(national_data[["Table 7a - Care Homes (Cases)"]], 2))
 national_data[["Table 7a - Care Homes"]] <- national_data[["Table 7a - Care Homes (Cases)"]] %>% 
     slice(3:nrow(.)) %>% 
@@ -105,8 +105,17 @@ national_data[["Table 7a - Care Homes"]] <- national_data[["Table 7a - Care Home
     mutate(Week = factor(Week, levels = .data[["Week"]])) %>% 
     select(Week, everything())
 
-    
+# Care homes
+national_data[["Table 7c - Care Homes (Homes)"]] <- tidy_table(
+    df = national_data[["Table 7c - Care Homes (Homes)"]],
+    row = 3
+)
 
+# Education 
+national_data[["Table 9 - School education"]] <- tidy_table(
+    df = select(national_data[["Table 9 - School education"]], 1:4), 
+    row = 3
+)
 
 
 

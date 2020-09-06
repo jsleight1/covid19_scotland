@@ -71,7 +71,7 @@ shinyUI(fluidPage(
                         updated on a weekly basis rather than a daily 
                         basis by the Scottish Government"
             ),
-            panelUI(id = "Care Homes", 
+            panelUI(id = "Care Home (Cases)", 
                 message = "NOTE: Please note that as of 23/07/20 this table 
                         only includes the number of adult care homes with a
                         current suspected case and the proportion of all 
@@ -79,8 +79,10 @@ shinyUI(fluidPage(
                         In addition, the Scottish Government will only
                         updated this on a weekly basis"    
             ),
+            panelUI(id = "Care Home (Homes)"),
             panelUI(id = "Care Home Workforce"),
-            panelUI(id = "Deaths")
+            panelUI(id = "Deaths"),
+            panelUI(id = "Education")
             
         ), 
         navbarMenu("Regional Data",
