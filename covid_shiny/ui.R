@@ -3,7 +3,7 @@ source("table_plot_module.R")
 
 shinyUI(fluidPage(
     theme = shinythemes::shinytheme("flatly"),
-    tags$head(includeHTML(("google-analytics.html"))),
+    # tags$head(includeHTML(("google-analytics.html"))),
     navbarPage("COVID-19 Analysis",
         tabPanel("Introduction",
             fluidRow(
@@ -92,10 +92,10 @@ shinyUI(fluidPage(
             panelUI(id = "Regional Suspected"),
             tabPanel(
                 "Map",
-                leafletOutput("map", height = 700),
+                leafletOutput("regional_map", height = 700),
                 fluidRow(
                     radioButtons(
-                        inputId = "mapInput",
+                        inputId = "regional_mapInput",
                         label = "Select Input",
                         choices = c(
                             "Regional Cases" = "Table 1 - Cumulative cases",
@@ -108,8 +108,42 @@ shinyUI(fluidPage(
                 )
             )
         ),
+        navbarMenu("Council Data",
+            panelUI(id = "Council Deaths Per 100,000"),
+            panelUI(id = "Council Negative Cases Per 100,000"),
+            panelUI(id = "Council Positive Cases Per 100,000"),
+            panelUI(id = "Council Cumulative Deaths"),
+            panelUI(id = "Council Cumulative Negative"),
+            panelUI(id = "Council Cumulative Positive"),
+            panelUI(id = "Council Cumuilative Positive Percent"),
+            panelUI(id = "Council Daily Deaths"),
+            panelUI(id = "Council Daily Positive"),
+            tabPanel(
+                "Map",
+                leafletOutput("council_map", height = 700),
+                fluidRow(
+                    radioButtons(
+                        inputId = "council_mapInput",
+                        label = "Select Input",
+                        choices = c(
+                            "Council Deaths Per 100,000" = "CrudeRateDeaths",
+                            "Council Negative Cases Per 100,000" = "CrudeRateNegative",
+                            "Council Positive Cases Per 100,000" = "CrudeRatePositive",
+                            "Council Cumulative Deaths" = "CumulativeDeaths",
+                            "Council Cumulative Negative" = "CumulativeNegative",
+                            "Council Cumulative Positive" = "CumulativePositive",
+                            "Council Cumuilative Positive Percent" = "CumulativePositivePercent",
+                            "Council Daily Deaths" = "DailyDeaths",
+                            "Council Daily Positive" = "DailyPositive"
+                        ),
+                        inline = TRUE
+                    )
+                )
+            )
+        ),
         navbarMenu("References",
-            HTML("<a href=\"https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/\" style=\"font-size: 15px\"> Government Data </a>"),
+            HTML("<a href=\"https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/\" style=\"font-size: 15px\"> National and Regional Data </a>"),
+            HTML("<a href=\"https://www.opendata.nhs.scot/dataset/covid-19-in-scotland/resource/427f9a25-db22-4014-a3bc-893b68243055\" style=\"font-size: 15px\"> Council Data </a>"),
             HTML("<a href=\"https://github.com/jsleight1/covid19_scotland\" style=\"font-size: 15px\"> Source Code </a>")
         )
     )

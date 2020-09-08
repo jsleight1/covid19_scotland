@@ -44,9 +44,8 @@ shinyServer(function(input, output) {
     panelServer(id = "Regional ICU", table = regional_data[["Table 2a - ICU patients"]])
     panelServer(id = "Regional Confirmed", table = regional_data[["Table 3a - Hospital Confirmed"]])
     panelServer(id = "Regional Suspected", table = regional_data[["Table 3b- Hospital Suspected"]])
-
-    output[["map"]] <- renderLeaflet({
-        df <- tail(regional_data[[input[["mapInput"]]]], 1) %>% 
+    output[["regional_map"]] <- renderLeaflet({
+        df <- tail(regional_data[[input[["regional_mapInput"]]]], 1) %>% 
             pivot_longer(-Date) %>%
             inner_join(., readRDS("regions_scotland.RDS"), by = "name") %>% 
             mutate(Circle_size = scales::rescale(value, to = c(2000, 18000)))
@@ -57,4 +56,28 @@ shinyServer(function(input, output) {
                 popup = paste(df[["name"]], "<br>", input[["mapInput"]], df[["value"]], "<br>")
             ) 
     })
+
+    # Council analysis
+    panelServer(id = "Council Deaths Per 100,000", table = council_data[["CrudeRateDeaths"]])
+    panelServer(id = "Council Negative Cases Per 100,000", table = council_data[["CrudeRateNegative"]])
+    panelServer(id = "Council Positive Cases Per 100,000", table = council_data[["CrudeRatePositive"]])
+    panelServer(id = "Council Cumulative Deaths", table = council_data[["CumulativeDeaths"]])
+    panelServer(id = "Council Cumulative Negative", table = council_data[["CumulativeNegative"]])
+    panelServer(id = "Council Cumulative Positive", table = council_data[["CumulativePositive"]])
+    panelServer(id = "Council Cumuilative Positive Percent", table = council_data[["CumulativePositivePercent"]])
+    panelServer(id = "Council Daily Deaths", table = council_data[["DailyDeaths"]])
+    panelServer(id = "Council Daily Positive", table = council_data[["DailyPositive"]])
+    output[["council_map"]] <- renderLeaflet({
+        df <- tail(council_data[[input[["council_mapInput"]]]], 1) %>% 
+            pivot_longer(-Date) %>%
+            inner_join(., readRDS("councils_scotland.RDS"), by = "name") %>% 
+            mutate(Circle_size = scales::rescale(value, to = c(2000, 10000)))
+        leaflet(df) %>% 
+            addTiles(options = providerTileOptions(minZoom = 5, maxZoom = 9)) %>% 
+            setView(lat = 56.4907, lng = -4.2026, zoom = 6) %>% 
+            addCircles(lat = ~latitude, lng = ~longitude, radius = ~Circle_size,
+                popup = paste(df[["name"]], "<br>", input[["mapInput"]], df[["value"]], "<br>")
+            ) 
+    })
+
 })
