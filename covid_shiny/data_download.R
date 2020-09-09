@@ -73,6 +73,7 @@ national_data[["Table 8 - Deaths"]] <- tidy_table(
 
 # Testing 
 national_data[["Table 5 - Testing"]] <- national_data[["Table 5 - Testing"]] %>% 
+    select_if(~sum(!is.na(.)) > 2) %>% 
     set_names(
         c("Date", "Negative", "Positive", "Total", "Daily Positive", 
         paste("NHS labs", c("Daily", "Cumulative"), sep = " "), 
