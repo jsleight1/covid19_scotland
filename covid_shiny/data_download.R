@@ -134,6 +134,7 @@ GET(url_council, write_disk(tf_council <- tempfile(fileext = "csv"), overwrite =
 council_data <- read_csv(tf_council) %>% 
    left_join(., readRDS("councils_scotland.RDS"), by = c("CA" = "code")) %>% 
    select(name, everything(), -CA, -latitude, -longitude) %>% 
+   mutate(CumulativePositivePercent = CumulativePositivePercent * 100) %>% 
    pivot_longer(cols = -c(name, Date), names_to = "key", values_to = "value")
 council_data <- council_data %>% 
     group_split(key) %>% 
@@ -145,7 +146,6 @@ council_data <- council_data %>%
             select(Date, sort(colnames(.)), -key, -"NA") %>% 
             mutate_if(is.numeric, ~round(as.numeric(.), 2))
     })
-
 
 # council_local <- tribble(
 #     ~name,                          ~latitude,     ~longitude,
@@ -160,25 +160,25 @@ council_data <- council_data %>%
 #     "East Ayrshire",                55.4536,       -4.2648,
 #     "East Dunbartonshire",          55.9743,       -4.2023,
 #     "East Lothian",                 55.9587,       -2.7749, 
-#     "East Renfrewshire",            55.7705,       -4.3360,
+#     "East Renfrewshire",            55.7505,       -4.3360,
 #     "City of Edinburgh",            55.9533,       -3.1883,
 #     "Falkirk",                      56.0019,       -3.7839,
 #     "Fife",                         56.2082,       -3.1495,
 #     "Glasgow City",                 55.8642,       -4.2518,
 #     "Highland",                     57.4596,       -4.2264,
-#     "Inverclyde",                   55.9317,       -4.6800,
-#     "Midlothian",                   55.8924,       -3.0702,
+#     "Inverclyde",                   55.9317,       -4.7895,
+#     "Midlothian",                   55.8124,       -3.0702,
 #     "Moray",                        57.6482,       -3.3114,
-#     "North Ayrshire",               55.617,        -4.7595,
+#     "North Ayrshire",               55.617,        -4.6795,
 #     "North Lanarkshire",            55.8662,       -3.9613,
 #     "Orkney Islands",               58.9814,       -2.9569,
 #     "Perth and Kinross",            56.3978,       -3.4317,
 #     "Renfrewshire",                 55.8467,       -4.5331,
 #     "Scottish Borders",             55.5486,       -2.7861,
 #     "Shetland Islands",             60.1542,       -1.1463,
-#     "South Ayrshire",               55.4589,       -4.6292,
+#     "South Ayrshire",               55.4189,       -4.6292,
 #     "South Lanarkshire",            55.6736,       -3.7820,
-#     "West Dunbartonshire",          55.9451,       -4.5646,
+#     "West Dunbartonshire",          55.9843,       -4.5646,
 #     "West Lothian",                 55.8818,       -3.6267,
 #     "Na h-Eileanan Siar",           58.2091,       -6.3789
 # )
@@ -187,4 +187,4 @@ council_data <- council_data %>%
 #     dplyr::select(code = "CA", name = "CAName") %>% 
 #     unique %>% 
 #     left_join(., council_local, by = "name")
-
+# saveRDS(tmp, "covid_shiny/councils_scotland.RDS")

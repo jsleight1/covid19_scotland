@@ -51,9 +51,13 @@ shinyServer(function(input, output) {
             mutate(Circle_size = scales::rescale(value, to = c(2000, 18000)))
         leaflet(df) %>% 
             addTiles(options = providerTileOptions(minZoom = 5, maxZoom = 9)) %>% 
-            setView(lat = 56.4907, lng = -4.2026, zoom = 6) %>% 
+            setView(lat = 57.4907, lng = -4.2026, zoom = 6) %>% 
             addCircles(lat = ~latitude, lng = ~longitude, radius = ~Circle_size,
-                popup = paste(df[["name"]], "<br>", input[["mapInput"]], df[["value"]], "<br>")
+                popup = paste(
+                    "Date:", df[["Date"]], "<br>", 
+                    "Regional Board:", df[["name"]], "<br>", 
+                    "Value:", df[["value"]], "<br>"
+                )
             ) 
     })
 
@@ -64,9 +68,7 @@ shinyServer(function(input, output) {
     panelServer(id = "Council Cumulative Deaths", table = council_data[["CumulativeDeaths"]])
     panelServer(id = "Council Cumulative Negative", table = council_data[["CumulativeNegative"]])
     panelServer(id = "Council Cumulative Positive", table = council_data[["CumulativePositive"]])
-    panelServer(id = "Council Cumuilative Positive Percent", table = council_data[["CumulativePositivePercent"]])
-    panelServer(id = "Council Daily Deaths", table = council_data[["DailyDeaths"]])
-    panelServer(id = "Council Daily Positive", table = council_data[["DailyPositive"]])
+    panelServer(id = "Council Cumulative Positive Percent", table = council_data[["CumulativePositivePercent"]])
     output[["council_map"]] <- renderLeaflet({
         df <- tail(council_data[[input[["council_mapInput"]]]], 1) %>% 
             pivot_longer(-Date) %>%
@@ -74,9 +76,13 @@ shinyServer(function(input, output) {
             mutate(Circle_size = scales::rescale(value, to = c(2000, 10000)))
         leaflet(df) %>% 
             addTiles(options = providerTileOptions(minZoom = 5, maxZoom = 9)) %>% 
-            setView(lat = 56.4907, lng = -4.2026, zoom = 6) %>% 
+            setView(lat = 57.4907, lng = -4.2026, zoom = 6) %>% 
             addCircles(lat = ~latitude, lng = ~longitude, radius = ~Circle_size,
-                popup = paste(df[["name"]], "<br>", input[["mapInput"]], df[["value"]], "<br>")
+                popup = paste(
+                    "Date:", df[["Date"]], "<br>", 
+                    "Council:", df[["name"]], "<br>", 
+                    "Value:", df[["value"]], "<br>"
+                )
             ) 
     })
 

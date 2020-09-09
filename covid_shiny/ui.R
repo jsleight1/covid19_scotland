@@ -115,9 +115,7 @@ shinyUI(fluidPage(
             panelUI(id = "Council Cumulative Deaths"),
             panelUI(id = "Council Cumulative Negative"),
             panelUI(id = "Council Cumulative Positive"),
-            panelUI(id = "Council Cumuilative Positive Percent"),
-            panelUI(id = "Council Daily Deaths"),
-            panelUI(id = "Council Daily Positive"),
+            panelUI(id = "Council Cumulative Positive Percent"),
             tabPanel(
                 "Map",
                 leafletOutput("council_map", height = 700),
@@ -132,9 +130,7 @@ shinyUI(fluidPage(
                             "Council Cumulative Deaths" = "CumulativeDeaths",
                             "Council Cumulative Negative" = "CumulativeNegative",
                             "Council Cumulative Positive" = "CumulativePositive",
-                            "Council Cumuilative Positive Percent" = "CumulativePositivePercent",
-                            "Council Daily Deaths" = "DailyDeaths",
-                            "Council Daily Positive" = "DailyPositive"
+                            "Council Cumulative Positive Percent" = "CumulativePositivePercent"
                         ),
                         inline = TRUE
                     )
