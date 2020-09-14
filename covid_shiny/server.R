@@ -68,7 +68,7 @@ shinyServer(function(input, output) {
     panelServer(id = "Council Cumulative Deaths", table = council_data[["CumulativeDeaths"]])
     panelServer(id = "Council Cumulative Negative", table = council_data[["CumulativeNegative"]])
     panelServer(id = "Council Cumulative Positive", table = council_data[["CumulativePositive"]])
-    panelServer(id = "Council Cumulative Positive Percent", table = council_data[["CumulativePositivePercent"]])
+    panelServer(id = "Council Percent Positive", table = council_data[["CumulativePositivePercent"]])
     output[["council_map"]] <- renderLeaflet({
         df <- tail(council_data[[input[["council_mapInput"]]]], 1) %>% 
             pivot_longer(-Date) %>%

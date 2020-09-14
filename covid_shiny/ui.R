@@ -3,7 +3,7 @@ source("table_plot_module.R")
 
 shinyUI(fluidPage(
     theme = shinythemes::shinytheme("flatly"),
-    # tags$head(includeHTML(("google-analytics.html"))),
+    tags$head(includeHTML(("google-analytics.html"))),
     navbarPage("COVID-19 Analysis",
         tabPanel("Introduction",
             fluidRow(
@@ -47,7 +47,14 @@ shinyUI(fluidPage(
                     been updated to account for this hence the significant increase 
                     in testing capacity and positive cases on this day."
                 ),
-                style = "padding-top:15px"
+                div(
+                    "DISCLAIMER: This app is specifically designed as a visualisation tool
+                    that utilises public COVID-19 data and therefore should 
+                    not be used for any official decision making. Links to data sources can 
+                    be found under the references tab and should be consulted to further 
+                    understand the nuances and exact meaning of the data presented."
+                ),
+                style = "padding-top:15px; color:red"
             ),
         ),
         navbarMenu("National Data",
@@ -115,7 +122,7 @@ shinyUI(fluidPage(
             panelUI(id = "Council Cumulative Deaths"),
             panelUI(id = "Council Cumulative Negative"),
             panelUI(id = "Council Cumulative Positive"),
-            panelUI(id = "Council Cumulative Positive Percent"),
+            panelUI(id = "Council Percent Positive"),
             tabPanel(
                 "Map",
                 leafletOutput("council_map", height = 700),
@@ -130,7 +137,7 @@ shinyUI(fluidPage(
                             "Council Cumulative Deaths" = "CumulativeDeaths",
                             "Council Cumulative Negative" = "CumulativeNegative",
                             "Council Cumulative Positive" = "CumulativePositive",
-                            "Council Cumulative Positive Percent" = "CumulativePositivePercent"
+                            "Council Percent Positive" = "CumulativePositivePercent"
                         ),
                         inline = TRUE
                     )
