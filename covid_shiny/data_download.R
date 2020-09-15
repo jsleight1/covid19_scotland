@@ -12,6 +12,15 @@ regional_data <- sheets[grep("Table", names(sheets))] %>%
         tidy_table(df = i, row = 3)
     })
 
+# Regions json 
+# region_json <- rgdal::readOGR("../../../SG_NHS_HealthBoards_2019/SG_NHS_HealthBoards_2019.shp")
+
+# region_json_simp <- rgeos::gSimplify(
+#     region_json, 
+#     tol = 8, 
+#     topologyPreserve = TRUE
+# )
+
 ################################################################################
 # Read in national data
 ################################################################################
@@ -126,14 +135,12 @@ national_data[["Table 9 - School education"]] <- tidy_table(
 # Read in council data
 ################################################################################
 
-# url_council_cumulative <- "https://www.opendata.nhs.scot/dataset/b318bddf-a4dc-4262-971f-0ba329e09b87/resource/e8454cf0-1152-4bcb-b9da-4343f625dfef/download/total_cases_by_la_20200908.csv"
-# GET(url_council_cumulative, write_disk(tf_council_cumulative <- tempfile(fileext = "csv"), overwrite = TRUE))
 url_council <- "https://www.opendata.nhs.scot/dataset/b318bddf-a4dc-4262-971f-0ba329e09b87/resource/427f9a25-db22-4014-a3bc-893b68243055/download/trend_ca_20200908.csv"
 GET(url_council, write_disk(tf_council <- tempfile(fileext = "csv"), overwrite = TRUE))
 
-# council_cumulative <- read_csv(tf_council_cumulative)
+council_codes <- readRDS("councils_scotland.RDS")
 council_data <- read_csv(tf_council) %>% 
-   left_join(., readRDS("councils_scotland.RDS"), by = c("CA" = "code")) %>% 
+   left_join(., council_codes, by = c("CA" = "code")) %>% 
    select(name, everything(), -CA, -latitude, -longitude) %>% 
    mutate(CumulativePositivePercent = CumulativePositivePercent * 100) %>% 
    pivot_longer(cols = -c(name, Date), names_to = "key", values_to = "value")
@@ -147,6 +154,9 @@ council_data <- council_data %>%
             select(Date, sort(colnames(.)), -key, -"NA") %>% 
             mutate_if(is.numeric, ~round(as.numeric(.), 2))
     })
+
+# Council json from https://github.com/martinjc/UK-GeoJSON/blob/master/json/administrative/sco/lad.json
+# council_json <- rgdal::readOGR("scotland_councils.json")
 
 # council_local <- tribble(
 #     ~name,                          ~latitude,     ~longitude,

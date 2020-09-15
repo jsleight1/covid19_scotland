@@ -44,7 +44,7 @@ shinyServer(function(input, output) {
     panelServer(id = "Regional ICU", table = regional_data[["Table 2a - ICU patients"]])
     panelServer(id = "Regional Confirmed", table = regional_data[["Table 3a - Hospital Confirmed"]])
     panelServer(id = "Regional Suspected", table = regional_data[["Table 3b- Hospital Suspected"]])
-    output[["regional_map"]] <- renderLeaflet({
+    output[["regional_map"]] <- renderLeaflet({  
         df <- tail(regional_data[[input[["regional_mapInput"]]]], 1) %>% 
             pivot_longer(-Date) %>%
             inner_join(., readRDS("regions_scotland.RDS"), by = "name") %>% 
@@ -84,6 +84,24 @@ shinyServer(function(input, output) {
                     "Value:", df[["value"]], "<br>"
                 )
             ) 
-    })
+        # input <- input[["council_mapInput"]]
+        # council_json[["name"]] <- deframe(select(council_codes, code, name))[council_json[["id"]]]
+        # council_json[[input]] <- unlist(select(tail(council_data[[input]], 1), -Date))[council_json[["name"]]]
+        # council_json[["label"]] <- paste(
+        #     "Council:", council_json[["name"]], 
+        #     input, council_json[[input]]
+        # )
 
+        # pal <- colorNumeric("viridis", NULL)
+        # leaflet(council_json) %>%
+        #     addTiles() %>%
+        #     addPolygons(
+        #         fillOpacity = 0.7,
+        #         smoothFactor = 0.3, 
+        #         stroke = FALSE,
+        #         fillColor = pal(council_json[[input]]),
+        #         label = ~label
+        #     ) %>% 
+        #     addLegend(pal = pal, values = council_json[[input]], opacity = 1)
+        # })
 })
