@@ -138,7 +138,7 @@ national_data[["Table 9 - School education"]] <- tidy_table(
 url_council <- "https://www.opendata.nhs.scot/dataset/b318bddf-a4dc-4262-971f-0ba329e09b87/resource/427f9a25-db22-4014-a3bc-893b68243055/download/trend_ca_20200908.csv"
 GET(url_council, write_disk(tf_council <- tempfile(fileext = "csv"), overwrite = TRUE))
 
-council_codes <- readRDS("councils_scotland.RDS")
+council_codes <- readRDS("data/councils_scotland.RDS")
 council_data <- read_csv(tf_council) %>% 
    left_join(., council_codes, by = c("CA" = "code")) %>% 
    select(name, everything(), -CA, -latitude, -longitude) %>% 
@@ -156,46 +156,4 @@ council_data <- council_data %>%
     })
 
 # Council json from https://github.com/martinjc/UK-GeoJSON/blob/master/json/administrative/sco/lad.json
-# council_json <- rgdal::readOGR("scotland_councils.json")
-
-# council_local <- tribble(
-#     ~name,                          ~latitude,     ~longitude,
-#     "Aberdeen City",                57.1497,       -2.0943,
-#     "Aberdeenshire",                57.2869,       -2.3816,
-#     "Angus",                        56.6980,       -2.9124,
-#     "Argyll and Bute",              56.4006,       -5.4807,
-#     "Clackmannanshire",             56.1075,       -3.7529,
-#     "Stirling",                     56.1165,       -3.9369,
-#     "Dumfries and Galloway",        55.0709,       -3.6051,
-#     "Dundee City",                  56.4620,       -2.9707,
-#     "East Ayrshire",                55.4536,       -4.2648,
-#     "East Dunbartonshire",          55.9743,       -4.2023,
-#     "East Lothian",                 55.9587,       -2.7749, 
-#     "East Renfrewshire",            55.7505,       -4.3360,
-#     "City of Edinburgh",            55.9533,       -3.1883,
-#     "Falkirk",                      56.0019,       -3.7839,
-#     "Fife",                         56.2082,       -3.1495,
-#     "Glasgow City",                 55.8642,       -4.2518,
-#     "Highland",                     57.4596,       -4.2264,
-#     "Inverclyde",                   55.9317,       -4.7895,
-#     "Midlothian",                   55.8124,       -3.0702,
-#     "Moray",                        57.6482,       -3.3114,
-#     "North Ayrshire",               55.617,        -4.6795,
-#     "North Lanarkshire",            55.8662,       -3.9613,
-#     "Orkney Islands",               58.9814,       -2.9569,
-#     "Perth and Kinross",            56.3978,       -3.4317,
-#     "Renfrewshire",                 55.8467,       -4.5331,
-#     "Scottish Borders",             55.5486,       -2.7861,
-#     "Shetland Islands",             60.1542,       -1.1463,
-#     "South Ayrshire",               55.4189,       -4.6292,
-#     "South Lanarkshire",            55.6736,       -3.7820,
-#     "West Dunbartonshire",          55.9843,       -4.5646,
-#     "West Lothian",                 55.8818,       -3.6267,
-#     "Na h-Eileanan Siar",           58.2091,       -6.3789
-# )
-
-# tmp <- read_csv("../../ca11_ca19.csv") %>% 
-#     dplyr::select(code = "CA", name = "CAName") %>% 
-#     unique %>% 
-#     left_join(., council_local, by = "name")
-# saveRDS(tmp, "covid_shiny/councils_scotland.RDS")
+council_json <- rgdal::readOGR("scotland_councils.json")

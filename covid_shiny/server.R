@@ -46,7 +46,7 @@ shinyServer(function(input, output) {
     output[["regional_map"]] <- renderLeaflet({  
         df <- tail(regional_data[[input[["regional_mapInput"]]]], 1) %>% 
             pivot_longer(-Date) %>%
-            inner_join(., readRDS("regions_scotland.RDS"), by = "name") %>% 
+            inner_join(., readRDS("data/regions_scotland.RDS"), by = "name") %>% 
             mutate(Circle_size = scales::rescale(value, to = c(2000, 18000)))
         leaflet(df) %>% 
             addTiles(options = providerTileOptions(minZoom = 5, maxZoom = 9)) %>% 
@@ -69,38 +69,39 @@ shinyServer(function(input, output) {
     panelServer(id = "Council Cumulative Positive", table = council_data[["CumulativePositive"]])
     panelServer(id = "Council Percent Positive", table = council_data[["CumulativePositivePercent"]])
     output[["council_map"]] <- renderLeaflet({
-        df <- tail(council_data[[input[["council_mapInput"]]]], 1) %>% 
-            pivot_longer(-Date) %>%
-            inner_join(., readRDS("councils_scotland.RDS"), by = "name") %>% 
-            mutate(Circle_size = scales::rescale(value, to = c(2000, 10000)))
-        leaflet(df) %>% 
-            addTiles(options = providerTileOptions(minZoom = 5, maxZoom = 9)) %>% 
-            setView(lat = 57.4907, lng = -4.2026, zoom = 6) %>% 
-            addCircles(lat = ~latitude, lng = ~longitude, radius = ~Circle_size,
-                popup = paste(
-                    "Date:", df[["Date"]], "<br>", 
-                    "Council:", df[["name"]], "<br>", 
-                    "Value:", df[["value"]], "<br>"
-                )
-            ) 
-        # input <- input[["council_mapInput"]]
-        # council_json[["name"]] <- deframe(select(council_codes, code, name))[council_json[["id"]]]
-        # council_json[[input]] <- unlist(select(tail(council_data[[input]], 1), -Date))[council_json[["name"]]]
-        # council_json[["label"]] <- paste(
-        #     "Council:", council_json[["name"]], 
-        #     input, council_json[[input]]
-        # )
+       
+        # df <- tail(council_data[[input[["council_mapInput"]]]], 1) %>% 
+        #     pivot_longer(-Date) %>%
+        #     inner_join(., readRDS("councils_scotland.RDS"), by = "name") %>% 
+        #     mutate(Circle_size = scales::rescale(value, to = c(2000, 10000)))
+        # leaflet(df) %>% 
+        #     addTiles(options = providerTileOptions(minZoom = 5, maxZoom = 9)) %>% 
+        #     setView(lat = 57.4907, lng = -4.2026, zoom = 6) %>% 
+        #     addCircles(lat = ~latitude, lng = ~longitude, radius = ~Circle_size,
+        #         popup = paste(
+        #             "Date:", df[["Date"]], "<br>", 
+        #             "Council:", df[["name"]], "<br>", 
+        #             "Value:", df[["value"]], "<br>"
+        #         )
+        #     ) 
+        input <- input[["council_mapInput"]]
+        council_json[["name"]] <- deframe(select(council_codes, code, name))[council_json[["id"]]]
+        council_json[[input]] <- unlist(select(tail(council_data[[input]], 1), -Date))[council_json[["name"]]]
+        council_json[["label"]] <- paste(
+            "Council:", council_json[["name"]], 
+            input, council_json[[input]]
+        )
 
-        # pal <- colorNumeric("viridis", NULL)
-        # leaflet(council_json) %>%
-        #     addTiles() %>%
-        #     addPolygons(
-        #         fillOpacity = 0.7,
-        #         smoothFactor = 0.3, 
-        #         stroke = FALSE,
-        #         fillColor = pal(council_json[[input]]),
-        #         label = ~label
-        #     ) %>% 
-        #     addLegend(pal = pal, values = council_json[[input]], opacity = 1)
+        pal <- colorNumeric("viridis", NULL)
+        leaflet(council_json) %>%
+            addTiles() %>%
+            addPolygons(
+                fillOpacity = 0.7,
+                smoothFactor = 0.3, 
+                stroke = FALSE,
+                fillColor = pal(council_json[[input]]),
+                label = ~label
+            ) %>% 
+            addLegend(pal = pal, values = council_json[[input]], opacity = 1)
         })
 })
