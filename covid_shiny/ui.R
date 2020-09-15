@@ -1,5 +1,6 @@
 source("dependencies.R")
 source("table_plot_module.R")
+source("map_module.R")
 
 shinyUI(fluidPage(
     theme = shinythemes::shinytheme("flatly"),
@@ -112,20 +113,11 @@ shinyUI(fluidPage(
                            values mean there were fewer than 5 patients. Refer to 
                            reference link for further details."
             ),
-            tabPanel(
-                "Map",
-                leafletOutput("regional_map", height = 700),
-                fluidRow(
-                    radioButtons(
-                        inputId = "regional_mapInput",
-                        label = "Select Input",
-                        choices = c(
-                            "Regional Cases" = "Table 1 - Cumulative cases",
-                            "Regional ICU Patients" = "Table 2 - ICU patients",
-                            "Regional Hospital Patients" = "Table 3 - Hospital patients"
-                        ),
-                        inline = TRUE
-                    )
+            mapUI(id = "regional_map", 
+                choices = c(
+                    "Regional Cases" = "Table 1 - Cumulative cases",
+                    "Regional ICU Patients" = "Table 2 - ICU patients",
+                    "Regional Hospital Patients" = "Table 3 - Hospital patients"
                 )
             )
         ),
@@ -137,24 +129,15 @@ shinyUI(fluidPage(
             panelUI(id = "Council Cumulative Negative"),
             panelUI(id = "Council Cumulative Positive"),
             panelUI(id = "Council Percent Positive"),
-            tabPanel(
-                "Map",
-                leafletOutput("council_map", height = 700),
-                fluidRow(
-                    radioButtons(
-                        inputId = "council_mapInput",
-                        label = "Select Input",
-                        choices = c(
-                            "Council Deaths Per 100,000" = "CrudeRateDeaths",
-                            "Council Negative Cases Per 100,000" = "CrudeRateNegative",
-                            "Council Positive Cases Per 100,000" = "CrudeRatePositive",
-                            "Council Cumulative Deaths" = "CumulativeDeaths",
-                            "Council Cumulative Negative" = "CumulativeNegative",
-                            "Council Cumulative Positive" = "CumulativePositive",
-                            "Council Percent Positive" = "CumulativePositivePercent"
-                        ),
-                        inline = TRUE
-                    )
+            mapUI(id = "council_map",
+                choices = c(
+                    "Council Deaths Per 100,000" = "CrudeRateDeaths",
+                    "Council Negative Cases Per 100,000" = "CrudeRateNegative",
+                    "Council Positive Cases Per 100,000" = "CrudeRatePositive",
+                    "Council Cumulative Deaths" = "CumulativeDeaths",
+                    "Council Cumulative Negative" = "CumulativeNegative",
+                    "Council Cumulative Positive" = "CumulativePositive",
+                    "Council Percent Positive" = "CumulativePositivePercent"
                 )
             )
         ),

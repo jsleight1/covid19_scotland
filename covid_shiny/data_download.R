@@ -156,4 +156,4 @@ council_data <- council_data %>%
     })
 
 # Council json from https://github.com/martinjc/UK-GeoJSON/blob/master/json/administrative/sco/lad.json
-council_json <- rgdal::readOGR("scotland_councils.json")
+# council_json <- rgdal::readOGR("data/scotland_councils.json")
