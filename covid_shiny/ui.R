@@ -60,9 +60,11 @@ shinyUI(fluidPage(
         navbarMenu("National Data",
             panelUI(id = "Testing"),
             panelUI(id = "Hospital Care", 
-                message = "NOTE: Please note that as of 22/07/20 suspected
-                    COVID-19 patients in hospital and ICU will no 
-                    longer be reported"
+                message = "NOTE: Please note that as of 15/09/20 this table
+                           only includes patients who first tested positive during
+                           their current stay in hospital or in the two weeks 
+                           before their admission. Refer to reference link for 
+                           further details."
             ),
             panelUI(id = "Ambulance Attendances",
                 message = "NOTE: Please note that as of 22/07/20 this table is 
@@ -94,9 +96,22 @@ shinyUI(fluidPage(
         ), 
         navbarMenu("Regional Data",
             panelUI(id = "Regional Cases"),
-            panelUI(id = "Regional ICU"),
-            panelUI(id = "Regional Confirmed"),
-            panelUI(id = "Regional Suspected"),
+            panelUI(id = "Regional ICU", 
+                message = "NOTE: Please note that as of 15/09/20 this table
+                           only includes patients who first tested positive during
+                           their current stay in hospital or in the two weeks 
+                           before their admission. For disclosure reasons blanks
+                           values mean there were fewer than 5 patients. Refer to 
+                           reference link for further details."
+            ),
+            panelUI(id = "Regional Hospital",
+                message = "NOTE: Please note that as of 15/09/20 this table
+                           only includes patients who first tested positive during
+                           their current stay in hospital or in the two weeks 
+                           before their admission. For disclosure reasons blanks
+                           values mean there were fewer than 5 patients. Refer to 
+                           reference link for further details."
+            ),
             tabPanel(
                 "Map",
                 leafletOutput("regional_map", height = 700),
@@ -106,9 +121,8 @@ shinyUI(fluidPage(
                         label = "Select Input",
                         choices = c(
                             "Regional Cases" = "Table 1 - Cumulative cases",
-                            "Regional ICU Patients" = "Table 2a - ICU patients",
-                            "Regional Hospital Confirmed" = "Table 3a - Hospital Confirmed",
-                            "Regional Hospital Suspected" = "Table 3b- Hospital Suspected"
+                            "Regional ICU Patients" = "Table 2 - ICU patients",
+                            "Regional Hospital Patients" = "Table 3 - Hospital patients"
                         ),
                         inline = TRUE
                     )

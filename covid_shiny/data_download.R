@@ -6,7 +6,7 @@ GET(url_regional, write_disk(tf_regional <- tempfile(fileext = ".xlsx"), overwri
 sheets <- readxl::excel_sheets(tf_regional) %>% 
     set_names() %>% 
     map(readxl::read_excel, path = tf_regional)
-regional_data <- sheets[grep("Table", names(sheets))] %>% 
+regional_data <- sheets[c("Table 1 - Cumulative cases", "Table 2 - ICU patients", "Table 3 - Hospital patients")] %>% 
     map(., function(i) {
         i <- select_if(i, ~sum(!is.na(.)) > 0)
         tidy_table(df = i, row = 3)
@@ -52,28 +52,22 @@ national_data[["Table 4 - Delayed Discharges"]] <- tidy_table(
 )
 
 # Hospital care stats
-national_data[["Table 2 - Hospital Care"]] <- national_data[["Table 2 - Hospital Care"]] %>% 
-    slice(4:nrow(.)) %>% 
-    select(1, 2, 5) %>% 
-    set_names(
+national_data[["Table 2 - Hospital Care"]][national_data[["Table 2 - Hospital Care"]] == "Reporting Date"] <- "Date"
+national_data[["Table 2 - Hospital Care"]] <- tidy_table(
+        df = national_data[["Table 2 - Hospital Care"]],
+        row = 3
+    ) %>%
+    set_names(c(
         "Date", 
-        "COVID-19 patients in ICU or combined ICU/HDU Confirmed",
-        "COVID-19 patients in hopsital (including those in ICU) Confirmed"
-    ) %>% 
-    mutate_all(~round(as.numeric(.))) %>% 
+        "COVID-19 patients in ICU or combined ICU/HDU Confirmed", 
+        "COVID-19 patients in hopsital (including those in ICU)"  
+    )) %>% 
     mutate(
-        Date = excel_numeric_to_date(Date),
         `Daily Change in Intensive Care Confirmed` = `COVID-19 patients in ICU or combined ICU/HDU Confirmed` - 
                lag(`COVID-19 patients in ICU or combined ICU/HDU Confirmed`),
-        `Daily Change in Total Hospital Patients Confirmed` = `COVID-19 patients in hopsital (including those in ICU) Confirmed` - 
-            lag(`COVID-19 patients in hopsital (including those in ICU) Confirmed`)
+        `Daily Change in Total Hospital Patients Confirmed` = `COVID-19 patients in hopsital (including those in ICU)` - 
+            lag(`COVID-19 patients in hopsital (including those in ICU)`)
     )
-
-# Care home workforce
-national_data[["Table 7b - Care Home Workforce"]] <- tidy_table(
-    df = national_data[["Table 7b - Care Home Workforce"]],
-    row = 2
-)
 
 # Deaths
 national_data[["Table 8 - Deaths"]] <- tidy_table(
@@ -118,6 +112,12 @@ national_data[["Table 7a - Care Homes"]] <- national_data[["Table 7a - Care Home
     mutate_at(c(1, 3), as.numeric) %>% 
     mutate(Week = factor(Week, levels = .data[["Week"]])) %>% 
     select(Week, everything())
+
+# Care home workforce
+national_data[["Table 7b - Care Home Workforce"]] <- tidy_table(
+    df = national_data[["Table 7b - Care Home Workforce"]],
+    row = 2
+)
 
 # Care homes
 national_data[["Table 7c - Care Homes (Homes)"]] <- tidy_table(

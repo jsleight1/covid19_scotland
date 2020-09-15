@@ -41,9 +41,8 @@ shinyServer(function(input, output) {
 
     # Regional analysis
     panelServer(id = "Regional Cases", table = regional_data[["Table 1 - Cumulative cases"]])
-    panelServer(id = "Regional ICU", table = regional_data[["Table 2a - ICU patients"]])
-    panelServer(id = "Regional Confirmed", table = regional_data[["Table 3a - Hospital Confirmed"]])
-    panelServer(id = "Regional Suspected", table = regional_data[["Table 3b- Hospital Suspected"]])
+    panelServer(id = "Regional ICU", table = regional_data[["Table 2 - ICU patients"]])
+    panelServer(id = "Regional Hospital", table = regional_data[["Table 3 - Hospital patients"]])
     output[["regional_map"]] <- renderLeaflet({  
         df <- tail(regional_data[[input[["regional_mapInput"]]]], 1) %>% 
             pivot_longer(-Date) %>%
@@ -103,5 +102,5 @@ shinyServer(function(input, output) {
         #         label = ~label
         #     ) %>% 
         #     addLegend(pal = pal, values = council_json[[input]], opacity = 1)
-        # })
+        })
 })
