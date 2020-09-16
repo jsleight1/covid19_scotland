@@ -12,14 +12,12 @@ regional_data <- sheets[c("Table 1 - Cumulative cases", "Table 2 - ICU patients"
         tidy_table(df = i, row = 3)
     })
 
-# Regions json 
-# region_json <- rgdal::readOGR("../../../SG_NHS_HealthBoards_2019/SG_NHS_HealthBoards_2019.shp")
-
-# region_json_simp <- rgeos::gSimplify(
-#     region_json, 
-#     tol = 8, 
-#     topologyPreserve = TRUE
-# )
+# Regions json generate by:
+# ogr2ogr -progress -t_srs WGS84 -simplify 300 scotland_regions.shp SG_NHS_HealthBoards_2019/SG_NHS_HealthBoards_2019.shp
+# topojson -o scotland_regions.json scotland_regions.shp -p
+region_json <- rgdal::readOGR("data/scotland_regions.json")
+region_json[["name"]] <- paste("NHS", gsub(" and ", " & ", region_json[["HBName"]]))
+stopifnot(region_json[["name"]] %in% colnames(regional_data[[1]]))
 
 ################################################################################
 # Read in national data
@@ -156,4 +154,6 @@ council_data <- council_data %>%
     })
 
 # Council json from https://github.com/martinjc/UK-GeoJSON/blob/master/json/administrative/sco/lad.json
-# council_json <- rgdal::readOGR("data/scotland_councils.json")
+council_json <- rgdal::readOGR("data/scotland_councils.json")
+council_json[["name"]] <- gsub("Eilean Siar", "Na h-Eileanan Siar", council_json[["LAD13NM"]])
+stopifnot(council_json[["name"]] %in% colnames(council_data[[1]]))

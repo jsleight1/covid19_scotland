@@ -4,7 +4,7 @@ source("map_module.R")
 
 shinyUI(fluidPage(
     theme = shinythemes::shinytheme("flatly"),
-    # tags$head(includeHTML(("google-analytics.html"))),
+    tags$head(includeHTML(("google-analytics.html"))),
     navbarPage("COVID-19 Analysis",
         tabPanel("Introduction",
             fluidRow(

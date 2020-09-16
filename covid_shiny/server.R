@@ -47,7 +47,7 @@ shinyServer(function(input, output) {
     mapServer(
         id = "regional_map", 
         data = regional_data, 
-        locations = readRDS("data/regions_scotland.RDS")
+        json = region_json
     )
 
     # Council analysis
@@ -61,27 +61,6 @@ shinyServer(function(input, output) {
     mapServer(
         id = "council_map",
         data = council_data,
-        locations = readRDS("data/councils_scotland.RDS")
+        json = council_json
     )
-    # output[["council_map"]] <- renderLeaflet({
-        # input <- input[["council_mapInput"]]
-        # council_json[["name"]] <- deframe(select(council_codes, code, name))[council_json[["id"]]]
-        # council_json[[input]] <- unlist(select(tail(council_data[[input]], 1), -Date))[council_json[["name"]]]
-        # council_json[["label"]] <- paste(
-        #     "Council:", council_json[["name"]], 
-        #     input, council_json[[input]]
-        # )
-
-        # pal <- colorNumeric("viridis", NULL)
-        # leaflet(council_json) %>%
-        #     addTiles() %>%
-        #     addPolygons(
-        #         fillOpacity = 0.7,
-        #         smoothFactor = 0.3, 
-        #         stroke = FALSE,
-        #         fillColor = pal(council_json[[input]]),
-        #         label = ~label
-        #     ) %>% 
-        #     addLegend(pal = pal, values = council_json[[input]], opacity = 1)
-        # })
 })

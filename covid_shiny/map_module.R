@@ -16,26 +16,30 @@ mapUI <- function(id, choices) {
 }
 
 # Server
-mapServer <- function(id, data, locations) {
+mapServer <- function(id, data, json) {
     moduleServer(
         id,
         function(input, output, session) {
             ns <- session[["ns"]]
-            output[[id]] <- renderLeaflet({  
-                df <- tail(data[[req(input[[paste0(id, "input")]])]], 1) %>% 
-                    pivot_longer(-Date) %>%
-                    inner_join(., locations, by = "name") %>% 
-                    mutate(Circle_size = scales::rescale(value, to = c(2000, 18000)))
-                leaflet(df) %>% 
-                    addTiles(options = providerTileOptions(minZoom = 5, maxZoom = 9)) %>% 
-                    setView(lat = 57.4907, lng = -4.2026, zoom = 6) %>% 
-                    addCircles(lat = ~latitude, lng = ~longitude, radius = ~Circle_size,
-                        popup = paste(
-                            "Date:", df[["Date"]], "<br>", 
-                            "Regional Board:", df[["name"]], "<br>", 
-                            "Value:", df[["value"]], "<br>"
-                        )
-                    ) 
+            output[[id]] <- renderLeaflet({
+                input <- req(input[[paste0(id, "input")]])
+                json[[input]] <- unlist(select(tail(data[[input]], 1), json[["name"]]))
+                json[["label"]] <- paste(
+                    "Area:", json[["name"]], 
+                    input, json[[input]]
+                )
+
+                pal <- colorNumeric("viridis", NULL)
+                leaflet(json) %>%
+                    addTiles() %>%
+                    addPolygons(
+                        fillOpacity = 0.7,
+                        smoothFactor = 0.3, 
+                        stroke = FALSE,
+                        fillColor = pal(json[[input]]),
+                        label = ~label
+                    ) %>% 
+                    addLegend(pal = pal, values = json[[input]], opacity = 1)
             })
         }
     )
