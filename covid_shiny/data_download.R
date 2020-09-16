@@ -141,7 +141,7 @@ GET(url_council, write_disk(tf_council <- tempfile(fileext = "csv"), overwrite =
 council_codes <- readRDS("data/councils_scotland.RDS")
 council_data <- read_csv(tf_council) %>% 
    left_join(., council_codes, by = c("CA" = "code")) %>% 
-   select(name, everything(), -CA, -latitude, -longitude) %>% 
+   select(name, everything(), -CAName, -CA, -latitude, -longitude) %>% 
    mutate(CumulativePositivePercent = CumulativePositivePercent * 100) %>% 
    pivot_longer(cols = -c(name, Date), names_to = "key", values_to = "value")
 council_data <- council_data %>% 
@@ -151,7 +151,7 @@ council_data <- council_data %>%
         .x %>% 
             mutate(Date = lubridate::ymd(Date)) %>% 
             pivot_wider(names_from = "name", values_from = "value") %>% 
-            select(Date, sort(colnames(.)), -key, -"NA") %>% 
+            select(Date, sort(colnames(.)), -key) %>% 
             mutate_if(is.numeric, ~round(as.numeric(.), 2))
     })
 
