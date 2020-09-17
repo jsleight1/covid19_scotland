@@ -83,7 +83,9 @@ national_data[["Table 5 - Testing"]] <- national_data[["Table 5 - Testing"]] %>%
         c("Date", "Negative", "Positive", "Total", "Daily Positive", 
         paste("NHS labs", c("Daily", "Cumulative"), sep = " "), 
         paste("Regional Centres", c("Daily", "Cumulative"), sep = " "),
-        c("Total daily tests", "People tested in last 7 days", "Positive cases in last 7 days", "Tests in last 7 days")
+        c(
+            "Total daily tests", "People with first test result in last 7 days", 
+            "Positive cases in last 7 days", "Tests in last 7 days", "Tests in last 7 days per 1,000")
     )) %>% 
     slice(4:nrow(.)) %>% 
     mutate_all(~round(as.numeric(.))) %>% 
