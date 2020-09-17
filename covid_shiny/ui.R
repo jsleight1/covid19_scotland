@@ -1,5 +1,6 @@
 source("dependencies.R")
 source("table_plot_module.R")
+source("map_module.R")
 
 shinyUI(fluidPage(
     theme = shinythemes::shinytheme("flatly"),
@@ -47,15 +48,24 @@ shinyUI(fluidPage(
                     been updated to account for this hence the significant increase 
                     in testing capacity and positive cases on this day."
                 ),
-                style = "padding-top:15px"
+                div(
+                    "DISCLAIMER: This app is specifically designed as a visualisation tool
+                    that utilises public COVID-19 data and therefore should 
+                    not be used for any official decision making. Links to data sources can 
+                    be found under the references tab and should be consulted to further 
+                    understand the nuances and exact meaning of the data presented."
+                ),
+                style = "padding-top:15px; color:red"
             ),
         ),
         navbarMenu("National Data",
             panelUI(id = "Testing"),
             panelUI(id = "Hospital Care", 
-                message = "NOTE: Please note that as of 22/07/20 suspected
-                    COVID-19 patients in hospital and ICU will no 
-                    longer be reported"
+                message = "NOTE: Please note that as of 15/09/20 this table
+                           only includes patients who first tested positive during
+                           their current stay in hospital or in the two weeks 
+                           before their admission. Refer to reference link for 
+                           further details."
             ),
             panelUI(id = "Ambulance Attendances",
                 message = "NOTE: Please note that as of 22/07/20 this table is 
@@ -87,29 +97,53 @@ shinyUI(fluidPage(
         ), 
         navbarMenu("Regional Data",
             panelUI(id = "Regional Cases"),
-            panelUI(id = "Regional ICU"),
-            panelUI(id = "Regional Confirmed"),
-            panelUI(id = "Regional Suspected"),
-            tabPanel(
-                "Map",
-                leafletOutput("map", height = 700),
-                fluidRow(
-                    radioButtons(
-                        inputId = "mapInput",
-                        label = "Select Input",
-                        choices = c(
-                            "Regional Cases" = "Table 1 - Cumulative cases",
-                            "Regional ICU Patients" = "Table 2a - ICU patients",
-                            "Regional Hospital Confirmed" = "Table 3a - Hospital Confirmed",
-                            "Regional Hospital Suspected" = "Table 3b- Hospital Suspected"
-                        ),
-                        inline = TRUE
-                    )
+            panelUI(id = "Regional ICU", 
+                message = "NOTE: Please note that as of 15/09/20 this table
+                           only includes patients who first tested positive during
+                           their current stay in hospital or in the two weeks 
+                           before their admission. For disclosure reasons blanks
+                           values mean there were fewer than 5 patients. Refer to 
+                           reference link for further details."
+            ),
+            panelUI(id = "Regional Hospital",
+                message = "NOTE: Please note that as of 15/09/20 this table
+                           only includes patients who first tested positive during
+                           their current stay in hospital or in the two weeks 
+                           before their admission. For disclosure reasons blanks
+                           values mean there were fewer than 5 patients. Refer to 
+                           reference link for further details."
+            ),
+            mapUI(id = "regional_map", 
+                choices = c(
+                    "Regional Cases" = "Table 1 - Cumulative cases",
+                    "Regional ICU Patients" = "Table 2 - ICU patients",
+                    "Regional Hospital Patients" = "Table 3 - Hospital patients"
+                )
+            )
+        ),
+        navbarMenu("Council Data",
+            panelUI(id = "Council Deaths Per 100,000"),
+            panelUI(id = "Council Negative Cases Per 100,000"),
+            panelUI(id = "Council Positive Cases Per 100,000"),
+            panelUI(id = "Council Cumulative Deaths"),
+            panelUI(id = "Council Cumulative Negative"),
+            panelUI(id = "Council Cumulative Positive"),
+            panelUI(id = "Council Percent Positive"),
+            mapUI(id = "council_map",
+                choices = c(
+                    "Council Deaths Per 100,000" = "CrudeRateDeaths",
+                    "Council Negative Cases Per 100,000" = "CrudeRateNegative",
+                    "Council Positive Cases Per 100,000" = "CrudeRatePositive",
+                    "Council Cumulative Deaths" = "CumulativeDeaths",
+                    "Council Cumulative Negative" = "CumulativeNegative",
+                    "Council Cumulative Positive" = "CumulativePositive",
+                    "Council Percent Positive" = "CumulativePositivePercent"
                 )
             )
         ),
         navbarMenu("References",
-            HTML("<a href=\"https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/\" style=\"font-size: 15px\"> Government Data </a>"),
+            HTML("<a href=\"https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/\" style=\"font-size: 15px\"> National and Regional Data </a>"),
+            HTML("<a href=\"https://www.opendata.nhs.scot/dataset/covid-19-in-scotland/resource/427f9a25-db22-4014-a3bc-893b68243055\" style=\"font-size: 15px\"> Council Data </a>"),
             HTML("<a href=\"https://github.com/jsleight1/covid19_scotland\" style=\"font-size: 15px\"> Source Code </a>")
         )
     )

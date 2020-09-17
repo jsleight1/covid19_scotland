@@ -1,6 +1,7 @@
 source("dependencies.R")
 source("server_functions.R")
 source("table_plot_module.R")
+source("map_module.R")
 source("data_download.R")
 
 shinyServer(function(input, output) {
@@ -41,20 +42,25 @@ shinyServer(function(input, output) {
 
     # Regional analysis
     panelServer(id = "Regional Cases", table = regional_data[["Table 1 - Cumulative cases"]])
-    panelServer(id = "Regional ICU", table = regional_data[["Table 2a - ICU patients"]])
-    panelServer(id = "Regional Confirmed", table = regional_data[["Table 3a - Hospital Confirmed"]])
-    panelServer(id = "Regional Suspected", table = regional_data[["Table 3b- Hospital Suspected"]])
+    panelServer(id = "Regional ICU", table = regional_data[["Table 2 - ICU patients"]])
+    panelServer(id = "Regional Hospital", table = regional_data[["Table 3 - Hospital patients"]])
+    mapServer(
+        id = "regional_map", 
+        data = regional_data, 
+        json = region_json
+    )
 
-    output[["map"]] <- renderLeaflet({
-        df <- tail(regional_data[[input[["mapInput"]]]], 1) %>% 
-            pivot_longer(-Date) %>%
-            inner_join(., readRDS("regions_scotland.RDS"), by = "name") %>% 
-            mutate(Circle_size = scales::rescale(value, to = c(2000, 18000)))
-        leaflet(df) %>% 
-            addTiles(options = providerTileOptions(minZoom = 5, maxZoom = 9)) %>% 
-            setView(lat = 56.4907, lng = -4.2026, zoom = 6) %>% 
-            addCircles(lat = ~latitude, lng = ~longitude, radius = ~Circle_size,
-                popup = paste(df[["name"]], "<br>", input[["mapInput"]], df[["value"]], "<br>")
-            ) 
-    })
+    # Council analysis
+    panelServer(id = "Council Deaths Per 100,000", table = council_data[["CrudeRateDeaths"]])
+    panelServer(id = "Council Negative Cases Per 100,000", table = council_data[["CrudeRateNegative"]])
+    panelServer(id = "Council Positive Cases Per 100,000", table = council_data[["CrudeRatePositive"]])
+    panelServer(id = "Council Cumulative Deaths", table = council_data[["CumulativeDeaths"]])
+    panelServer(id = "Council Cumulative Negative", table = council_data[["CumulativeNegative"]])
+    panelServer(id = "Council Cumulative Positive", table = council_data[["CumulativePositive"]])
+    panelServer(id = "Council Percent Positive", table = council_data[["CumulativePositivePercent"]])
+    mapServer(
+        id = "council_map",
+        data = council_data,
+        json = council_json
+    )
 })
