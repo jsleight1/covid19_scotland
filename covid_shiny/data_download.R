@@ -12,6 +12,7 @@ regional_data <- sheets[c("Table 1 - Cumulative cases", "Table 2 - ICU patients"
         tidy_table(df = i, row = 3)
     })
 
+# Shape file downnloaded from https://data.gov.uk/dataset/27d0fe5f-79bb-4116-aec9-a8e565ff756a/nhs-health-boards
 # Regions json generate by:
 # ogr2ogr -progress -t_srs WGS84 -simplify 300 scotland_regions.shp SG_NHS_HealthBoards_2019/SG_NHS_HealthBoards_2019.shp
 # topojson -o scotland_regions.json scotland_regions.shp -p
@@ -155,7 +156,8 @@ council_data <- council_data %>%
             mutate_if(is.numeric, ~round(as.numeric(.), 2))
     })
 
-# Council json from https://github.com/martinjc/UK-GeoJSON/blob/master/json/administrative/sco/lad.json
+# Shape file downloaded from https://spatialdata.gov.scot/geonetwork/srv/eng/catalog.search;jsessionid=09FA9EA46E60A59D1EF83383E3819105#/metadata/1cd57ea6-8d6e-412b-a9dd-d1c89a80ad62
+# Converted to json in similar fashion to scotland_regions.json
 council_json <- rgdal::readOGR("data/scotland_councils.json")
-council_json[["name"]] <- gsub("Eilean Siar", "Na h-Eileanan Siar", council_json[["LAD13NM"]])
+council_json[["name"]] <- gsub("Eilean Siar", "Na h-Eileanan Siar", council_json[["local_auth"]])
 stopifnot(council_json[["name"]] %in% colnames(council_data[[1]]))
