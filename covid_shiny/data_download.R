@@ -84,9 +84,9 @@ national_data[["Table 5 - Testing"]] <- national_data[["Table 5 - Testing"]] %>%
         c("Date", "Negative", "Positive", "Total", "Daily Positive", 
         paste("NHS labs", c("Daily", "Cumulative"), sep = " "), 
         paste("Regional Centres", c("Daily", "Cumulative"), sep = " "),
-        c(
-            "Total daily tests", "People with first test result in last 7 days", 
-            "Positive cases in last 7 days", "Tests in last 7 days", "Tests in last 7 days per 1,000")
+        c("Total daily tests", "People with first test result in last 7 days", 
+            "Positive cases in last 7 days", "Tests in last 7 days", 
+            "Tests in last 7 days per 1,000")
     )) %>% 
     slice(4:nrow(.)) %>% 
     mutate_all(~round(as.numeric(.))) %>% 
@@ -138,22 +138,20 @@ national_data[["Table 9 - School education"]] <- tidy_table(
 
 url_council <- "https://www.opendata.nhs.scot/dataset/b318bddf-a4dc-4262-971f-0ba329e09b87/resource/427f9a25-db22-4014-a3bc-893b68243055/download/trend_ca_20200908.csv"
 GET(url_council, write_disk(tf_council <- tempfile(fileext = "csv"), overwrite = TRUE))
-
-council_codes <- readRDS("data/councils_scotland.RDS")
-council_data <- read_csv(tf_council) %>% 
-   left_join(., council_codes, by = c("CA" = "code")) %>% 
-   select(name, everything(), -CAName, -CA, -latitude, -longitude) %>% 
-   mutate(CumulativePositivePercent = CumulativePositivePercent * 100) %>% 
-   pivot_longer(cols = -c(name, Date), names_to = "key", values_to = "value")
+council_data <- read_csv(tf_council)
 council_data <- council_data %>% 
+    select(name = "CAName", everything(), -CA) %>% 
+    mutate(CumulativePositivePercent = CumulativePositivePercent * 100) %>% 
+    pivot_longer(cols = -c(name, Date), names_to = "key", values_to = "value") %>% 
     group_split(key) %>% 
-    set_names(unique(sort(council_data[["key"]]))) %>% 
+    set_names(unique(sort(setdiff(colnames(council_data), c("Date", "CA", "CAName"))))) %>% 
     lapply(., function(.x) {
         .x %>% 
             mutate(Date = lubridate::ymd(Date)) %>% 
             pivot_wider(names_from = "name", values_from = "value") %>% 
             select(Date, sort(colnames(.)), -key) %>% 
-            mutate_if(is.numeric, ~round(as.numeric(.), 2))
+            mutate_if(is.numeric, ~round(as.numeric(.), 2)) %>% 
+            set_names(gsub(" & ", " and ", colnames(.)))
     })
 
 # Shape file downloaded from https://spatialdata.gov.scot/geonetwork/srv/eng/catalog.search;jsessionid=09FA9EA46E60A59D1EF83383E3819105#/metadata/1cd57ea6-8d6e-412b-a9dd-d1c89a80ad62

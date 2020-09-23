@@ -44,11 +44,7 @@ shinyServer(function(input, output) {
     panelServer(id = "Regional Cases", table = regional_data[["Table 1 - Cumulative cases"]])
     panelServer(id = "Regional ICU", table = regional_data[["Table 2 - ICU patients"]])
     panelServer(id = "Regional Hospital", table = regional_data[["Table 3 - Hospital patients"]])
-    mapServer(
-        id = "regional_map", 
-        data = regional_data, 
-        json = region_json
-    )
+    mapServer(id = "regional_map", data = regional_data, json = region_json)
 
     # Council analysis
     panelServer(id = "Council Deaths Per 100,000", table = council_data[["CrudeRateDeaths"]])
@@ -58,9 +54,5 @@ shinyServer(function(input, output) {
     panelServer(id = "Council Cumulative Negative", table = council_data[["CumulativeNegative"]])
     panelServer(id = "Council Cumulative Positive", table = council_data[["CumulativePositive"]])
     panelServer(id = "Council Percent Positive", table = council_data[["CumulativePositivePercent"]])
-    mapServer(
-        id = "council_map",
-        data = council_data,
-        json = council_json
-    )
+    mapServer(id = "council_map", data = council_data, json = council_json)
 })
