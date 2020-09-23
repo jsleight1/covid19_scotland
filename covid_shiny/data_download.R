@@ -159,3 +159,9 @@ council_data <- council_data %>%
 council_json <- rgdal::readOGR("data/scotland_councils.json")
 council_json[["name"]] <- gsub("Eilean Siar", "Na h-Eileanan Siar", council_json[["local_auth"]])
 stopifnot(council_json[["name"]] %in% colnames(council_data[[1]]))
+
+# Implement data download from dropbox
+# Set up cron script to run data_downdload.R to download and process data
+# from sources
+# Then upload the processed data to dropbox from which the app will 
+# download the already processed tables from
