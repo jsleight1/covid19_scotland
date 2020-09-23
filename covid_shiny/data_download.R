@@ -1,3 +1,6 @@
+source("dependencies.R")
+source("server_functions.R")
+
 ################################################################################
 # Read in regional data
 ################################################################################
@@ -165,3 +168,14 @@ stopifnot(council_json[["name"]] %in% colnames(council_data[[1]]))
 # from sources
 # Then upload the processed data to dropbox from which the app will 
 # download the already processed tables from
+
+processed_data <- list(
+    "regional_data" = regional_data,
+    "regional_json" = region_json,
+    "national_data" = national_data,
+    "council_data" = council_data,
+    "council_json" = council_json
+)
+
+saveRDS(processed_data, file = file.path(tempdir(), "processed_covid_data.RDS"))
+drop_upload(file.path(tempdir(), "processed_covid_data.RDS"), path = "processed")
