@@ -10,11 +10,22 @@ GET(url_regional, write_disk(tf_regional <- tempfile(fileext = ".xlsx"), overwri
 sheets <- readxl::excel_sheets(tf_regional) %>% 
     set_names() %>% 
     map(readxl::read_excel, path = tf_regional)
-regional_data <- sheets[c("Table 1 - Cumulative cases", "Table 2 - ICU patients", "Table 3 - Hospital patients")] %>% 
-    map(., function(i) {
-        i <- select_if(i, ~sum(!is.na(.)) > 0)
-        tidy_table(df = i, row = 3)
-    })
+regional_data <- sheets[c("Table 1 - Cumulative cases", "Table 2 - ICU patients", "Table 3 - Hospital patients")]
+regional_data[["Table 1 - Cumulative cases"]] <- tidy_table(
+    df = regional_data[["Table 1 - Cumulative cases"]], 
+    row = 3, 
+    date_col = "Date notified"
+)
+regional_data[["Table 2 - ICU patients"]] <- tidy_table(
+    df = regional_data[["Table 2 - ICU patients"]],
+    row = 3, 
+    date_col = "Reporting date"
+)
+regional_data[["Table 3 - Hospital patients"]] <- tidy_table(
+    df = regional_data[["Table 3 - Hospital patients"]],
+    row = 3, 
+    date_col = "Reporting date"
+)
 
 # Shape file downnloaded from https://data.gov.uk/dataset/27d0fe5f-79bb-4116-aec9-a8e565ff756a/nhs-health-boards
 # Regions json generate by:
