@@ -1,3 +1,4 @@
+setwd("/Users/jacksleight/Desktop/Fios_training/covid19_scotland/covid_shiny/")
 source("dependencies.R")
 source("server_functions.R")
 
@@ -163,11 +164,8 @@ council_json <- rgdal::readOGR("data/scotland_councils.json")
 council_json[["name"]] <- gsub("Eilean Siar", "Na h-Eileanan Siar", council_json[["local_auth"]])
 stopifnot(council_json[["name"]] %in% colnames(council_data[[1]]))
 
-# Implement data download from dropbox
-# Set up cron script to run data_downdload.R to download and process data
-# from sources
-# Then upload the processed data to dropbox from which the app will 
-# download the already processed tables from
+# Set up cron script to run data_download.R to download and process data
+# Then upload the processed data to dropbox
 
 processed_data <- list(
     "regional_data" = regional_data,
@@ -176,6 +174,7 @@ processed_data <- list(
     "council_data" = council_data,
     "council_json" = council_json
 )
+saveRDS(processed_data, "/Users/jacksleight/Desktop/covid.RDS")
 
 saveRDS(processed_data, file = file.path(tempdir(), "processed_covid_data.RDS"))
 drop_upload(file.path(tempdir(), "processed_covid_data.RDS"), path = "processed")
