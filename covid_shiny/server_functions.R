@@ -1,10 +1,13 @@
-tidy_table <- function(df, row) {
-    col_names <- na.omit(unlist(slice(df, row-1)))
-    df %>% 
+tidy_table <- function(df, row, date_col = "Date") {
+    col_names <- na.omit(unlist(slice(df, row - 1)))
+    df <- df %>% 
         slice(row:nrow(.)) %>% 
         select(1:length(col_names)) %>% 
-        set_names(col_names) %>% 
-        mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>% 
+        set_names(col_names)
+    df[["Date"]] <- excel_numeric_to_date(as.numeric(df[[date_col]]))
+    if (date_col != "Date") df[[date_col]] <- NULL
+    df %>% 
+        select(Date, everything()) %>% 
         mutate_if(is.character, ~round(as.numeric(.), 2)) %>% 
         filter(rowSums(is.na(.)) != ncol(.))
 }
