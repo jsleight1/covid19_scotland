@@ -179,11 +179,11 @@ stopifnot(council_json[["name"]] %in% colnames(council_data[[1]]))
 
 processed_data <- list(
     "regional_data" = regional_data,
-    "regional_json" = region_json,
+    "region_json" = region_json,
     "national_data" = national_data,
     "council_data" = council_data,
     "council_json" = council_json
 )
 
 saveRDS(processed_data, file = file.path(tempdir(), "processed_covid_data.RDS"))
-drop_upload(file.path(tempdir(), "processed_covid_data.RDS"), path = "processed")
+drop_upload(file.path(tempdir(), "processed_covid_data.RDS"), path = "covid_shiny")

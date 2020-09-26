@@ -55,10 +55,6 @@ shinyUI(fluidPage(
                     be found under the references tab and should be consulted to further 
                     understand the nuances and exact meaning of the data presented."
                 ),
-                div(
-                    "Due to technical difficulties with Goverment reporting
-                    the deaths for 25/09/20 are not available"
-                ),
                 style = "padding-top:15px; color:red"
             ),
         ),
