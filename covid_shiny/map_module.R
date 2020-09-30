@@ -24,7 +24,7 @@ mapServer <- function(id, data, json) {
             output[[id]] <- renderLeaflet({
                 input <- req(input[[paste0(id, "input")]])
                 values <- unlist(select(tail(data[[input]], 1), json$name))
-                labels <- paste("Area:", json$name, input, values)
+                labels <- paste("Area:", json$name, "Value", values)
 
                 pal <- colorNumeric("viridis", NULL)
                 leaflet(json) %>%
