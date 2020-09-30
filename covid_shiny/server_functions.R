@@ -55,19 +55,18 @@ xlab_format <- function(df, x) {
     else 0
 }
 
-render_custom_datatable <- function(df, title, ...) {
+render_custom_datatable <- function(df, ...) {
     DT::renderDataTable(
         df,
-        extensions = c("Buttons", "Scroller", "FixedColumns"), 
+        extensions = c("Scroller", "FixedColumns"), 
         rownames = FALSE,
         options = list(
-            dom = "tB",
+            dom = "lrti",
             scrollY = 500,
             scrollX = TRUE,
             scroller = TRUE,
-            buttons = list(list(extend = "excel", filename = title)),
             fixedColumns = list(leftColumn = 1)
-        ), 
+        ),
         ...
     )
 }

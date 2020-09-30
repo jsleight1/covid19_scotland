@@ -23,11 +23,8 @@ mapServer <- function(id, data, json) {
             ns <- session[["ns"]]
             output[[id]] <- renderLeaflet({
                 input <- req(input[[paste0(id, "input")]])
-                json[[input]] <- unlist(select(tail(data[[input]], 1), json[["name"]]))
-                json[["label"]] <- paste(
-                    "Area:", json[["name"]], 
-                    input, json[[input]]
-                )
+                values <- unlist(select(tail(data[[input]], 1), json$name))
+                labels <- paste("Area:", json$name, input, values)
 
                 pal <- colorNumeric("viridis", NULL)
                 leaflet(json) %>%
@@ -36,10 +33,10 @@ mapServer <- function(id, data, json) {
                         fillOpacity = 0.7,
                         smoothFactor = 0.3, 
                         stroke = FALSE,
-                        fillColor = pal(json[[input]]),
-                        label = ~label
+                        fillColor = pal(values),
+                        label = labels
                     ) %>% 
-                    addLegend(pal = pal, values = json[[input]], opacity = 1)
+                    addLegend(pal = pal, values = values, opacity = 1)
             })
         }
     )

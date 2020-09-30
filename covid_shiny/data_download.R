@@ -1,27 +1,19 @@
+setwd("/Users/jacksleight/Desktop/Fios_training/covid19_scotland/covid_shiny")
+source("dependencies.R")
+source("server_functions.R")
+
 ################################################################################
 # Read in regional data
 ################################################################################
 url_regional = "https://www.gov.scot/binaries/content/documents/govscot/publications/statistics/2020/04/coronavirus-covid-19-trends-in-daily-data/documents/covid-19-data-by-nhs-board/covid-19-data-by-nhs-board/govscot%3Adocument/COVID-19%2Bdata%2Bby%2BNHS%2BBoard%2B28%2BMay%2B2020.xlsx"
 GET(url_regional, write_disk(tf_regional <- tempfile(fileext = ".xlsx"), overwrite = TRUE))
-sheets <- readxl::excel_sheets(tf_regional) %>% 
+regional_data <- readxl::excel_sheets(tf_regional) %>% 
     set_names() %>% 
-    map(readxl::read_excel, path = tf_regional)
-regional_data <- sheets[c("Table 1 - Cumulative cases", "Table 2 - ICU patients", "Table 3 - Hospital patients")]
-regional_data[["Table 1 - Cumulative cases"]] <- tidy_table(
-    df = regional_data[["Table 1 - Cumulative cases"]], 
-    row = 3, 
-    date_col = "Date notified"
-)
-regional_data[["Table 2 - ICU patients"]] <- tidy_table(
-    df = regional_data[["Table 2 - ICU patients"]],
-    row = 3, 
-    date_col = "Reporting date"
-)
-regional_data[["Table 3 - Hospital patients"]] <- tidy_table(
-    df = regional_data[["Table 3 - Hospital patients"]],
-    row = 3, 
-    date_col = "Reporting date"
-)
+    map(readxl::read_excel, path = tf_regional) %>% 
+    .[c("Table 1 - Cumulative cases", "Table 2 - ICU patients", "Table 3 - Hospital patients")] %>% 
+    map2(., c("Date notified", "Reporting date", "Reporting date"), function(.x, .y) {
+        tidy_table(df = .x, row = 3, date_col = .y)
+    })
 
 # Shape file downnloaded from https://data.gov.uk/dataset/27d0fe5f-79bb-4116-aec9-a8e565ff756a/nhs-health-boards
 # Regions json generate by:
@@ -38,9 +30,8 @@ url_trend <- "https://www.gov.scot/binaries/content/documents/govscot/publicatio
 GET(url_trend, write_disk(tf_national <- tempfile(fileext = ".xlsx"), overwrite = TRUE))
 national_data <- readxl::excel_sheets(tf_national) %>% 
     set_names() %>% 
-    map(readxl::read_excel, path = tf_national)
-
-national_data <- national_data[grep("Table", names(national_data))] %>% 
+    map(readxl::read_excel, path = tf_national) %>% 
+    .[grep("Table", names(.))] %>% 
     map(., function(i) select_if(i, ~sum(!is.na(.)) > 0))
 
 # NHS 24 stats
@@ -62,21 +53,17 @@ national_data[["Table 4 - Delayed Discharges"]] <- tidy_table(
 )
 
 # Hospital care stats
-national_data[["Table 2 - Hospital Care"]][national_data[["Table 2 - Hospital Care"]] == "Reporting Date"] <- "Date"
 national_data[["Table 2 - Hospital Care"]] <- tidy_table(
         df = national_data[["Table 2 - Hospital Care"]],
-        row = 3
+        row = 3, 
+        date_col = "Reporting Date"
     ) %>%
-    set_names(c(
-        "Date", 
-        "COVID-19 patients in ICU or combined ICU/HDU Confirmed", 
-        "COVID-19 patients in hopsital (including those in ICU)"  
-    )) %>% 
+    set_names(gsub("\\(i{1,}\\) |\\r|\\n", "", colnames(.))) %>% 
     mutate(
-        `Daily Change in Intensive Care Confirmed` = `COVID-19 patients in ICU or combined ICU/HDU Confirmed` - 
-               lag(`COVID-19 patients in ICU or combined ICU/HDU Confirmed`),
-        `Daily Change in Total Hospital Patients Confirmed` = `COVID-19 patients in hopsital (including those in ICU)` - 
-            lag(`COVID-19 patients in hopsital (including those in ICU)`)
+        `Daily Change in Intensive Care Confirmed` = `COVID-19 patients in ICU or combined ICU/HDU` - 
+               lag(`COVID-19 patients in ICU or combined ICU/HDU`),
+        `Daily Change in Total Hospital Patients Confirmed` = `COVID-19 patients in hospital (including those in ICU)` - 
+            lag(`COVID-19 patients in hospital (including those in ICU)`)
     )
 
 # Deaths
@@ -105,8 +92,7 @@ national_data[["Table 5 - Testing"]] <- national_data[["Table 5 - Testing"]] %>%
         Date = excel_numeric_to_date(Date), 
         `Daily Negative` = Negative - lag(Negative)
     ) %>% 
-    select(Date, Negative, `Daily Negative`, Positive, 
-        `Daily Positive`, everything())
+    select(Date, Negative, `Daily Negative`, Positive, `Daily Positive`, everything())
 
 # Workforce absences
 cols <- na.omit(unlist(slice(national_data[["Table 6 - Workforce"]], 1)))
@@ -170,3 +156,16 @@ council_data <- council_data %>%
 council_json <- rgdal::readOGR("data/scotland_councils.json")
 council_json[["name"]] <- gsub("Eilean Siar", "Na h-Eileanan Siar", council_json[["local_auth"]])
 stopifnot(council_json[["name"]] %in% colnames(council_data[[1]]))
+
+# Set up cron script to run data_download.R to download and process data
+# Then upload the processed data to dropbox
+processed_data <- list(
+    "regional_data" = regional_data,
+    "region_json" = region_json,
+    "national_data" = national_data,
+    "council_data" = council_data,
+    "council_json" = council_json
+)
+
+saveRDS(processed_data, file = file.path(tempdir(), "processed_covid_data.RDS"))
+drop_upload(file.path(tempdir(), "processed_covid_data.RDS"), path = "covid_shiny")
