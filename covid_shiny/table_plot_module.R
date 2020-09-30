@@ -6,7 +6,10 @@ panelUI <- function(id, message = "") {
             tabPanel(
                 h6("Table"),
                 DT::dataTableOutput(outputId = ns(id)),
-                fluidRow(div(message), style = "padding-top:15px")
+                fluidRow(
+                    downloadButton(ns(paste0(id, "download")), "Download data"),
+                    div(message), style = "padding-top:15px"
+                )
             ),
             tabPanel(
                 h6("Plot"),
@@ -26,7 +29,7 @@ panelServer <- function(id, table, x = "Date", first_col = x) {
         id, 
         function(input, output, session) {
             ns <- session[["ns"]]
-            output[[id]] <- render_custom_datatable(table, id)
+            output[[id]] <- render_custom_datatable(table)
             output[[paste0(id, "_select")]] <- renderUI(
                 selectizeInput(
                     inputId = ns(id), 
@@ -52,6 +55,12 @@ panelServer <- function(id, table, x = "Date", first_col = x) {
                     x = x, 
                     first_col = first_col
                 )
+            )
+            output[[paste0(id, "download")]] <- downloadHandler(
+                filename = paste0(gsub(" ",  "_", id), ".tsv"), 
+                content = function(file) {
+                    write_tsv(table, file)
+                }
             )
         }
     ) 

@@ -12,11 +12,7 @@ regional_data <- readxl::excel_sheets(tf_regional) %>%
     map(readxl::read_excel, path = tf_regional) %>% 
     .[c("Table 1 - Cumulative cases", "Table 2 - ICU patients", "Table 3 - Hospital patients")] %>% 
     map2(., c("Date notified", "Reporting date", "Reporting date"), function(.x, .y) {
-        tidy_table(
-            df = .x, 
-            row = 3, 
-            date_col = .y
-        )
+        tidy_table(df = .x, row = 3, date_col = .y)
     })
 
 # Shape file downnloaded from https://data.gov.uk/dataset/27d0fe5f-79bb-4116-aec9-a8e565ff756a/nhs-health-boards
@@ -34,9 +30,8 @@ url_trend <- "https://www.gov.scot/binaries/content/documents/govscot/publicatio
 GET(url_trend, write_disk(tf_national <- tempfile(fileext = ".xlsx"), overwrite = TRUE))
 national_data <- readxl::excel_sheets(tf_national) %>% 
     set_names() %>% 
-    map(readxl::read_excel, path = tf_national)
-
-national_data <- national_data[grep("Table", names(national_data))] %>% 
+    map(readxl::read_excel, path = tf_national) %>% 
+    .[grep("Table", names(.))] %>% 
     map(., function(i) select_if(i, ~sum(!is.na(.)) > 0))
 
 # NHS 24 stats
@@ -97,8 +92,7 @@ national_data[["Table 5 - Testing"]] <- national_data[["Table 5 - Testing"]] %>%
         Date = excel_numeric_to_date(Date), 
         `Daily Negative` = Negative - lag(Negative)
     ) %>% 
-    select(Date, Negative, `Daily Negative`, Positive, 
-        `Daily Positive`, everything())
+    select(Date, Negative, `Daily Negative`, Positive, `Daily Positive`, everything())
 
 # Workforce absences
 cols <- na.omit(unlist(slice(national_data[["Table 6 - Workforce"]], 1)))
