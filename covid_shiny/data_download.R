@@ -90,9 +90,10 @@ national_data[["Table 5 - Testing"]] <- national_data[["Table 5 - Testing"]] %>%
     mutate_all(~round(as.numeric(.))) %>% 
     mutate(
         Date = excel_numeric_to_date(Date), 
-        `Daily Negative` = Negative - lag(Negative)
+        `Daily Negative` = Negative - lag(Negative),
+        `% Positive` = round((`Daily Positive` / (Total - lag(Total))) * 100, 2)
     ) %>% 
-    select(Date, Negative, `Daily Negative`, Positive, `Daily Positive`, everything())
+    select(Date, Negative, `Daily Negative`, Positive, `Daily Positive`, `% Positive`, everything())
 
 # Workforce absences
 cols <- na.omit(unlist(slice(national_data[["Table 6 - Workforce"]], 1)))

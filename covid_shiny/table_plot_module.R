@@ -24,7 +24,7 @@ panelUI <- function(id, message = "") {
 }
 
 # Server
-panelServer <- function(id, table, x = "Date", first_col = x) {
+panelServer <- function(id, table, x = "Date", first_col = x, roll_ave = TRUE) {
     moduleServer(
         id, 
         function(input, output, session) {
@@ -53,7 +53,8 @@ panelServer <- function(id, table, x = "Date", first_col = x) {
                     input = req(input[[id]]),
                     type = req(input[[paste0(id, "_radio_select_in")]]),
                     x = x, 
-                    first_col = first_col
+                    first_col = first_col, 
+                    roll_ave = roll_ave
                 )
             )
             output[[paste0(id, "download")]] <- downloadHandler(

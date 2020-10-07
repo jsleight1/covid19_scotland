@@ -12,12 +12,22 @@ tidy_table <- function(df, row, date_col = "Date") {
         filter(rowSums(is.na(.)) != ncol(.))
 }
 
-daily_barplot <- function(df, x, y) {
-    p <- ggplot(data = df, aes_string(x = x, y = y, label1 = x, label2 = y)) +
-        geom_bar(stat = "identity", fill = "#619CFF") +
+daily_barplot <- function(df, x, y, roll_ave) {
+    p <- ggplot(data = df, aes_string(x = x, label1 = x)) +
+        geom_bar(aes_string(y = y, label2 = y), stat = "identity", fill = "#619CFF") +
         labs(y = gsub("`", "", stringr::str_wrap(y, 70))) +
         theme(axis.text.x = element_text(angle = xlab_format(df, x)))
-    ggplotly(p, tooltip = c("label1", "label2"))
+
+    if (roll_ave) {
+        df[["7 day average"]] <- c(
+            rep(NA, 6),
+            round(RcppRoll::roll_mean(df[[gsub("`", "", y)]], n = 7), 2)
+        )   
+        p <- p +
+            geom_line(data = df, aes_string(y = "`7 day average`", label3 = "`7 day average`"), colour = "red")
+    }
+    
+    ggplotly(p, tooltip = c("label1", "label2", "label3"))
 }
 
 stacked_barplot <- function(df, x) {
@@ -30,16 +40,26 @@ stacked_barplot <- function(df, x) {
     ggplotly(p)
 }
 
-cumulative_plot <- function(df, x, y) {
-    p <- ggplot(data = df, aes_string(x = x, y = y)) +
-        geom_point(colour = "#619CFF") +
-        geom_line(aes(group = 1), colour = "#619CFF") +
+daily_lineplot <- function(df, x, y, roll_ave) {
+    p <- ggplot(data = df, aes_string(x = x, label1 = x)) +
+        geom_point(aes_string(y = y, label2 = y), colour = "#619CFF") +
+        geom_line(aes_string(y = y), colour = "#619CFF") +
         labs(y = gsub("`", "", stringr::str_wrap(y, 70))) +
         theme(axis.text.x = element_text(angle = xlab_format(df, x)))
-    ggplotly(p)
+
+    if (roll_ave) {
+        df[["7 day average"]] <- c(
+            rep(NA, 6),
+            round(RcppRoll::roll_mean(df[[gsub("`", "", y)]], n = 7), 2)
+        )   
+        p <- p +
+            geom_line(data = df, aes_string(y = "`7 day average`", label3 = "`7 day average`"), colour = "red")
+    }
+
+    ggplotly(p, tooltip = c("label1", "label2", "label3"))
 }
 
-cumulative_group_plot <- function(df, x) {
+grouped_lineplot <- function(df, x) {
     df <- pivot_longer(df, -x)
     p <- ggplot(data = df, aes_string(x = x, y = "value", label1 = x, label2 = "value", label3 = "name")) +
         geom_line(aes(group = name, color = fct_reorder2(name, .data[[x]], .data[["value"]]), linetype = name)) +
@@ -71,17 +91,17 @@ render_custom_datatable <- function(df, ...) {
     )
 }
 
-decide_plotly_output <- function(data, input, type, x, first_col) {
+decide_plotly_output <- function(data, input, type, x, first_col, roll_ave) {
     data <- select(data, all_of(c(first_col, input)))
     if (ncol(data) == 2) {
         switch(type,
-            "Bar Plot" = daily_barplot(df = data, x = x, y = paste0("`", input, "`")),
-            "Line Plot" = cumulative_plot(df = data, x = x, y = paste0("`", input, "`"))
+            "Bar Plot" = daily_barplot(df = data, x = x, y = paste0("`", input, "`"), roll_ave),
+            "Line Plot" = daily_lineplot(df = data, x = x, y = paste0("`", input, "`"), roll_ave)
         )
     } else {
         switch(type,
             "Stacked Barplot" = stacked_barplot(pivot_longer(data, -x), x = x),
-            "Line Plot" = cumulative_group_plot(df = data, x = x) 
+            "Line Plot" = grouped_lineplot(df = data, x = x) 
         )
     } 
 }
