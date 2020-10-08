@@ -29,7 +29,18 @@ panelServer <- function(id, table, x = "Date", first_col = x, roll_ave = TRUE) {
         id, 
         function(input, output, session) {
             ns <- session[["ns"]]
-            output[[id]] <- render_custom_datatable(table)
+            output[[id]] <- DT::renderDataTable(
+                table,
+                extensions = c("Scroller", "FixedColumns"), 
+                rownames = FALSE,
+                options = list(
+                    dom = "lrti",
+                    scrollY = 500,
+                    scrollX = TRUE,
+                    scroller = TRUE,
+                    fixedColumns = list(leftColumn = 1)
+                )
+            )
             output[[paste0(id, "_select")]] <- renderUI(
                 selectizeInput(
                     inputId = ns(id), 
@@ -40,22 +51,35 @@ panelServer <- function(id, table, x = "Date", first_col = x, roll_ave = TRUE) {
                     selected = setdiff(colnames(table), first_col)[1]
                 )
             )
+            data <- reactive({
+                select(table, all_of(c(first_col, req(input[[id]]))))
+            })
+            selected <- reactive({req(input[[id]])})
+            radio <- reactive({req(input[[paste0(id, "_radio_select_in")]])})
             output[[paste0(id, "_radio_select")]] <- renderUI(
-                decide_checkbox_output(
-                    data = table,
-                    input = req(input[[id]]),
-                    id = ns(paste0(id, "_radio_select_in"))
-                ) 
+                radioButtons(
+                    inputId = ns(paste0(id, "_radio_select_in")),
+                    label = "Select Plot Type",
+                    choices = case_when(
+                        length(selected()) <= 1 ~ c("Bar Plot", "Line Plot"), 
+                        length(selected()) > 1 ~ c("Line Plot", "Stacked Barplot")
+                    ),
+                    inline = TRUE,
+                    width = "100%"      
+                )
             )
             output[[paste0(id, "_plot")]] <- renderPlotly(
-                decide_plotly_output(
-                    data = table,
-                    input = req(input[[id]]),
-                    type = req(input[[paste0(id, "_radio_select_in")]]),
-                    x = x, 
-                    first_col = first_col, 
-                    roll_ave = roll_ave
-                )
+                if (length(selected()) == 1) {
+                    switch(radio(),
+                        "Bar Plot" = daily_barplot(df = data(), x = x, y = selected(), roll_ave),
+                        "Line Plot" = daily_lineplot(df = data(), x = x, y = selected(), roll_ave)
+                    )
+                } else {
+                    switch(radio(),
+                        "Stacked Barplot" = stacked_barplot(data(), x = x),
+                        "Line Plot" = grouped_lineplot(df = data(), x = x) 
+                    )
+                }
             )
             output[[paste0(id, "download")]] <- downloadHandler(
                 filename = paste0(gsub(" ",  "_", id), ".tsv"), 
