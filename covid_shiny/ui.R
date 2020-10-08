@@ -1,6 +1,6 @@
 source("dependencies.R")
-source("table_plot_module.R")
-source("map_module.R")
+source("panel.R")
+source("map.R")
 
 shinyUI(fluidPage(
     theme = shinythemes::shinytheme("flatly"),

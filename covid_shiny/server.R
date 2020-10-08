@@ -1,7 +1,7 @@
 source("dependencies.R")
 source("server_functions.R")
-source("table_plot_module.R")
-source("map_module.R")
+source("panel.R")
+source("map.R")
 source("dropbox_download.R")
 
 shinyServer(function(input, output) {
