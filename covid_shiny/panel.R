@@ -76,7 +76,7 @@ panelServer <- function(id, table, x = "Date", first_col = x, roll_ave = TRUE) {
                     )
                 } else {
                     switch(radio(),
-                        "Stacked Barplot" = stacked_barplot(data(), x = x),
+                        "Stacked Barplot" = stacked_barplot(df = data(), x = x),
                         "Line Plot" = grouped_lineplot(df = data(), x = x) 
                     )
                 }

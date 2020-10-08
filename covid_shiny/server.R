@@ -2,36 +2,23 @@ source("dependencies.R")
 source("server_functions.R")
 source("panel.R")
 source("map.R")
+source("intro.R")
 source("dropbox_download.R")
 
 shinyServer(function(input, output) {
     
     # Introduction
-    output[["introduction_plot"]] <- renderPlotly({
-        daily_barplot(
-            regional_data[["Table 1 - Cumulative cases"]], 
-            x = "Date", 
-            y = "Scotland",
-            roll_ave = TRUE
-        )
-    })
-    output[["introduction_date"]] <- renderText({
-        as.character(last(pull(national_data[["Table 8 - Deaths"]], Date)))
-    })
-    output[["introduction_cases"]] <- renderText({
-        last(pull(regional_data[["Table 1 - Cumulative cases"]], Scotland))
-    })
-    output[["introduction_daily_cases"]] <- renderText({
-        last(pull(national_data[["Table 5 - Testing"]], `Daily Positive`))
-    })
-    output[["introduction_deaths"]] <- renderText({
-        last(pull(select(national_data[["Table 8 - Deaths"]], 
-            `Number of COVID-19 confirmed deaths registered to date`)))
-    })
-    output[["introduction_daily_deaths"]] <- renderText({
-        last(pull(national_data[["Table 8 - Deaths"]], `Daily Deaths`))
-    })
-
+    introServer(
+        id = "Introduction", 
+        data = regional_data[["Table 1 - Cumulative cases"]],
+        date = as.character(last(pull(national_data[["Table 8 - Deaths"]], Date))), 
+        cases = last(pull(regional_data[["Table 1 - Cumulative cases"]], Scotland)), 
+        daily_cases = last(pull(national_data[["Table 5 - Testing"]], `Daily Positive`)),
+        deaths = last(pull(select(national_data[["Table 8 - Deaths"]], 
+            `Number of COVID-19 confirmed deaths registered to date`))),
+        daily_deaths = last(pull(national_data[["Table 8 - Deaths"]], `Daily Deaths`))
+    )
+    
     # National analysis
     panelServer(
         id = "Testing", 
