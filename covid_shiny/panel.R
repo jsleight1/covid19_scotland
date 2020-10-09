@@ -7,24 +7,24 @@ panelUI <- function(id, message = "") {
                 h6("Table"),
                 DT::dataTableOutput(outputId = ns(id)),
                 fluidRow(
-                    downloadButton(ns(paste0(id, "download")), "Download data"),
+                    downloadButton(ns("download"), "Download data"),
                     div(message), style = "padding-top:15px"
                 )
             ),
             tabPanel(
                 h6("Plot"),
                 fluidRow(
-                    column(uiOutput(ns(paste0(id, "_select"))), width = 8),
-                    column(uiOutput(ns(paste0(id, "_radio_select"))), width = 4)
+                    column(uiOutput(ns("select")), width = 8),
+                    column(uiOutput(ns("radio_select")), width = 4)
                 ),
-                plotlyOutput(ns(paste0(id, "_plot")), height = "700px")
+                plotlyOutput(ns("plot"), height = "700px")
             )
         )
     )
 }
 
 # Server
-panelServer <- function(id, table, x = "Date", first_col = x, roll_ave = TRUE) {
+panelServer <- function(id, table, x = "Date", roll_ave = TRUE) {
     moduleServer(
         id, 
         function(input, output, session) {
@@ -41,48 +41,41 @@ panelServer <- function(id, table, x = "Date", first_col = x, roll_ave = TRUE) {
                     fixedColumns = list(leftColumn = 1)
                 )
             )
-            output[[paste0(id, "_select")]] <- renderUI(
+            output[["select"]] <- renderUI(
                 selectizeInput(
                     inputId = ns(id), 
                     label = "Choose Y Axis Variables", 
                     width = "100%", 
                     multiple = TRUE,
-                    choices = setdiff(colnames(table), first_col),
-                    selected = setdiff(colnames(table), first_col)[1]
+                    choices = setdiff(colnames(table), x),
+                    selected = setdiff(colnames(table), x)[1]
                 )
             )
-            data <- reactive({
-                select(table, all_of(c(first_col, req(input[[id]]))))
-            })
             selected <- reactive({req(input[[id]])})
-            radio <- reactive({req(input[[paste0(id, "_radio_select_in")]])})
-            output[[paste0(id, "_radio_select")]] <- renderUI(
+            data <- reactive({table[, c(x, selected())]})
+            radio <- reactive({req(input[["radio_select_in"]])})
+            output[["radio_select"]] <- renderUI(
                 radioButtons(
-                    inputId = ns(paste0(id, "_radio_select_in")),
+                    inputId = ns("radio_select_in"),
                     label = "Select Plot Type",
                     choices = case_when(
                         length(selected()) <= 1 ~ c("Bar Plot", "Line Plot"), 
-                        length(selected()) > 1 ~ c("Line Plot", "Stacked Barplot")
+                        TRUE ~ c("Grouped Line Plot", "Stacked Barplot")
                     ),
                     inline = TRUE,
                     width = "100%"      
                 )
             )
-            output[[paste0(id, "_plot")]] <- renderPlotly(
-                if (length(selected()) == 1) {
-                    switch(radio(),
-                        "Bar Plot" = daily_barplot(df = data(), x = x, y = selected(), roll_ave),
-                        "Line Plot" = daily_lineplot(df = data(), x = x, y = selected(), roll_ave)
-                    )
-                } else {
-                    switch(radio(),
-                        "Stacked Barplot" = stacked_barplot(df = data(), x = x),
-                        "Line Plot" = grouped_lineplot(df = data(), x = x) 
-                    )
-                }
+            output[["plot"]] <- renderPlotly(
+                switch(radio(),
+                    "Bar Plot" = daily_barplot(df = data(), x = x, y = selected(), roll_ave),
+                    "Line Plot" = daily_lineplot(df = data(), x = x, y = selected(), roll_ave),
+                    "Stacked Barplot" = stacked_barplot(df = data(), x = x),
+                    "Grouped Line Plot" = grouped_lineplot(df = data(), x = x) 
+                )
             )
-            output[[paste0(id, "download")]] <- downloadHandler(
-                filename = paste0(gsub(" ",  "_", id), ".tsv"), 
+            output[["download"]] <- downloadHandler(
+                filename = str_c(id, ".tsv"), 
                 content = function(file) {
                     write_tsv(table, file)
                 }

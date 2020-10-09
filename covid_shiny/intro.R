@@ -5,34 +5,34 @@ introUI <- function(id) {
         fluidRow(
             column(
                 width = 12, div("National Cumulative Cases", style = "font-size:20px;"), 
-                plotlyOutput(outputId = ns(paste0(id, "_plot")), height = "500px")
+                plotlyOutput(outputId = ns("plot"), height = "500px")
             )
         ),
         fluidRow(
             column(width = 1, div("Date: ", style = "font-size:20px;")),
             column(
                 width = 2, 
-                div(textOutput(outputId = ns(paste0(id, "date"))), style = "font-size:20px; color:red")
+                div(textOutput(outputId = ns("date")), style = "font-size:20px; color:red")
             ),
             column(width = 1, div("Total Cases: ", style = "font-size:20px;")),
             column(
                 width = 1,
-                div(textOutput(outputId = ns(paste0(id, "cases"))), style = "font-size:20px; color:red")
+                div(textOutput(outputId = ns("cases")), style = "font-size:20px; color:red")
             ),
             column(width = 1, div("Cases Today: ", style = "font-size:20px;")),
             column(
                 width = 1,
-                div(textOutput(outputId = ns(paste0(id, "daily_cases"))), style = "font-size:20px; color:red")
+                div(textOutput(outputId = ns("daily_cases")), style = "font-size:20px; color:red")
             ),
             column(width = 1, div("Total Deaths: ", style = "font-size:20px;")),
             column(
                 width = 1,
-                div(textOutput(outputId = ns(paste0(id, "deaths"))), style = "font-size:20px; color:red")
+                div(textOutput(outputId = ns("deaths")), style = "font-size:20px; color:red")
             ),
             column(width = 1, div("Deaths Today: ", style = "font-size:20px;")),
                 column(
                     width = 1,
-                    div(textOutput(outputId = ns(paste0(id, "daily_deaths"))), style = "font-size:20px; color:red")
+                    div(textOutput(outputId = ns("daily_deaths")), style = "font-size:20px; color:red")
                 ),
             style = "padding-top:15px"
         ),
@@ -60,7 +60,7 @@ introServer <- function(id, data, date, cases, daily_cases, deaths, daily_deaths
     moduleServer(
         id, 
         function(input, output, session) {
-            output[[paste0(id, "_plot")]] <- renderPlotly({
+            output[["plot"]] <- renderPlotly({
                 daily_barplot(
                     data, 
                     x = "Date", 
@@ -68,11 +68,11 @@ introServer <- function(id, data, date, cases, daily_cases, deaths, daily_deaths
                     roll_ave = TRUE
                 )
             })
-            output[[paste0(id, "date")]] <- renderText({date})
-            output[[paste0(id, "cases")]] <- renderText({cases})
-            output[[paste0(id, "daily_cases")]] <- renderText({daily_cases})
-            output[[paste0(id, "deaths")]] <- renderText({deaths})
-            output[[paste0(id, "daily_deaths")]] <- renderText({daily_deaths})
+            output[["date"]] <- renderText({date})
+            output[["cases"]] <- renderText({cases})
+            output[["daily_cases"]] <- renderText({daily_cases})
+            output[["deaths"]] <- renderText({deaths})
+            output[["daily_deaths"]] <- renderText({daily_deaths})
         }
     )
 }
