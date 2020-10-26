@@ -77,7 +77,7 @@ national_data[["Table 8 - Deaths"]] <- tidy_table(
 
 # Testing 
 national_data[["Table 5 - Testing"]] <- national_data[["Table 5 - Testing"]] %>% 
-    select_if(~sum(!is.na(.)) > 2) %>% 
+    select(1:14) %>% 
     set_names(
         c("Date", "Negative", "Positive", "Total", "Daily Positive", 
         paste("NHS labs", c("Daily", "Cumulative"), sep = " "), 
@@ -139,7 +139,6 @@ GET(url_council, write_disk(tf_council <- tempfile(fileext = "csv"), overwrite =
 council_data <- read_csv(tf_council)
 council_data <- council_data %>% 
     select(name = "CAName", everything(), -CA) %>% 
-    mutate(CumulativePositivePercent = CumulativePositivePercent * 100) %>% 
     pivot_longer(cols = -c(name, Date), names_to = "key", values_to = "value") %>% 
     group_split(key) %>% 
     set_names(unique(sort(setdiff(colnames(council_data), c("Date", "CA", "CAName"))))) %>% 

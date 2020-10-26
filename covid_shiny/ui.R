@@ -78,7 +78,6 @@ shinyUI(fluidPage(
             panelUI(id = "Council Cumulative Deaths"),
             panelUI(id = "Council Cumulative Negative"),
             panelUI(id = "Council Cumulative Positive"),
-            panelUI(id = "Council Percent Positive"),
             mapUI(id = "council_map",
                 choices = c(
                     "Council Deaths Per 100,000" = "CrudeRateDeaths",
@@ -86,8 +85,7 @@ shinyUI(fluidPage(
                     "Council Positive Cases Per 100,000" = "CrudeRatePositive",
                     "Council Cumulative Deaths" = "CumulativeDeaths",
                     "Council Cumulative Negative" = "CumulativeNegative",
-                    "Council Cumulative Positive" = "CumulativePositive",
-                    "Council Percent Positive" = "CumulativePositivePercent"
+                    "Council Cumulative Positive" = "CumulativePositive"
                 )
             )
         ),

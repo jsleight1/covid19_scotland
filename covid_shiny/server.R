@@ -112,9 +112,5 @@ shinyServer(function(input, output) {
         id = "Council Cumulative Positive", 
         table = council_data[["CumulativePositive"]]
     )
-    panelServer(
-        id = "Council Percent Positive", 
-        table = council_data[["CumulativePositivePercent"]]
-    )
     mapServer(id = "council_map", data = council_data, json = council_json)
 })
