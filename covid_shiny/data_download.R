@@ -1,11 +1,11 @@
-setwd("/Users/jacksleight/Desktop/Fios_training/covid19_scotland/covid_shiny")
+setwd("/Users/jacksleight/Desktop/Fios_training/shiny/covid19_scotland/covid_shiny")
 source("dependencies.R")
 source("server_functions.R")
 
 ################################################################################
 # Read in regional data
 ################################################################################
-url_regional = "https://www.gov.scot/binaries/content/documents/govscot/publications/statistics/2020/04/coronavirus-covid-19-trends-in-daily-data/documents/covid-19-data-by-nhs-board/covid-19-data-by-nhs-board/govscot%3Adocument/COVID-19%2Bdata%2Bby%2BNHS%2BBoard%2B28%2BMay%2B2020.xlsx"
+url_regional = "https://www.gov.scot/binaries/content/documents/govscot/publications/statistics/2020/04/coronavirus-covid-19-trends-in-daily-data/documents/covid-19-data-by-nhs-board/covid-19-data-by-nhs-board/govscot%3Adocument/COVID-19%2Bdaily%2Bdata%2B-%2Bby%2BNHS%2BBoard%2B-%2B7%2BNovember%2B2020.xlsx"
 GET(url_regional, write_disk(tf_regional <- tempfile(fileext = ".xlsx"), overwrite = TRUE))
 regional_data <- readxl::excel_sheets(tf_regional) %>% 
     set_names() %>% 
@@ -77,23 +77,23 @@ national_data[["Table 8 - Deaths"]] <- tidy_table(
 
 # Testing 
 national_data[["Table 5 - Testing"]] <- national_data[["Table 5 - Testing"]] %>% 
-    select(1:14) %>% 
+    select(1:19, -6) %>% 
     set_names(
         c("Date", "Negative", "Positive", "Total", "Daily Positive", 
         paste("NHS labs", c("Daily", "Cumulative"), sep = " "), 
         paste("Regional Centres", c("Daily", "Cumulative"), sep = " "),
-        c("Total daily tests", "People with first test result in last 7 days", 
-            "Positive cases in last 7 days", "Tests in last 7 days", 
-            "Tests in last 7 days per 1,000")
+        c("Total daily tests", "Total daily number of positive tests", 
+        "% Positive", "People with first test in last 7 days", "Positive cases in last 7 days", 
+        "Test reported in last 7 days", "Positive tests reported in last 7 days", 
+        "Test positivity rate in last 7 days", "Tests in last 7 days per 1,000 population")
     )) %>% 
     slice(4:nrow(.)) %>% 
-    mutate_all(~round(as.numeric(.))) %>% 
+    mutate_at(c("% Positive", "Test positivity rate in last 7 days"), ~as.numeric(.) * 100) %>% 
+    mutate_at(setdiff(colnames(.), c("% Positive", "Test positivity rate in last 7 days")), ~round(as.numeric(., 2))) %>% 
     mutate(
         Date = excel_numeric_to_date(Date), 
         `Daily Negative` = Negative - lag(Negative),
-        `% Positive` = round((`Daily Positive` / (Total - lag(Total))) * 100, 2)
-    ) %>% 
-    select(Date, Negative, `Daily Negative`, Positive, `Daily Positive`, `% Positive`, everything())
+    )
 
 # Workforce absences
 cols <- na.omit(unlist(slice(national_data[["Table 6 - Workforce"]], 1)))
