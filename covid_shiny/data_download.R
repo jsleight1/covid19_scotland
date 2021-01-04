@@ -1,4 +1,3 @@
-setwd("/Users/jacksleight/Desktop/Fios_training/shiny/covid19_scotland/covid_shiny")
 source("dependencies.R")
 source("server_functions.R")
 
@@ -167,5 +166,4 @@ processed_data <- list(
     "council_json" = council_json
 )
 
-saveRDS(processed_data, file = file.path(tempdir(), "processed_covid_data.RDS"))
-drop_upload(file.path(tempdir(), "processed_covid_data.RDS"), path = "covid_shiny")
+saveRDS(processed_data, file = "processed_covid_data.RDS")
