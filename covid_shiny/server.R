@@ -26,6 +26,11 @@ shinyServer(function(input, output) {
         table = national_data[["Table 5 - Testing"]]
     )
     panelServer(
+        id = "Vaccinations", 
+        table = national_data[["Table 10 - Vaccinations"]], 
+        roll_ave = FALSE
+    )
+    panelServer(
         id = "Hospital Care", 
         table = national_data[["Table 2 - Hospital Care"]]
     )
@@ -112,6 +117,14 @@ shinyServer(function(input, output) {
     panelServer(
         id = "Council Cumulative Positive", 
         table = council_data[["CumulativePositive"]]
+    )
+    panelServer(
+        id = "Council Daily Positive", 
+        table = council_data[["DailyPositive"]]
+    )
+    panelServer(
+        id = "Council Daily Deaths", 
+        table = council_data[["DailyDeaths"]]
     )
     mapServer(id = "council_map", data = council_data, json = council_json)
 })

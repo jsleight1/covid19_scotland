@@ -129,6 +129,16 @@ national_data[["Table 9 - School education"]] <- tidy_table(
     row = 3
 )
 
+# Vaccinations
+national_data[["Table 10 - Vaccinations"]] <- tidy_table(
+        df = national_data[["Table 10 - Vaccinations"]], 
+        row = 3
+    ) %>% 
+    mutate(`Daily Vaccinations` = `Number of people who have received the first dose of the Covid vaccination` - 
+        lag(`Number of people who have received the first dose of the Covid vaccination`)
+    ) 
+
+
 ################################################################################
 # Read in council data
 ################################################################################
