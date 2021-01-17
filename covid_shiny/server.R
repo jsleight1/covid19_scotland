@@ -1,6 +1,7 @@
 source("dependencies.R")
 source("server_functions.R")
 source("panel.R")
+source("plot.R")
 source("map.R")
 source("intro.R")
 source("dropbox_download.R")

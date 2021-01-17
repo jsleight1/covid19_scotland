@@ -12,12 +12,11 @@ panelUI <- function(id, message = "") {
                 )
             ),
             tabPanel(
-                h6("Plot"),
-                fluidRow(
-                    column(uiOutput(ns("select")), width = 8),
-                    column(uiOutput(ns("radio_select")), width = 4)
-                ),
-                plotlyOutput(ns("plot"), height = "700px")
+                h6("Plot"), 
+                # plotUI(ns("plot1")), 
+                actionButton(ns("addPlot"), "Add new plot panel"),
+                # actionButton(ns("removePlot"), "Remove plot panel"),
+                tags$div(id = gsub(" ", "_", ns("newplot")))
             )
         )
     )
@@ -41,45 +40,35 @@ panelServer <- function(id, table, x = "Date", roll_ave = TRUE) {
                     fixedColumns = list(leftColumn = 1)
                 )
             )
-            output[["select"]] <- renderUI(
-                selectizeInput(
-                    inputId = ns(id), 
-                    label = "Choose Y Axis Variables", 
-                    width = "100%", 
-                    multiple = TRUE,
-                    choices = setdiff(colnames(table), x),
-                    selected = setdiff(colnames(table), x)[1]
-                )
-            )
-            selected <- reactive({req(input[[id]])})
-            data <- reactive({table[, c(x, selected())]})
-            radio <- reactive({req(input[["radio_select_in"]])})
-            output[["radio_select"]] <- renderUI(
-                radioButtons(
-                    inputId = ns("radio_select_in"),
-                    label = "Select Plot Type",
-                    choices = case_when(
-                        length(selected()) <= 1 ~ c("Bar Plot", "Line Plot"), 
-                        TRUE ~ c("Grouped Line Plot", "Stacked Barplot")
-                    ),
-                    inline = TRUE,
-                    width = "100%"      
-                )
-            )
-            output[["plot"]] <- renderPlotly(
-                switch(radio(),
-                    "Bar Plot" = daily_barplot(df = data(), x = x, y = selected(), roll_ave),
-                    "Line Plot" = daily_lineplot(df = data(), x = x, y = selected(), roll_ave),
-                    "Stacked Barplot" = stacked_barplot(df = data(), x = x),
-                    "Grouped Line Plot" = grouped_lineplot(df = data(), x = x) 
-                )
-            )
             output[["download"]] <- downloadHandler(
                 filename = str_c(id, ".tsv"), 
                 content = function(file) {
                     write_tsv(table, file)
                 }
             )
+            # plotServer("plot1", table = table, x = x, roll_ave = roll_ave)
+            plots <- c()
+            observeEvent(input[["addPlot"]], {
+                browser()
+                plotid <- paste0(gsub(" ", "_", ns("newplot")), input[["addPlot"]])
+                insertUI(
+                    selector = paste0("#", gsub(" ", "_",ns("newplot"))),
+                    ui = plotUI(ns(plotid))
+                )
+                plotServer(
+                    id = plotid, 
+                    table = table, 
+                    x = x, 
+                    roll_ave = roll_ave
+                )
+                plots <<- c(plotid, plots)
+            })
+            # observeEvent(input[["removePlot"]], {
+            #     removeUI(
+            #         selector = paste0("#", plots[length(plots)])
+            #     )
+            #     plots <<- plots[-length(plots)]
+            # })
         }
     ) 
 }

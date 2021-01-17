@@ -1,5 +1,6 @@
 source("dependencies.R")
 source("panel.R")
+source("plot.R")
 source("map.R")
 source("intro.R")
 
