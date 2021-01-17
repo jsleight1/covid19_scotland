@@ -10,6 +10,7 @@ shinyUI(fluidPage(
         introUI(id = "Introduction"),
         navbarMenu("National Data",
             panelUI(id = "Testing"),
+            panelUI(id = "Vaccinations"),
             panelUI(id = "Hospital Care", 
                 message = "NOTE: Please note that as of 15/09/20 this table
                            only includes patients who first tested positive during
@@ -78,6 +79,16 @@ shinyUI(fluidPage(
             panelUI(id = "Council Cumulative Deaths"),
             panelUI(id = "Council Cumulative Negative"),
             panelUI(id = "Council Cumulative Positive"),
+            panelUI(id = "Council Daily Positive", 
+                message = "NOTE: Due to reporting this will not equal national 
+                          data statistics. Please consult sources for further
+                          information."
+            ), 
+            panelUI(id = "Council Daily Deaths", 
+                message = "NOTE: Due to reporting this will not equal national 
+                          data statistics. Please consult sources for further
+                          information."
+            ),
             mapUI(id = "council_map",
                 choices = c(
                     "Council Deaths Per 100,000" = "CrudeRateDeaths",
