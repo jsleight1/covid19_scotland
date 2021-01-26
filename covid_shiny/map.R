@@ -6,7 +6,7 @@ mapUI <- function(id, choices) {
         leafletOutput(ns(id), height = 700),
         fluidRow(
             radioButtons(
-                inputId = ns(paste0(id, "input")),
+                inputId = ns("input"),
                 label = "Select Input",
                 choices = choices,
                 inline = TRUE
@@ -22,9 +22,9 @@ mapServer <- function(id, data, json) {
         function(input, output, session) {
             ns <- session[["ns"]]
             output[[id]] <- renderLeaflet({
-                input <- req(input[[paste0(id, "input")]])
+                input <- req(input[["input"]])
                 values <- unlist(select(tail(data[[input]], 1), json$name))
-                labels <- paste("Area:", json$name, input, values)
+                labels <- paste("Area:", json$name, "Value:", values)
 
                 pal <- colorNumeric("viridis", NULL)
                 leaflet(json) %>%

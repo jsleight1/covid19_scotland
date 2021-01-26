@@ -1,65 +1,17 @@
 source("dependencies.R")
-source("table_plot_module.R")
-source("map_module.R")
+source("panel.R")
+source("plot.R")
+source("map.R")
+source("intro.R")
 
 shinyUI(fluidPage(
     theme = shinythemes::shinytheme("flatly"),
     tags$head(includeHTML(("google-analytics.html"))),
     navbarPage("COVID-19 Analysis",
-        tabPanel("Introduction",
-            fluidRow(
-                column(
-                    width = 12, div("National Cumulative Cases", style = "font-size:20px;"), 
-                    plotlyOutput(outputId = "introduction_plot", height = "500px")
-                )
-            ),
-            fluidRow(
-                column(width = 1, div("Date: ", style = "font-size:20px;")),
-                column(
-                    width = 2, 
-                    div(textOutput(outputId = "introduction_date"), style = "font-size:20px; color:red")
-                ),
-                column(width = 1, div("Total Cases: ", style = "font-size:20px;")),
-                column(
-                    width = 1,
-                    div(textOutput(outputId = "introduction_cases"), style = "font-size:20px; color:red")
-                ),
-                column(width = 1, div("Cases Today: ", style = "font-size:20px;")),
-                column(
-                    width = 1,
-                    div(textOutput(outputId = "introduction_daily_cases"), style = "font-size:20px; color:red")
-                ),
-                column(width = 1, div("Total Deaths: ", style = "font-size:20px;")),
-                column(
-                    width = 1,
-                    div(textOutput(outputId = "introduction_deaths"), style = "font-size:20px; color:red")
-                ),
-                column(width = 1, div("Deaths Today: ", style = "font-size:20px;")),
-                column(
-                    width = 1,
-                    div(textOutput(outputId = "introduction_daily_deaths"), style = "font-size:20px; color:red")
-                ),
-                style = "padding-top:15px"
-            ),
-            fluidRow(
-                div(
-                    "NOTE: As of 15 June, confirmed cases include confirmed cases at 
-                    UK government regional testing centres. Previous data have not 
-                    been updated to account for this hence the significant increase 
-                    in testing capacity and positive cases on this day."
-                ),
-                div(
-                    "DISCLAIMER: This app is specifically designed as a visualisation tool
-                    that utilises public COVID-19 data and therefore should 
-                    not be used for any official decision making. Links to data sources can 
-                    be found under the references tab and should be consulted to further 
-                    understand the nuances and exact meaning of the data presented."
-                ),
-                style = "padding-top:15px; color:red"
-            ),
-        ),
+        introUI(id = "Introduction"),
         navbarMenu("National Data",
             panelUI(id = "Testing"),
+            panelUI(id = "Vaccinations"),
             panelUI(id = "Hospital Care", 
                 message = "NOTE: Please note that as of 15/09/20 this table
                            only includes patients who first tested positive during
@@ -128,7 +80,16 @@ shinyUI(fluidPage(
             panelUI(id = "Council Cumulative Deaths"),
             panelUI(id = "Council Cumulative Negative"),
             panelUI(id = "Council Cumulative Positive"),
-            panelUI(id = "Council Percent Positive"),
+            panelUI(id = "Council Daily Positive", 
+                message = "NOTE: Due to reporting this will not equal national 
+                          data statistics. Please consult sources for further
+                          information."
+            ), 
+            panelUI(id = "Council Daily Deaths", 
+                message = "NOTE: Due to reporting this will not equal national 
+                          data statistics. Please consult sources for further
+                          information."
+            ),
             mapUI(id = "council_map",
                 choices = c(
                     "Council Deaths Per 100,000" = "CrudeRateDeaths",
@@ -136,8 +97,7 @@ shinyUI(fluidPage(
                     "Council Positive Cases Per 100,000" = "CrudeRatePositive",
                     "Council Cumulative Deaths" = "CumulativeDeaths",
                     "Council Cumulative Negative" = "CumulativeNegative",
-                    "Council Cumulative Positive" = "CumulativePositive",
-                    "Council Percent Positive" = "CumulativePositivePercent"
+                    "Council Cumulative Positive" = "CumulativePositive"
                 )
             )
         ),
