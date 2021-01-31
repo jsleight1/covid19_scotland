@@ -12,6 +12,7 @@ shinyUI(fluidPage(
         navbarMenu("National Data",
             panelUI(id = "Testing"),
             panelUI(id = "Vaccinations"),
+            panelUI(id = "Vaccinations per group"),
             panelUI(id = "Hospital Care", 
                 message = "NOTE: Please note that as of 15/09/20 this table
                            only includes patients who first tested positive during

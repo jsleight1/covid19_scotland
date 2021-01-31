@@ -88,7 +88,7 @@ national_data[["Table 5 - Testing"]] <- national_data[["Table 5 - Testing"]] %>%
     )) %>% 
     slice(4:nrow(.)) %>% 
     mutate_at(c("% Positive", "Test positivity rate in last 7 days"), ~as.numeric(.) * 100) %>% 
-    mutate_at(setdiff(colnames(.), c("% Positive", "Test positivity rate in last 7 days")), ~round(as.numeric(., 2))) %>% 
+    mutate_all(~round(as.numeric(.), 2)) %>% 
     mutate(
         Date = excel_numeric_to_date(Date), 
         `Daily Negative` = Negative - lag(Negative),
@@ -130,13 +130,31 @@ national_data[["Table 9 - School education"]] <- tidy_table(
 )
 
 # Vaccinations
-national_data[["Table 10 - Vaccinations"]] <- tidy_table(
-        df = national_data[["Table 10 - Vaccinations"]], 
+national_data[["Table 10a - Vaccinations"]] <- tidy_table(
+        df = national_data[["Table 10a - Vaccinations"]], 
         row = 3
     ) %>% 
     mutate(`Daily Vaccinations` = `Number of people who have received the first dose of the Covid vaccination` - 
         lag(`Number of people who have received the first dose of the Covid vaccination`)
     ) 
+
+sup_cols <- na.omit(unlist(slice(national_data[["Table 10b - Vac by JCVI group"]], 2)))
+cols <- split(
+    na.omit(unlist(slice(national_data[["Table 10b - Vac by JCVI group"]], 3))), 
+    c(rep(1, 5), rep(2, 5), rep(3, 3), rep(4, 3))
+)
+final_cols <- map2(setdiff(sup_cols, "Date"), cols, function(.x, .y) {
+        paste(.x, .y, sep = ": ")
+    }) %>% 
+    unlist()
+national_data[["Table 10b - Vac by JCVI group"]] <- national_data[["Table 10b - Vac by JCVI group"]] %>% 
+    slice(4:nrow(.)) %>% 
+    set_names(c("Date", final_cols)) %>% 
+    mutate(
+        Date = excel_numeric_to_date(as.numeric(Date))
+    ) %>%
+    mutate_if(is.character, ~round(as.numeric(.), 2))
+    
 
 
 ################################################################################

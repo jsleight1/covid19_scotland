@@ -27,7 +27,12 @@ shinyServer(function(input, output) {
     )
     panelServer(
         id = "Vaccinations", 
-        table = national_data[["Table 10 - Vaccinations"]], 
+        table = national_data[["Table 10a - Vaccinations"]], 
+        roll_ave = FALSE
+    )
+    panelServer(
+        id = "Vaccinations per group", 
+        table = national_data[["Table 10b - Vac by JCVI group"]] , 
         roll_ave = FALSE
     )
     panelServer(
