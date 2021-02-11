@@ -59,10 +59,12 @@ national_data[["Table 2 - Hospital Care"]] <- tidy_table(
     ) %>%
     set_names(gsub("\\(i{1,}\\) |\\r|\\n", "", colnames(.))) %>% 
     mutate(
-        `Daily Change in Intensive Care Confirmed` = `COVID-19 patients in ICU or combined ICU/HDU` - 
-               lag(`COVID-19 patients in ICU or combined ICU/HDU`),
-        `Daily Change in Total Hospital Patients Confirmed` = `COVID-19 patients in hospital (including those in ICU)` - 
-            lag(`COVID-19 patients in hospital (including those in ICU)`)
+        `Daily Change in Intensive Care <= 28 days` = `COVID-19 patients in ICU or combined ICU/HDU (with length of stay 28 days or less)` - 
+               lag(`COVID-19 patients in ICU or combined ICU/HDU (with length of stay 28 days or less)`),
+        `Daily Change in Total Hospital Patients <= 28 days` = `COVID-19 patients in hospital (including those in ICU) (with length of stay 28 days or less)` - 
+            lag(`COVID-19 patients in hospital (including those in ICU) (with length of stay 28 days or less)`), 
+        `Daily Chance in Intensive Case > 28 days` = `COVID-19 patients in ICU or combined ICU/HDU (with length of stay more than 28 days)` -
+            lag(`COVID-19 patients in ICU or combined ICU/HDU (with length of stay more than 28 days)`)
     )
 
 # Deaths
@@ -141,7 +143,7 @@ national_data[["Table 10a - Vaccinations"]] <- tidy_table(
 sup_cols <- na.omit(unlist(slice(national_data[["Table 10b - Vac by JCVI group"]], 2)))
 cols <- split(
     na.omit(unlist(slice(national_data[["Table 10b - Vac by JCVI group"]], 3))), 
-    c(rep(1, 5), rep(2, 5), rep(3, 3), rep(4, 3))
+    c(rep(1, 5), rep(2, 5), rep(3, 3), rep(4, 3), rep(5, 3), rep(6, 3))
 )
 final_cols <- map2(setdiff(sup_cols, "Date"), cols, function(.x, .y) {
         paste(.x, .y, sep = ": ")
@@ -150,13 +152,10 @@ final_cols <- map2(setdiff(sup_cols, "Date"), cols, function(.x, .y) {
 national_data[["Table 10b - Vac by JCVI group"]] <- national_data[["Table 10b - Vac by JCVI group"]] %>% 
     slice(4:nrow(.)) %>% 
     set_names(c("Date", final_cols)) %>% 
-    mutate(
-        Date = excel_numeric_to_date(as.numeric(Date))
-    ) %>%
-    mutate_if(is.character, ~round(as.numeric(.), 2))
+    mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>%
+    mutate_if(is.character, ~round(as.numeric(.), 2)) %>% 
+    mutate_if(str_detect(names(.), "%"), function(i) i * 100)
     
-
-
 ################################################################################
 # Read in council data
 ################################################################################
