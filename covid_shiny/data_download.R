@@ -33,18 +33,6 @@ national_data <- readxl::excel_sheets(tf_national) %>%
     .[grep("Table", names(.))] %>% 
     map(., function(i) select_if(i, ~sum(!is.na(.)) > 0))
 
-# NHS 24 stats
-national_data[["Table 1 - NHS 24"]] <- tidy_table(
-    df = national_data[["Table 1 - NHS 24"]],
-    row = 3
-)
-
-# Ambulance stats
-national_data[["Table 3 - Ambulance"]] <- tidy_table(
-    df = select(national_data[["Table 3 - Ambulance"]], -1),
-    row = 3
-)
-
 # Delayed discharges 
 national_data[["Table 4 - Delayed Discharges"]] <- tidy_table(
     df = select(national_data[["Table 4 - Delayed Discharges"]], -1),
@@ -125,12 +113,6 @@ national_data[["Table 7c - Care Homes (Homes)"]] <- tidy_table(
     row = 3
 )
 
-# Education 
-national_data[["Table 9 - School education"]] <- tidy_table(
-    df = select(national_data[["Table 9 - School education"]], 1:4), 
-    row = 3
-)
-
 # Vaccinations
 national_data[["Table 10a - Vaccinations"]] <- tidy_table(
         df = national_data[["Table 10a - Vaccinations"]], 
@@ -143,7 +125,7 @@ national_data[["Table 10a - Vaccinations"]] <- tidy_table(
 sup_cols <- na.omit(unlist(slice(national_data[["Table 10b - Vac by JCVI group"]], 2)))
 cols <- split(
     na.omit(unlist(slice(national_data[["Table 10b - Vac by JCVI group"]], 3))), 
-    c(rep(1, 5), rep(2, 5), rep(3, 3), rep(4, 3), rep(5, 3), rep(6, 3))
+    c(rep(1, 5), rep(2, 5), as.vector(sapply(3:7, function(i) rep(i, 3))), rep(8, 5))
 )
 final_cols <- map2(setdiff(sup_cols, "Date"), cols, function(.x, .y) {
         paste(.x, .y, sep = ": ")
@@ -155,7 +137,24 @@ national_data[["Table 10b - Vac by JCVI group"]] <- national_data[["Table 10b - 
     mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>%
     mutate_if(is.character, ~round(as.numeric(.), 2)) %>% 
     mutate_if(str_detect(names(.), "%"), function(i) i * 100)
-    
+
+sup_cols <- na.omit(unlist(slice(national_data[["Table 10c - Vac by age"]], 2))) 
+cols <- split(
+    na.omit(unlist(slice(national_data[["Table 10c - Vac by age"]], 3))), 
+    as.vector(sapply(1:4, function(i) rep(i, 3)))
+) 
+final_cols <- map2(setdiff(sup_cols, "Date"), cols, function(.x, .y) {
+        paste(.x, .y, sep = ": ")
+    }) %>% 
+    unlist()
+national_data[["Table 10c - Vac by age"]] <- national_data[["Table 10c - Vac by age"]] %>% 
+    slice(4:nrow(.)) %>% 
+    set_names(c("Date", final_cols)) %>% 
+    mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>%
+    mutate_if(is.character, ~round(as.numeric(.), 2)) %>% 
+    mutate_if(str_detect(names(.), "%"), function(i) i * 100) %>% 
+    filter_all(any_vars(!is.na(.)))
+
 ################################################################################
 # Read in council data
 ################################################################################

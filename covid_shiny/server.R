@@ -31,21 +31,18 @@ shinyServer(function(input, output) {
         roll_ave = FALSE
     )
     panelServer(
-        id = "Vaccinations per group", 
-        table = national_data[["Table 10b - Vac by JCVI group"]] , 
+        id = "Vaccinations per JCVI group", 
+        table = national_data[["Table 10b - Vac by JCVI group"]], 
+        roll_ave = FALSE
+    ) 
+    panelServer(
+        id = "Vacciations per age group", 
+        table = national_data[["Table 10c - Vac by age"]], 
         roll_ave = FALSE
     )
     panelServer(
         id = "Hospital Care", 
         table = national_data[["Table 2 - Hospital Care"]]
-    )
-    panelServer(
-        id = "Ambulance Attendances", 
-        table = national_data[["Table 3 - Ambulance"]]
-    )
-    panelServer(
-        id = "NHS Calls", 
-        table = national_data[["Table 1 - NHS 24"]]
     )
     panelServer(
         id = "Delayed Discharges", 
@@ -76,11 +73,6 @@ shinyServer(function(input, output) {
     panelServer(
         id = "Deaths", 
         table = national_data[["Table 8 - Deaths"]]
-    )
-    panelServer(
-        id = "Education", 
-        table = national_data[["Table 9 - School education"]], 
-        roll_ave = FALSE
     )
 
     # Regional analysis

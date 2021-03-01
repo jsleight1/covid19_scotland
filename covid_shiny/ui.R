@@ -12,21 +12,14 @@ shinyUI(fluidPage(
         navbarMenu("National Data",
             panelUI(id = "Testing"),
             panelUI(id = "Vaccinations"),
-            panelUI(id = "Vaccinations per group"),
+            panelUI(id = "Vaccinations per JCVI group"),
+            panelUI(id = "Vacciations per age group"),
             panelUI(id = "Hospital Care", 
                 message = "NOTE: Please note that as of 15/09/20 this table
                            only includes patients who first tested positive during
                            their current stay in hospital or in the two weeks 
                            before their admission. Refer to reference link for 
                            further details."
-            ),
-            panelUI(id = "Ambulance Attendances",
-                message = "NOTE: Please note that as of 22/07/20 this table is 
-                        no longer updated by the Scottish Government"
-            ),
-            panelUI(id = "NHS Calls", 
-                message = "NOTE: Please note that as of 22/07/20 this table is 
-                        no longer updated by the Scottish Government"
             ),
             panelUI(id = "Delayed Discharges"),
             panelUI(id = "Workforce", 
@@ -44,8 +37,7 @@ shinyUI(fluidPage(
             ),
             panelUI(id = "Care Home (Homes)"),
             panelUI(id = "Care Home Workforce"),
-            panelUI(id = "Deaths"),
-            panelUI(id = "Education")
+            panelUI(id = "Deaths")
             
         ), 
         navbarMenu("Regional Data",
