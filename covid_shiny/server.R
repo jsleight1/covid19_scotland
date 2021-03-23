@@ -55,13 +55,13 @@ shinyServer(function(input, output) {
         roll_ave = FALSE
     )
     panelServer(
-        id = "Care Home (Cases)", 
+        id = "Care Home - Cases", 
         table = national_data[["Table 7a - Care Homes"]], 
         x = "Week", 
         roll_ave = FALSE
     )
     panelServer(
-        id = "Care Home (Homes)", 
+        id = "Care Home - Homes", 
         table = national_data[["Table 7c - Care Homes (Homes)"]], 
         roll_ave = FALSE
     )
@@ -92,15 +92,15 @@ shinyServer(function(input, output) {
 
     # Council analysis
     panelServer(
-        id = "Council Deaths Per 100,000", 
+        id = "Council Deaths Per 100000", 
         table = council_data[["CrudeRateDeaths"]]
     )
     panelServer(
-        id = "Council Negative Cases Per 100,000", 
+        id = "Council Negative Cases Per 100000", 
         table = council_data[["CrudeRateNegative"]]
     )
     panelServer(
-        id = "Council Positive Cases Per 100,000", 
+        id = "Council Positive Cases Per 100000", 
         table = council_data[["CrudeRatePositive"]]
     )
     panelServer(

@@ -27,7 +27,7 @@ shinyUI(fluidPage(
                         updated on a weekly basis rather than a daily 
                         basis by the Scottish Government"
             ),
-            panelUI(id = "Care Home (Cases)", 
+            panelUI(id = "Care Home - Cases", 
                 message = "NOTE: Please note that as of 23/07/20 this table 
                         only includes the number of adult care homes with a
                         current suspected case and the proportion of all 
@@ -35,7 +35,7 @@ shinyUI(fluidPage(
                         In addition, the Scottish Government will only
                         updated this on a weekly basis"    
             ),
-            panelUI(id = "Care Home (Homes)"),
+            panelUI(id = "Care Home - Homes"),
             panelUI(id = "Care Home Workforce"),
             panelUI(id = "Deaths")
             
@@ -67,9 +67,9 @@ shinyUI(fluidPage(
             )
         ),
         navbarMenu("Council Data",
-            panelUI(id = "Council Deaths Per 100,000"),
-            panelUI(id = "Council Negative Cases Per 100,000"),
-            panelUI(id = "Council Positive Cases Per 100,000"),
+            panelUI(id = "Council Deaths Per 100000"),
+            panelUI(id = "Council Negative Cases Per 100000"),
+            panelUI(id = "Council Positive Cases Per 100000"),
             panelUI(id = "Council Cumulative Deaths"),
             panelUI(id = "Council Cumulative Negative"),
             panelUI(id = "Council Cumulative Positive"),
