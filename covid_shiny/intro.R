@@ -5,7 +5,7 @@ introUI <- function(id) {
         fluidRow(
             column(
                 width = 12, div("National Cumulative Cases", style = "font-size:20px;"), 
-                plotlyOutput(outputId = ns("plot"), height = "500px")
+                plotlyOutput(outputId = ns("plot"), height = "700px")
             )
         ),
         fluidRow(
@@ -65,7 +65,7 @@ introServer <- function(id, data, date, cases, daily_cases, deaths, daily_deaths
                     data, 
                     x = "Date", 
                     y = "Scotland",
-                    roll_ave = TRUE
+                    roll_ave = FALSE
                 )
             })
             output[["date"]] <- renderText({date})

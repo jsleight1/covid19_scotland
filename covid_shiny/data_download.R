@@ -118,42 +118,17 @@ national_data[["Table 10a - Vaccinations"]] <- tidy_table(
         df = national_data[["Table 10a - Vaccinations"]], 
         row = 3
     ) %>% 
-    mutate(`Daily Vaccinations` = `Number of people who have received the first dose of the Covid vaccination` - 
-        lag(`Number of people who have received the first dose of the Covid vaccination`)
+    mutate(
+        `Daily First Dose Vaccinations` = `Number of people who have received the first dose of the Covid vaccination` - 
+            lag(`Number of people who have received the first dose of the Covid vaccination`), 
+        `Daily Second Dose Vaccinations` = `Number of people who have received the second dose of the Covid vaccination` -
+            lag(`Number of people who have received the second dose of the Covid vaccination`)
     ) 
 
-sup_cols <- na.omit(unlist(slice(national_data[["Table 10b - Vac by JCVI group"]], 2)))
-cols <- split(
-    na.omit(unlist(slice(national_data[["Table 10b - Vac by JCVI group"]], 3))), 
-    c(rep(1, 5), rep(2, 5), as.vector(sapply(3:7, function(i) rep(i, 3))), rep(8, 5))
+national_data[["Table 11 - Vac supply"]] <- tidy_table(
+    df = national_data[["Table 11 - Vac supply"]], 
+    row = 3
 )
-final_cols <- map2(setdiff(sup_cols, "Date"), cols, function(.x, .y) {
-        paste(.x, .y, sep = ": ")
-    }) %>% 
-    unlist()
-national_data[["Table 10b - Vac by JCVI group"]] <- national_data[["Table 10b - Vac by JCVI group"]] %>% 
-    slice(4:nrow(.)) %>% 
-    set_names(c("Date", final_cols)) %>% 
-    mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>%
-    mutate_if(is.character, ~round(as.numeric(.), 2)) %>% 
-    mutate_if(str_detect(names(.), "%"), function(i) i * 100)
-
-sup_cols <- na.omit(unlist(slice(national_data[["Table 10c - Vac by age"]], 2))) 
-cols <- split(
-    na.omit(unlist(slice(national_data[["Table 10c - Vac by age"]], 3))), 
-    as.vector(sapply(1:4, function(i) rep(i, 3)))
-) 
-final_cols <- map2(setdiff(sup_cols, "Date"), cols, function(.x, .y) {
-        paste(.x, .y, sep = ": ")
-    }) %>% 
-    unlist()
-national_data[["Table 10c - Vac by age"]] <- national_data[["Table 10c - Vac by age"]] %>% 
-    slice(4:nrow(.)) %>% 
-    set_names(c("Date", final_cols)) %>% 
-    mutate(Date = excel_numeric_to_date(as.numeric(Date))) %>%
-    mutate_if(is.character, ~round(as.numeric(.), 2)) %>% 
-    mutate_if(str_detect(names(.), "%"), function(i) i * 100) %>% 
-    filter_all(any_vars(!is.na(.)))
 
 ################################################################################
 # Read in council data
