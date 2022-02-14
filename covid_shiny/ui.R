@@ -10,7 +10,7 @@ shinyUI(fluidPage(
     navbarPage("COVID-19 Analysis",
         introUI(id = "Introduction"),
         navbarMenu("National Data",
-            panelUI(id = "Testing"),
+            panelUI(id = "Testing - PCR"),
             panelUI(id = "Vaccinations"),
             panelUI(id = "Vaccintation supply"),
             panelUI(id = "Hospital Care", 
@@ -82,7 +82,7 @@ shinyUI(fluidPage(
                           data statistics. Please consult sources for further
                           information."
             ),
-            panelUI(id = "Council 7 day Positive Rate"), 
+            panelUI(id = "Council 7 day Positive Per 100000"), 
             panelUI(id = "Council 7 day Positve Percentage"), 
             mapUI(id = "council_map",
                 choices = c(
@@ -93,7 +93,7 @@ shinyUI(fluidPage(
                     "Council Cumulative Negative" = "CumulativeNegative",
                     "Council Cumulative Positive" = "CumulativePositive",
                     "Council Daily Positive" = "DailyPositive", 
-                    "Council 7 day Positive Rate" = "CrudeRate7DayPositive",
+                    "Council 7 day Positive Per 100000" = "CrudeRate7DayPositive",
                     "Council 7 day Positive Percentage" = "PositivePercentage7Day"
                 )
             )

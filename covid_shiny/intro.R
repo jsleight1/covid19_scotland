@@ -38,7 +38,7 @@ introUI <- function(id) {
         ),
         fluidRow(
             div(
-                "NOTE: As of 15 June, confirmed cases include confirmed cases at 
+                "NOTE: As of 15/06/20, confirmed cases include confirmed cases at 
                 UK government regional testing centres. Previous data have not 
                 been updated to account for this hence the significant increase 
                 in testing capacity and positive cases on this day."

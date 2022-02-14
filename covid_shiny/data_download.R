@@ -65,7 +65,7 @@ national_data[["Table 8 - Deaths"]] <- tidy_table(
     )
 
 # Testing 
-national_data[["Table 5 - Testing"]] <- national_data[["Table 5 - Testing"]] %>% 
+national_data[["Table 5b - Testing (PCR)"]] <- national_data[["Table 5b - Testing (PCR)"]] %>% 
     select(1:19, -6) %>% 
     set_names(
         c("Date", "Negative", "Positive", "Total", "Daily Positive", 
@@ -122,8 +122,10 @@ national_data[["Table 10a - Vaccinations"]] <- tidy_table(
         `Daily First Dose Vaccinations` = `Number of people who have received the first dose of the Covid vaccination` - 
             lag(`Number of people who have received the first dose of the Covid vaccination`), 
         `Daily Second Dose Vaccinations` = `Number of people who have received the second dose of the Covid vaccination` -
-            lag(`Number of people who have received the second dose of the Covid vaccination`)
-    ) 
+            lag(`Number of people who have received the second dose of the Covid vaccination`), 
+        `Daily Booster Vaccinations` = `Number of people who have received a third dose or booster Covid vaccination` -
+            lag(`Number of people who have received a third dose or booster Covid vaccination`)
+    )
 
 national_data[["Table 11 - Vac supply"]] <- tidy_table(
     df = national_data[["Table 11 - Vac supply"]], 

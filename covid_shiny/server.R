@@ -14,7 +14,7 @@ shinyServer(function(input, output) {
         data = regional_data[["Table 1 - Cumulative cases"]],
         date = as.character(last(pull(national_data[["Table 8 - Deaths"]], Date))), 
         cases = last(pull(regional_data[["Table 1 - Cumulative cases"]], Scotland)), 
-        daily_cases = last(pull(national_data[["Table 5 - Testing"]], `Daily Positive`)),
+        daily_cases = last(pull(national_data[["Table 5b - Testing (PCR)"]], `Daily Positive`)),
         deaths = last(pull(select(national_data[["Table 8 - Deaths"]], 
             `Number of COVID-19 confirmed deaths registered to date`))),
         daily_deaths = last(pull(national_data[["Table 8 - Deaths"]], `Daily Deaths`))
@@ -22,8 +22,8 @@ shinyServer(function(input, output) {
     
     # National analysis
     panelServer(
-        id = "Testing", 
-        table = national_data[["Table 5 - Testing"]]
+        id = "Testing - PCR", 
+        table = national_data[["Table 5b - Testing (PCR)"]]
     )
     panelServer(
         id = "Vaccinations", 
@@ -128,12 +128,14 @@ shinyServer(function(input, output) {
         table = council_data[["DailyDeaths"]]
     )
     panelServer(
-        id = "Council 7 day Positive Rate", 
-        table = council_data[["CrudeRate7DayPositive"]]
+        id = "Council 7 day Positive Per 100000", 
+        table = council_data[["CrudeRate7DayPositive"]], 
+        roll_ave = FALSE
     )
     panelServer(
         id = "Council 7 day Positve Percentage", 
-        table = council_data[["PositivePercentage7Day"]]
+        table = council_data[["PositivePercentage7Day"]], 
+        roll_ave = FALSE
     )
     mapServer(id = "council_map", data = council_data, json = council_json)
 })
