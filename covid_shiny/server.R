@@ -100,20 +100,8 @@ shinyServer(function(input, output) {
         table = council_data[["CrudeRateDeaths"]]
     )
     panelServer(
-        id = "Council Negative Cases Per 100000", 
-        table = council_data[["CrudeRateNegative"]]
-    )
-    panelServer(
-        id = "Council Positive Cases Per 100000", 
-        table = council_data[["CrudeRatePositive"]]
-    )
-    panelServer(
         id = "Council Cumulative Deaths", 
         table = council_data[["CumulativeDeaths"]]
-    )
-    panelServer(
-        id = "Council Cumulative Negative", 
-        table = council_data[["CumulativeNegative"]]
     )
     panelServer(
         id = "Council Cumulative Positive", 
@@ -126,16 +114,6 @@ shinyServer(function(input, output) {
     panelServer(
         id = "Council Daily Deaths", 
         table = council_data[["DailyDeaths"]]
-    )
-    panelServer(
-        id = "Council 7 day Positive Per 100000", 
-        table = council_data[["CrudeRate7DayPositive"]], 
-        roll_ave = FALSE
-    )
-    panelServer(
-        id = "Council 7 day Positve Percentage", 
-        table = council_data[["PositivePercentage7Day"]], 
-        roll_ave = FALSE
     )
     mapServer(id = "council_map", data = council_data, json = council_json)
 })

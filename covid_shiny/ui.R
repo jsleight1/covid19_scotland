@@ -67,10 +67,7 @@ shinyUI(fluidPage(
         ),
         navbarMenu("Council Data",
             panelUI(id = "Council Deaths Per 100000"),
-            panelUI(id = "Council Negative Cases Per 100000"),
-            panelUI(id = "Council Positive Cases Per 100000"),
             panelUI(id = "Council Cumulative Deaths"),
-            panelUI(id = "Council Cumulative Negative"),
             panelUI(id = "Council Cumulative Positive"),
             panelUI(id = "Council Daily Positive", 
                 message = "NOTE: Due to reporting this will not equal national 
@@ -82,19 +79,13 @@ shinyUI(fluidPage(
                           data statistics. Please consult sources for further
                           information."
             ),
-            panelUI(id = "Council 7 day Positive Per 100000"), 
-            panelUI(id = "Council 7 day Positve Percentage"), 
             mapUI(id = "council_map",
                 choices = c(
                     "Council Deaths Per 100,000" = "CrudeRateDeaths",
-                    "Council Negative Cases Per 100,000" = "CrudeRateNegative",
-                    "Council Positive Cases Per 100,000" = "CrudeRatePositive",
                     "Council Cumulative Deaths" = "CumulativeDeaths",
-                    "Council Cumulative Negative" = "CumulativeNegative",
                     "Council Cumulative Positive" = "CumulativePositive",
                     "Council Daily Positive" = "DailyPositive", 
-                    "Council 7 day Positive Per 100000" = "CrudeRate7DayPositive",
-                    "Council 7 day Positive Percentage" = "PositivePercentage7Day"
+                    "Council Daily Deaths" = "DailyDeaths"
                 )
             )
         ),
