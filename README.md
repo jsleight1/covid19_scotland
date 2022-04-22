@@ -5,3 +5,5 @@ The Scottish Government releases COVID-19 daily trend data split into both Natio
 Link: https://jack-sleight.shinyapps.io/covid_shiny/
 
 Reference: https://www.gov.scot/publications/coronavirus-covid-19-trends-in-daily-data/
+
+Deprecated April 2022
