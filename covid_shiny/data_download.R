@@ -65,24 +65,22 @@ national_data[["Table 8 - Deaths"]] <- tidy_table(
     )
 
 # Testing 
-national_data[["Table 5b - Testing (PCR)"]] <- national_data[["Table 5b - Testing (PCR)"]] %>% 
-    select(1:19, -6) %>% 
-    set_names(
-        c("Date", "Negative", "Positive", "Total", "Daily Positive", 
-        paste("NHS labs", c("Daily", "Cumulative"), sep = " "), 
-        paste("Regional Centres", c("Daily", "Cumulative"), sep = " "),
-        c("Total daily tests", "Total daily number of positive tests", 
-        "% Positive", "People with first test in last 7 days", "Positive cases in last 7 days", 
-        "Test reported in last 7 days", "Positive tests reported in last 7 days", 
-        "Test positivity rate in last 7 days", "Tests in last 7 days per 1,000 population")
+national_data[["Table 5 - Testing"]] <- national_data[["Table 5 - Testing"]] %>% 
+    select(1:9) %>% 
+    set_names(c(
+        "Date", 
+        "PCR only",
+        "New cases reported daily PCR only", 
+        "New cases reported daily LFD only", 
+        "Total number of positive cases (either PCR or LFD)", 
+        "Percentage of newly reported cases which are reinfections", 
+        "Total number of positive cases in the last 7 days (either PCR or LFD)", 
+        "Cumulative number of positive cases since the start of the pandemic", 
+        "Percentage of cases which are reinfections since the start of the pandemic"
     )) %>% 
     slice(4:nrow(.)) %>% 
-    mutate_at(c("% Positive", "Test positivity rate in last 7 days"), ~as.numeric(.) * 100) %>% 
     mutate_all(~round(as.numeric(.), 2)) %>% 
-    mutate(
-        Date = excel_numeric_to_date(Date), 
-        `Daily Negative` = Negative - lag(Negative),
-    )
+    mutate(Date = excel_numeric_to_date(Date))
 
 # Workforce absences
 cols <- na.omit(unlist(slice(national_data[["Table 6 - Workforce"]], 1)))

@@ -10,7 +10,7 @@ shinyUI(fluidPage(
     navbarPage("COVID-19 Analysis",
         introUI(id = "Introduction"),
         navbarMenu("National Data",
-            panelUI(id = "Testing - PCR"),
+            panelUI(id = "Testing"),
             panelUI(id = "Vaccinations"),
             panelUI(id = "Vaccintation supply"),
             panelUI(id = "Hospital Care", 
@@ -20,7 +20,6 @@ shinyUI(fluidPage(
                            before their admission. Refer to reference link for 
                            further details."
             ),
-            panelUI(id = "Delayed Discharges"),
             panelUI(id = "Workforce", 
                 message = "NOTE: Please note that as of 22/07/20 this table is 
                         updated on a weekly basis rather than a daily 

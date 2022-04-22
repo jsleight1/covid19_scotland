@@ -14,7 +14,7 @@ shinyServer(function(input, output) {
         data = regional_data[["Table 1 - Cumulative cases"]],
         date = as.character(last(pull(national_data[["Table 8 - Deaths"]], Date))), 
         cases = last(pull(regional_data[["Table 1 - Cumulative cases"]], Scotland)), 
-        daily_cases = last(pull(national_data[["Table 5b - Testing (PCR)"]], `Daily Positive`)),
+        daily_cases = last(pull(national_data[["Table 5 - Testing"]], `PCR only`)),
         deaths = last(pull(select(national_data[["Table 8 - Deaths"]], 
             `Number of COVID-19 confirmed deaths registered to date`))),
         daily_deaths = last(pull(national_data[["Table 8 - Deaths"]], `Daily Deaths`))
@@ -22,8 +22,8 @@ shinyServer(function(input, output) {
     
     # National analysis
     panelServer(
-        id = "Testing - PCR", 
-        table = national_data[["Table 5b - Testing (PCR)"]]
+        id = "Testing", 
+        table = national_data[["Table 5 - Testing"]]
     )
     panelServer(
         id = "Vaccinations", 
@@ -35,23 +35,8 @@ shinyServer(function(input, output) {
         table = national_data[["Table 11 - Vac supply"]]
     )
     panelServer(
-        id = "Vaccinations per JCVI group", 
-        table = national_data[["Table 10b - Vac by JCVI group"]], 
-        roll_ave = FALSE
-    ) 
-    panelServer(
-        id = "Vacciations per age group", 
-        table = national_data[["Table 10c - Vac by age"]], 
-        roll_ave = FALSE
-    )
-    panelServer(
         id = "Hospital Care", 
         table = national_data[["Table 2 - Hospital Care"]]
-    )
-    panelServer(
-        id = "Delayed Discharges", 
-        table = national_data[["Table 4 - Delayed Discharges"]], 
-        roll_ave = FALSE
     )
     panelServer(
         id = "Workforce", 

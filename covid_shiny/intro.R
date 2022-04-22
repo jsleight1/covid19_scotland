@@ -3,6 +3,15 @@ introUI <- function(id) {
     ns <- NS(id)
     tabPanel(id,
         fluidRow(
+            div(
+                "DISCLAIMER April 2022: Please note due to changes in Scottish 
+                Government reporting daily covid statistics are no longer 
+                available. Please see 'National and Regional Data' reference
+                for details."
+            ),
+            style = "padding-top:15px; color:red"
+        ),
+        fluidRow(
             column(
                 width = 12, div("National Cumulative Cases", style = "font-size:20px;"), 
                 plotlyOutput(outputId = ns("plot"), height = "700px")
@@ -35,22 +44,6 @@ introUI <- function(id) {
                     div(textOutput(outputId = ns("daily_deaths")), style = "font-size:20px; color:red")
                 ),
             style = "padding-top:15px"
-        ),
-        fluidRow(
-            div(
-                "NOTE: As of 15/06/20, confirmed cases include confirmed cases at 
-                UK government regional testing centres. Previous data have not 
-                been updated to account for this hence the significant increase 
-                in testing capacity and positive cases on this day."
-            ),
-            div(
-                "DISCLAIMER: This app is specifically designed as a visualisation tool
-                that utilises public COVID-19 data and therefore should 
-                not be used for any official decision making. Links to data sources can 
-                be found under the references tab and should be consulted to further 
-                understand the nuances and exact meaning of the data presented."
-            ),
-            style = "padding-top:15px; color:red"
         )
     )
 }
