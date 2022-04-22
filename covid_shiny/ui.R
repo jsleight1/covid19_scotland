@@ -10,7 +10,7 @@ shinyUI(fluidPage(
     navbarPage("COVID-19 Analysis",
         introUI(id = "Introduction"),
         navbarMenu("National Data",
-            panelUI(id = "Testing - PCR"),
+            panelUI(id = "Testing"),
             panelUI(id = "Vaccinations"),
             panelUI(id = "Vaccintation supply"),
             panelUI(id = "Hospital Care", 
@@ -20,7 +20,6 @@ shinyUI(fluidPage(
                            before their admission. Refer to reference link for 
                            further details."
             ),
-            panelUI(id = "Delayed Discharges"),
             panelUI(id = "Workforce", 
                 message = "NOTE: Please note that as of 22/07/20 this table is 
                         updated on a weekly basis rather than a daily 
@@ -67,10 +66,7 @@ shinyUI(fluidPage(
         ),
         navbarMenu("Council Data",
             panelUI(id = "Council Deaths Per 100000"),
-            panelUI(id = "Council Negative Cases Per 100000"),
-            panelUI(id = "Council Positive Cases Per 100000"),
             panelUI(id = "Council Cumulative Deaths"),
-            panelUI(id = "Council Cumulative Negative"),
             panelUI(id = "Council Cumulative Positive"),
             panelUI(id = "Council Daily Positive", 
                 message = "NOTE: Due to reporting this will not equal national 
@@ -82,19 +78,13 @@ shinyUI(fluidPage(
                           data statistics. Please consult sources for further
                           information."
             ),
-            panelUI(id = "Council 7 day Positive Per 100000"), 
-            panelUI(id = "Council 7 day Positve Percentage"), 
             mapUI(id = "council_map",
                 choices = c(
                     "Council Deaths Per 100,000" = "CrudeRateDeaths",
-                    "Council Negative Cases Per 100,000" = "CrudeRateNegative",
-                    "Council Positive Cases Per 100,000" = "CrudeRatePositive",
                     "Council Cumulative Deaths" = "CumulativeDeaths",
-                    "Council Cumulative Negative" = "CumulativeNegative",
                     "Council Cumulative Positive" = "CumulativePositive",
                     "Council Daily Positive" = "DailyPositive", 
-                    "Council 7 day Positive Per 100000" = "CrudeRate7DayPositive",
-                    "Council 7 day Positive Percentage" = "PositivePercentage7Day"
+                    "Council Daily Deaths" = "DailyDeaths"
                 )
             )
         ),
